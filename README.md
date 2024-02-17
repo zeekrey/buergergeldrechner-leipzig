@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Hierbei handelt es sich um ein Projekt im Rahmen der [Smart City Challange](https://digitalcampus.leipzig.de/sccl-2024/) Leipzig 2024 zum Themen ["Bürgergeldrechner+ - Dein individueller Anspruchsrechner"](https://digitalcampus.leipzig.de/sccl-wettbewerbsbedingungen-2024/buergergeldrechner-dein-individueller-anspruchsrechner/).
 
-## Getting Started
+## Anforderungen
 
-First, run the development server:
+> Wie gelingt es, mit wenigen Eingaben einen möglichst genauen Anspruch auf Bürgergeld zu berechnen und damit Orientierung für Grundsicherungssuchende zu schaffen ?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Fachliche Anforderungen
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Das angestrebte Webtool soll anhand eines Webformulars die Prüfung des Anspruches mit möglichst genauen Näherungswerten erreichen
+- Inhaltlich sind die Fragen in verschiedene, optisch erkennbare Kategorien unterteilt, welche intuitiv bzw. anhand von allgemeinen Angaben befüllt werden können.
+- Sobald man in das nächste Eingabefeld wechselt, werden in einfacher Sprache Hinweise zur Angabe angezeigt.
+- Eine Erklärung zu Datenschutz und -sicherheit ist dennoch ratsam, um die Nutzer:innen aufzuklären.
+- Neben dem Ergebnis werden entsprechende Verlinkungen und Webseiten zur weiteren Antragstellung angezeigt, ebenso ist die Einbindung von Flyern und Informationsmaterial möglich.
+- Letztendlich soll nicht nur das Ergebnis der Berechnung, sondern eine kurze Schritt-für-Schritt Anleitung zur Antragstellung erkennbar sein.
+- Das Ergebnis soll Client-seitig temporär gespeichert werden, um die Möglichkeit zu bieten, die Berechnung zu speichern und später fortzusetzen.*
+- Es gibt einen Fortschrittsbalken, der anzeigt, wie viele Fragen noch zu beantworten sind.*
+- Es gibt eine Art Outline, die anzeigt in welchem Pfad des Entscheidungsbaum man sich gerade befindet.*
+- Sollte gängie Accessability-Standards erfüllen.*
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Technische Anforderungen
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Das Webtool soll später über die Website bspw. des Jobcenters Leipzig oder der Stadt Leipzig zugänglich sein.
+- Technisch werden die Eingaben durch Javascript-Funktionen verarbeitet und direkt im Webbrowser das Ergebnis errechnet.
+- Dabei kommt es an keiner Stelle zur Speicherung der Daten, es wird keine Schnittstelle zu einer Datenbank benötigt, da die Formulareingaben direkt im Formular genutzt werden.
+- Die Anwendung soll auf allen gängigen Endgeräten (Desktop, Tablet, Smartphone) funktionieren. *
