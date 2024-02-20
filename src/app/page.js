@@ -1,57 +1,98 @@
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { UsersIcon } from "lucide-react";
-import { UserIcon } from "lucide-react";
+import { Step } from "@/components/step";
+import { StepsProvider } from "@/components/step-context-provider";
 
-export default function Home() {
+const stepsConfig = {
+  context: {
+    anzahl_kinder: {
+      erwachsene: 0,
+      jugendliche: 0,
+      kinder: 0,
+      kleinkinder: 0,
+    },
+    ausgaben: {
+      heizkosten: 0,
+      kaltmiete: 0,
+      nebenkosten: 0,
+    },
+    einkommen: {
+      arbeitslosengeld: 0,
+      brutto: 0,
+      elterngeld: 0,
+      kindergeld: 0,
+      netto: 0,
+      rente: 0,
+      sonstiges: 0,
+    },
+    kinder: false,
+    partnerschaft: false,
+    schwanger: false,
+  },
+  currentStep: 0,
+  steps: {
+    0: {
+      conditions: {},
+      description: 'Es ist zunächst wichtig zu wissen, ob Sie in einer Partnerschaft leben. Partnerschaften sind zum Beispiel Ehe, eingetragene Lebenspartnerschaften oder auch nichteheliche Lebensgemeinschaften die in einer gemeinsamen Wohnung leben.',
+      id: "partnerschaft",
+      next: 1,
+      previous: 0,
+      title: 'Leben Sie in einer Partnerschaft?'
+    },
+    1: {
+      conditions: {},
+      description: 'Leben Kinder in Ihren Haushhalt?',
+      id: "kinder",
+      next: 2,
+      previous: 0,
+      title: 'Haben Sie Kinder?'
+    },
+    2: {
+      conditions: {
+        kinder: true
+      },
+      description: 'Wie viele Kinder leben in Ihrem Haushalt?',
+      id: "kinder-anzahl",
+      next: 3,
+      previous: 1,
+      title: 'Wie viele Kinder leben in Ihrem Haushalt?'
+    },
+    3: {
+      conditions: {},
+      description: 'Tragen Sie hier bitte Ihre Kaltmiete, Heiz- und Betriebskosten ein. Wenn Sie Bürgergeld beziehen, übernimmt Ihr Jobcenter die Kosten für Unterkunft und Heizung in angemessener Höhe (die Höhe der Kosten für die Unterkunft werden regional unterschiedlich berechnet). Ist Ihre Wohnung nicht angemessen, müssen Sie die Kosten möglichst senken.',
+      id: "monatliche-ausgaben",
+      next: 4,
+      previous: 2,
+      title: 'Ihre Monatlichen Ausgaben'
+    },
+    4: {
+      conditions: {},
+      description: 'Geben Sie hier bitte jeweils Ihr Brutto- und Nettoeinkommen (bitte beide Werte eintragen) an und wenn zutreffend ebenfalls das Ihrer Partnerin /Ihres Partners.',
+      id: "monatliches-einkommen",
+      next: 5,
+      previous: 3,
+      title: 'Einkommen aus Erwerbstätigkeit'
+    },
+    5: {
+      conditions: {},
+      description: 'Hierzu zählen zum Beispiel Arbeitslosengeld I, Krankengeld, Elterngeld über dem Freibetrag von 300 Euro, Unterhalt und Unterhaltsvorschuss vom Jugendamt, Renten, Einnahmen aus Vermietung, Zinsen oder Steuererstattungen.',
+      id: "weiteres-einkommen",
+      next: 5,
+      previous: 4,
+      title: 'Weiteres Einkommen'
+    }
+    // Schwangerschaft und diverse andere Fragen fehlen
+  }
+}
+
+export default function StepPage() {
   return (
-    <main className="flex min-h-screen mx-auto bg-red-50 max-w-3xl">
-      {/* step root */}
-      <div className="bg-red-200 h-96 w-full flex flex-col">
-        {/* step title */}
-        <div className="px-8 pt-6">
-          <h2 className="font-semibold tracking-tight text-2xl">Leben Sie in einer Partnerschaft?</h2>
-        </div>
-        {/* step description */}
-        <div className="px-8 pt-4">
-          <p className="text-sm text-muted-foreground">Viele der folgenden Fragen hängen davon ab, ob Sie <strong>alleinstehend</strong> sind oder einen Partner haben. Zur einer Partnerschaft zählen <strong>eingetragene Partnerschaften</strong> und <strong>verheiratete Paare</strong>.</p>
-        </div>
-        {/* step content */}
-        <div className="px-8 pt-4 flex-grow flex justify-center items-center">
-          <RadioGroup className="grid grid-cols-2 gap-4" defaultValue="card">
-            <div className="w-48">
-              <RadioGroupItem
-                className="peer sr-only"
-                id="paypal"
-                value="paypal"
-              />
-              <Label
-                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                htmlFor="paypal"
-              >
-                <UserIcon className="mb-3 h-6 w-6" />
-                Alleinstehend
-              </Label>
-            </div>
-            <div className="w-48">
-              <RadioGroupItem className="peer sr-only" id="card" value="card" />
-              <Label
-                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                htmlFor="card"
-              >
-                <UsersIcon className="mb-3 h-6 w-6" />
-                Partnerschaft
-              </Label>
-            </div>
-          </RadioGroup>
-        </div>
-        {/* step navigation */}
-        <div className="px-8 py-6 flex justify-between">
-          <Button>⬅️</Button>
-          <Button className="w-48">Weiter</Button>
-        </div>
-      </div>
+    <main className="flex flex-col sm:gap-12 min-h-screen mx-auto max-w-3xl">
+      <StepsProvider value={stepsConfig}>
+        {
+          Object.entries(stepsConfig.steps).map(([id, step]) => (
+            <Step id={step.id} key={id} step={step} />
+          ))
+        }
+      </StepsProvider>
     </main>
   );
 }
