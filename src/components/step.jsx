@@ -10,10 +10,11 @@ import {
   StepTitle,
 } from "@/components/ui/step-primitives";
 
+import { StepChildren } from "./steps/step-children";
 import { StepPartner } from "./steps/step-partner";
 
 const stepComponents = {
-  kinder: (arg) => <StepPartner step={arg} />,
+  kinder: (arg) => <StepChildren step={arg} />,
   "kinder-anzahl": (arg) => <StepPartner step={arg} />,
   "monatliche-ausgaben": (arg) => <StepPartner step={arg} />,
   "monatliches-einkommen": (arg) => <StepPartner step={arg} />,
@@ -34,8 +35,7 @@ export function Step({ id, step }) {
     <StepRoot id={id}>
       <StepTitle>{step.title}</StepTitle>
       <StepDescription>{step.description}</StepDescription>
-      <StepContent>{StepToRender}</StepContent>
-      <StepNavigation />
+      {StepToRender}
     </StepRoot>
   );
 }

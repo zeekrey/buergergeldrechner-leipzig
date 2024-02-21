@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useSteps, useStepsDispatch } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { forwardRef } from "react";
 
@@ -9,7 +8,7 @@ const StepRoot = forwardRef(({ children, ...props }, ref) => {
   return (
     <div className="sm:h-screen sm:flex sm:items-center" {...props}>
       <div
-        className="border shadow-sm rounded-lg w-full flex flex-col min-h-screen sm:min-h-96"
+        className="sm:border sm:shadow-sm rounded-lg w-full flex flex-col min-h-dvh sm:min-h-96"
         ref={ref}
       >
         {children}
@@ -50,15 +49,13 @@ const StepContent = forwardRef(({ children, ...props }, ref) => {
 
 StepContent.displayName = "StepContent";
 
-const StepNavigation = forwardRef(({ children, ...props }, ref) => {
-  const dispatch = useStepsDispatch();
-
+const StepNavigation = forwardRef(({ children, onNext, onPrev, ...props }, ref) => {
   return (
     <div className="px-8 py-6 flex justify-between gap-4">
-      <Button onClick={() => dispatch({ type: "previous" })}><ArrowLeftCircleIcon className="w-4 h-4" /></Button>
+      <Button onClick={onPrev}><ArrowLeftCircleIcon className="w-4 h-4" /></Button>
       <Button
         className="grow sm:grow-0 sm:w-48 "
-        onClick={() => dispatch({ type: "next" })}
+        onClick={onNext}
       >
         Weiter
         <ArrowRightCircleIcon className="w-4 h-4 ml-3" />

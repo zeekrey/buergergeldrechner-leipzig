@@ -15,7 +15,7 @@ export function useSteps() {
 }
 
 /**
- * @returns {React.Dispatch<{ type: 'next' | 'previous' | 'deleted', id?: string }>}
+ * @returns {React.Dispatch<{ type: 'next' | 'previous', data?: {} }>}
  */
 export function useStepsDispatch() {
     return useContext(StepsDispatchContext);
