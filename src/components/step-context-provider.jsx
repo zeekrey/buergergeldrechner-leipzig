@@ -13,6 +13,7 @@ export function StepsProvider({ children, value }) {
   const [steps, dispatch] = useReducer(stepsReducer, value);
 
   useEffect(() => {
+    console.log(steps)
     window.history.pushState({}, "", `#${steps.steps[steps.currentStep].id}`);
     const hash = window.location.hash;
     if (hash) {

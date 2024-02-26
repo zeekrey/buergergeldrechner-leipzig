@@ -13,8 +13,13 @@ export function StepPartner() {
   const steps = useSteps();
   const [partner, setPartner] = useState(steps.context.partnerschaft ?? false);
 
+  function handleSubmit(event) {
+    event.preventDefault();
+    dispatch({ data: { partnerschaft: partner }, type: "next" });
+  }
+
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       <StepContent>
         <RadioGroup
           className="p-10 flex flex-col sm:flex-row gap-4"
@@ -52,11 +57,9 @@ export function StepPartner() {
         </RadioGroup>
       </StepContent>
       <StepNavigation
-        onNext={() =>
-          dispatch({ data: { partnerschaft: partner }, type: "next" })
-        }
+        onNext={handleSubmit}
         onPrev={() => dispatch({ type: "previous" })}
       />
-    </>
+    </form>
   );
 }

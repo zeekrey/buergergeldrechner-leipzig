@@ -1,54 +1,15 @@
+"use client";
+
 import { Step } from "@/components/step";
 import { StepsProvider } from "@/components/step-context-provider";
+import { Button } from "@/components/ui/button";
+import { BoltIcon, HelpCircleIcon } from "lucide-react";
 
 /**
- * @typedef {Object} TStep
- * @property {string} title - The title of the step.
- * @property {number} next - The age of the person.
- * @property {number} previous - The age of the person.
- * @property {string} description - The age of the person.
- * @property {string} id - The age of the person.
- * @property {Object} conditions - The age of the person.
- */
-
-/**
- * @typedef {Object} TStepsConfig
- * @property {Object} context
- * @property {Object} context.anzahl_kinder
- * @property {number} context.anzahl_kinder.erwachsene
- * @property {number} context.anzahl_kinder.jugendliche
- * @property {number} context.anzahl_kinder.kinder
- * @property {number} context.anzahl_kinder.kleinkinder
- * @property {Object} context.ausgaben
- * @property {number} context.ausgaben.heizkosten
- * @property {number} context.ausgaben.kaltmiete
- * @property {number} context.ausgaben.nebenkosten
- * @property {Object} context.einkommen
- * @property {number} context.einkommen.arbeitslosengeld
- * @property {number} context.einkommen.brutto
- * @property {number} context.einkommen.elterngeld
- * @property {number} context.einkommen.kindergeld
- * @property {number} context.einkommen.netto
- * @property {number} context.einkommen.rente
- * @property {number} context.einkommen.sonstiges
- * @property {boolean} context.kinder
- * @property {boolean} context.partnerschaft
- * @property {boolean} context.schwanger
- * @property {number} currentStep
- * @property {Object.<number, TStep>} steps
- */
-
-/**
- * @type {TStepsConfig}
+ * @type {import("@/lib/types").TStepsConfig}
  */
 const stepsConfig = {
   context: {
-    anzahl_kinder: {
-      erwachsene: 0,
-      jugendliche: 0,
-      kinder: 0,
-      kleinkinder: 0,
-    },
     ausgaben: {
       heizkosten: 0,
       kaltmiete: 0,
@@ -63,63 +24,61 @@ const stepsConfig = {
       rente: 0,
       sonstiges: 0,
     },
-    kinder: false,
+    kinder: [],
     partnerschaft: false,
     schwanger: false,
   },
   currentStep: 0,
   steps: {
     0: {
-      conditions: {},
       description:
         "Es ist zunächst wichtig zu wissen, ob Sie in einer Partnerschaft leben. Partnerschaften sind zum Beispiel Ehe, eingetragene Lebenspartnerschaften oder auch nichteheliche Lebensgemeinschaften die in einer gemeinsamen Wohnung leben.",
       id: "partnerschaft",
-      next: 1,
+      next: () => 1,
       previous: 0,
       title: "Leben Sie in einer Partnerschaft?",
     },
     1: {
-      conditions: {},
       description: "Leben Kinder in Ihren Haushhalt?",
       id: "kinder",
-      next: 2,
+      next: (ctx) => {
+        if (ctx.kinder) {
+          return 2;
+        }
+
+        return 3;
+      },
       previous: 0,
       title: "Haben Sie Kinder?",
     },
     2: {
-      conditions: {
-        kinder: true,
-      },
       description: "Wie viele Kinder leben in Ihrem Haushalt?",
       id: "kinder-anzahl",
-      next: 3,
+      next: () => 3,
       previous: 1,
       title: "Wie viele Kinder leben in Ihrem Haushalt?",
     },
     3: {
-      conditions: {},
       description:
         "Tragen Sie hier bitte Ihre Kaltmiete, Heiz- und Betriebskosten ein. Wenn Sie Bürgergeld beziehen, übernimmt Ihr Jobcenter die Kosten für Unterkunft und Heizung in angemessener Höhe (die Höhe der Kosten für die Unterkunft werden regional unterschiedlich berechnet). Ist Ihre Wohnung nicht angemessen, müssen Sie die Kosten möglichst senken.",
       id: "monatliche-ausgaben",
-      next: 4,
+      next: () => 4,
       previous: 2,
       title: "Ihre Monatlichen Ausgaben",
     },
     4: {
-      conditions: {},
       description:
         "Geben Sie hier bitte jeweils Ihr Brutto- und Nettoeinkommen (bitte beide Werte eintragen) an und wenn zutreffend ebenfalls das Ihrer Partnerin /Ihres Partners.",
       id: "monatliches-einkommen",
-      next: 5,
+      next: () => 5,
       previous: 3,
       title: "Einkommen aus Erwerbstätigkeit",
     },
     5: {
-      conditions: {},
       description:
         "Hierzu zählen zum Beispiel Arbeitslosengeld I, Krankengeld, Elterngeld über dem Freibetrag von 300 Euro, Unterhalt und Unterhaltsvorschuss vom Jugendamt, Renten, Einnahmen aus Vermietung, Zinsen oder Steuererstattungen.",
       id: "weiteres-einkommen",
-      next: 5,
+      next: () => 5,
       previous: 4,
       title: "Weiteres Einkommen",
     },
@@ -129,12 +88,29 @@ const stepsConfig = {
 
 export default function StepPage() {
   return (
-    <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl">
+    <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl relative">
       <StepsProvider value={stepsConfig}>
         {Object.entries(stepsConfig.steps).map(([id, step]) => (
           <Step id={step.id} key={id} step={step} />
         ))}
       </StepsProvider>
+      <div className="fixed bottom-0 inset-x-0 px-8 py-8 flex justify-between items-center backdrop-blur text-zinc-400">
+        <div className="">
+          <Button variant="ghost">
+            <BoltIcon className="w-5 h-5" />
+          </Button>
+        </div>
+        <ul className="flex gap-2">
+          {Object.entries(stepsConfig.steps).map(([id, step]) => (
+            <li className="w-2 h-2 rounded-full bg-zinc-500" key={id} />
+          ))}
+        </ul>
+        <div className="">
+          <Button variant="ghost">
+            <HelpCircleIcon className="w-5 h-5" />
+          </Button>
+        </div>
+      </div>
     </main>
   );
 }

@@ -1,7 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { HelpCircleIcon } from "lucide-react";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
+import PropTypes from "prop-types";
 import { forwardRef } from "react";
 
 const StepRoot = forwardRef(({ children, ...props }, ref) => {
@@ -21,8 +23,17 @@ StepRoot.displayName = "StepRoot";
 
 const StepTitle = forwardRef(({ children, ...props }, ref) => {
   return (
-    <div className="px-8 pt-6" ref={ref} {...props}>
+    <div
+      className="px-8 pt-6 flex justify-between items-center"
+      ref={ref}
+      {...props}
+    >
       <h2 className="font-semibold tracking-tight text-2xl">{children}</h2>
+      <div>
+        <Button variant="ghost">
+          <HelpCircleIcon className="w-5 h-5" />
+        </Button>
+      </div>
     </div>
   );
 });
@@ -49,20 +60,34 @@ const StepContent = forwardRef(({ children, ...props }, ref) => {
 
 StepContent.displayName = "StepContent";
 
-const StepNavigation = forwardRef(({ children, onNext, onPrev, ...props }, ref) => {
-  return (
-    <div className="px-8 py-6 flex justify-between gap-4">
-      <Button onClick={onPrev}><ArrowLeftCircleIcon className="w-4 h-4" /></Button>
-      <Button
-        className="grow sm:grow-0 sm:w-48 "
-        onClick={onNext}
-      >
-        Weiter
-        <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-      </Button>
-    </div>
-  );
-});
+/**
+ * @type React.FC<StepNavigationPropTypes>
+ */
+const StepNavigation = forwardRef(
+  ({ children, onNext, onPrev, ...props }, ref) => {
+    return (
+      <div className="px-8 py-6 flex justify-between gap-4">
+        <Button onClick={onPrev} type="button">
+          <ArrowLeftCircleIcon className="w-4 h-4" />
+        </Button>
+        <Button
+          className="grow sm:grow-0 sm:w-48 "
+          onClick={onNext}
+          type="submit"
+        >
+          Weiter
+          <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
+        </Button>
+      </div>
+    );
+  }
+);
+
+const StepNavigationPropTypes = {
+  children: PropTypes.node,
+  onNext: PropTypes.func,
+  onPrev: PropTypes.func,
+};
 
 StepNavigation.displayName = "StepNavigation";
 

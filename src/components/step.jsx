@@ -11,11 +11,12 @@ import {
 } from "@/components/ui/step-primitives";
 
 import { StepChildren } from "./steps/step-children";
+import { StepChildrenCount } from "./steps/step-children-count";
 import { StepPartner } from "./steps/step-partner";
 
 const stepComponents = {
   kinder: (arg) => <StepChildren step={arg} />,
-  "kinder-anzahl": (arg) => <StepPartner step={arg} />,
+  "kinder-anzahl": (arg) => <StepChildrenCount step={arg} />,
   "monatliche-ausgaben": (arg) => <StepPartner step={arg} />,
   "monatliches-einkommen": (arg) => <StepPartner step={arg} />,
   partnerschaft: (arg) => <StepPartner step={arg} />,
