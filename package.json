@@ -23,12 +23,13 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@types/node": "^20.11.20",
+    "@types/react": "18.2.58",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "eslint-plugin-perfectionist": "^2.5.0",
     "postcss": "^8",
-    "prop-types": "^15.8.1",
     "tailwindcss": "^3.3.0"
   }
 }

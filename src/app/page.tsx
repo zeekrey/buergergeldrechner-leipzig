@@ -3,12 +3,10 @@
 import { Step } from "@/components/step";
 import { StepsProvider } from "@/components/step-context-provider";
 import { Button } from "@/components/ui/button";
+import { TStepsConfig } from "@/lib/types";
 import { BoltIcon, HelpCircleIcon } from "lucide-react";
 
-/**
- * @type {import("@/lib/types").TStepsConfig}
- */
-const stepsConfig = {
+const stepsConfig: TStepsConfig = {
   context: {
     ausgaben: {
       heizkosten: 0,
@@ -16,17 +14,28 @@ const stepsConfig = {
       nebenkosten: 0,
     },
     einkommen: {
-      arbeitslosengeld: 0,
-      brutto: 0,
-      elterngeld: 0,
-      kindergeld: 0,
-      netto: 0,
-      rente: 0,
-      sonstiges: 0,
+      antragsteller: {
+        arbeitslosengeld: 0,
+        brutto: 0,
+        elterngeld: 0,
+        kindergeld: 0,
+        netto: 0,
+        rente: 0,
+        sonstiges: 0,
+      },
+      partner: {
+        arbeitslosengeld: 0,
+        brutto: 0,
+        elterngeld: 0,
+        kindergeld: 0,
+        netto: 0,
+        rente: 0,
+        sonstiges: 0,
+      },
     },
     kinder: [],
-    partnerschaft: false,
-    schwanger: false,
+    partnerschaft: "false",
+    schwanger: "false",
   },
   currentStep: 0,
   steps: {
@@ -78,9 +87,16 @@ const stepsConfig = {
       description:
         "Hierzu zählen zum Beispiel Arbeitslosengeld I, Krankengeld, Elterngeld über dem Freibetrag von 300 Euro, Unterhalt und Unterhaltsvorschuss vom Jugendamt, Renten, Einnahmen aus Vermietung, Zinsen oder Steuererstattungen.",
       id: "weiteres-einkommen",
-      next: () => 5,
+      next: () => 6,
       previous: 4,
       title: "Weiteres Einkommen",
+    },
+    6: {
+      description: "Ihre Berechnungsergebnisse",
+      id: "ergebnis",
+      next: () => 6,
+      previous: 5,
+      title: "Ergebnis",
     },
     // Schwangerschaft und diverse andere Fragen fehlen
   },

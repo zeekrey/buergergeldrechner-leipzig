@@ -1,4 +1,8 @@
 {
-  "extends": ["next/core-web-vitals", "plugin:perfectionist/recommended-natural"],
-  "plugins": ["perfectionist"]
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:perfectionist/recommended-natural"
+  ],
+  "plugins": ["perfectionist"],
+  "ignorePatterns": ["node_modules", "src/components/ui"]
 }

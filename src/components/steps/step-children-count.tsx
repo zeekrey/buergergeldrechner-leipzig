@@ -1,5 +1,7 @@
 "use client";
 
+import type { FormEvent } from "react";
+
 import {
   Select,
   SelectContent,
@@ -9,13 +11,16 @@ import {
 } from "@/components/ui/select";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { useSteps, useStepsDispatch } from "@/lib/machine";
-import { XCircleIcon } from "lucide-react";
+import {
+  ArrowLeftCircleIcon,
+  ArrowRightCircleIcon,
+  XCircleIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "../ui/button";
 
 export function StepChildrenCount() {
-  // anzahl_kinder
   const dispatch = useStepsDispatch();
   const steps = useSteps();
   const [childrenCount, setChildrenCount] = useState(
@@ -29,17 +34,22 @@ export function StepChildrenCount() {
     toddler: "Kleinkind (0-3 Jahre)",
   };
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    dispatch({ data: { kinder: childrenCount }, type: "next" });
+  }
+
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       <StepContent>
         {childrenCount.map((child, index) => (
           <div className="items-center gap-3 flex pb-3" key={index}>
             <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
               {index + 1}. Kind
             </div>
-            <Select>
+            <Select required>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Theme" />
+                <SelectValue placeholder="Altersgruppe" />
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(childAges).map(([key, value]) => (
@@ -65,17 +75,22 @@ export function StepChildrenCount() {
         <div className="items-center gap-4 flex">
           <Button
             className="flex h-10 w-full items-center justify-between rounded-md border border-input text-input border-dashed cursor-pointer bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
-            onClick={() => setChildrenCount([...childrenCount, ""])}
+            onClick={() => setChildrenCount([...childrenCount, "toddler"])}
             variant="ghost"
           >
             Kind hinzufügen
           </Button>
         </div>
       </StepContent>
-      <StepNavigation
-        onNext={() => dispatch({ data: { kinder: children }, type: "next" })}
-        onPrev={() => dispatch({ type: "previous" })}
-      />
-    </>
+      <StepNavigation>
+        <Button onClick={() => dispatch({ type: "previous" })} type="button">
+          <ArrowLeftCircleIcon className="w-4 h-4" />
+        </Button>
+        <Button className="grow sm:grow-0 sm:w-48 " type="submit">
+          Weiter
+          <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
+        </Button>
+      </StepNavigation>
+    </form>
   );
 }
