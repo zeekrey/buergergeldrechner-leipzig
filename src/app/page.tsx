@@ -3,8 +3,17 @@
 import { Step } from "@/components/step";
 import { StepsProvider } from "@/components/step-context-provider";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { TStepsConfig } from "@/lib/types";
 import { BoltIcon, HelpCircleIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const stepsConfig: TStepsConfig = {
   context: {
@@ -102,6 +111,18 @@ const stepsConfig: TStepsConfig = {
   },
 };
 
+export function ModeToggle() {
+  const { setTheme } = useTheme();
+
+  return (
+    <div>
+      <Button onClick={() => setTheme("light")}>Light</Button>
+      <Button onClick={() => setTheme("dark")}>Dark</Button>
+      <Button onClick={() => setTheme("system")}>System</Button>
+    </div>
+  );
+}
+
 export default function StepPage() {
   return (
     <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl relative">
@@ -112,9 +133,21 @@ export default function StepPage() {
       </StepsProvider>
       <div className="fixed bottom-0 inset-x-0 px-8 py-8 flex justify-between items-center backdrop-blur text-zinc-400">
         <div className="">
-          <Button variant="ghost">
-            <BoltIcon className="w-5 h-5" />
-          </Button>
+          <Dialog>
+            <DialogTrigger>
+              <BoltIcon className="w-5 h-5" />
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
+                </DialogDescription>
+                <ModeToggle />
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
         <ul className="flex gap-2">
           {Object.entries(stepsConfig.steps).map(([id, step]) => (
@@ -122,9 +155,20 @@ export default function StepPage() {
           ))}
         </ul>
         <div className="">
-          <Button variant="ghost">
-            <HelpCircleIcon className="w-5 h-5" />
-          </Button>
+          <Dialog>
+            <DialogTrigger>
+              <HelpCircleIcon className="w-5 h-5" />
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </main>

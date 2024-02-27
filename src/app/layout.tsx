@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/theme-provider";
 import { fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +18,14 @@ export default function RootLayout({ children }) {
           fontSans.variable
         )}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+          enableSystem
+        >
+          {children}{" "}
+        </ThemeProvider>
       </body>
     </html>
   );
