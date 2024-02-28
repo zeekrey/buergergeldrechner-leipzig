@@ -4,6 +4,14 @@ import { Button } from "@/components/ui/button";
 import { HelpCircleIcon } from "lucide-react";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { forwardRef } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -35,9 +43,42 @@ const StepTitle = forwardRef<HTMLDivElement, InputProps>(
       >
         <h2 className="font-semibold tracking-tight text-2xl">{children}</h2>
         <div>
-          <Button variant="ghost">
-            <HelpCircleIcon className="w-5 h-5" />
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost">
+                <HelpCircleIcon className="w-5 h-5" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Über diese Frage</DialogTitle>
+              </DialogHeader>
+              <div className="prose prose-sm">
+                <h3>Warum wird diese Frage gestellt?</h3>
+                <p>
+                  Wie viel Bürgergeld Sie erhalten können, richtet sich
+                  maßgeblich nach den finanziellen Mitteln die eine
+                  Lebensgemeinschaft hat. Sind Sie partnerlos, wird sich nur
+                  Ihre eigenen finanziellen Mitteln angeschaut. Leben Sie jedoch
+                  in einer Partnerschaft, müssen auch die finanziellen Mittel
+                  Ihres Partners betrachtet werden.
+                </p>
+                <h3>Wo finde ich mehr Informationen dazu?</h3>
+                <p>Hier finden Sie mehr Informationen dazu:</p>
+                <ul>
+                  <li>
+                    <a href="http://">Link #1</a>
+                  </li>
+                  <li>
+                    <a href="http://">Link #1</a>
+                  </li>
+                  <li>
+                    <a href="http://">Link #1</a>
+                  </li>
+                </ul>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     );

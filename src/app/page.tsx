@@ -1,19 +1,14 @@
 "use client";
 
+import { About } from "@/components/about";
+import { Progress } from "@/components/progress";
+import { Settings } from "@/components/settings";
 import { Step } from "@/components/step";
 import { StepsProvider } from "@/components/step-context-provider";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { TStepsConfig } from "@/lib/types";
 import { BoltIcon, HelpCircleIcon } from "lucide-react";
-import { useTheme } from "next-themes";
 
 const stepsConfig: TStepsConfig = {
   context: {
@@ -111,66 +106,37 @@ const stepsConfig: TStepsConfig = {
   },
 };
 
-export function ModeToggle() {
-  const { setTheme } = useTheme();
-
-  return (
-    <div>
-      <Button onClick={() => setTheme("light")}>Light</Button>
-      <Button onClick={() => setTheme("dark")}>Dark</Button>
-      <Button onClick={() => setTheme("system")}>System</Button>
-    </div>
-  );
-}
-
 export default function StepPage() {
   return (
-    <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl relative">
-      <StepsProvider value={stepsConfig}>
+    <StepsProvider value={stepsConfig}>
+      <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl relative">
         {Object.entries(stepsConfig.steps).map(([id, step]) => (
           <Step id={step.id} key={id} step={step} />
         ))}
-      </StepsProvider>
-      <div className="fixed bottom-0 inset-x-0 px-8 py-8 flex justify-between items-center backdrop-blur text-zinc-400">
-        <div className="">
-          <Dialog>
-            <DialogTrigger>
-              <BoltIcon className="w-5 h-5" />
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
-                </DialogDescription>
-                <ModeToggle />
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+        <div className="fixed bottom-0 inset-x-0 px-8 py-8 flex justify-between items-center backdrop-blur text-zinc-400">
+          <div className="">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost">
+                  <BoltIcon className="w-5 h-5" />
+                </Button>
+              </DialogTrigger>
+              <Settings />
+            </Dialog>
+          </div>
+          <Progress />
+          <div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost">
+                  <HelpCircleIcon className="w-5 h-5" />
+                </Button>
+              </DialogTrigger>
+              <About />
+            </Dialog>
+          </div>
         </div>
-        <ul className="flex gap-2">
-          {Object.entries(stepsConfig.steps).map(([id, step]) => (
-            <li className="w-2 h-2 rounded-full bg-zinc-500" key={id} />
-          ))}
-        </ul>
-        <div className="">
-          <Dialog>
-            <DialogTrigger>
-              <HelpCircleIcon className="w-5 h-5" />
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-    </main>
+      </main>
+    </StepsProvider>
   );
 }

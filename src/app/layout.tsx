@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased ",
@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
           enableSystem
         >
-          {children}{" "}
+          {children}
         </ThemeProvider>
       </body>
     </html>
