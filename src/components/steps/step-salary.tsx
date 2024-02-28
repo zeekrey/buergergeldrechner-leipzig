@@ -28,7 +28,6 @@ import { useState } from "react";
 
 export function StepSalary() {
   const dispatch = useStepsDispatch();
-  const steps = useSteps();
   const [income, setIncome] = useState({ brutto: 0, netto: 0 });
   const [incomePartner, setIncomePartner] = useState({ brutto: 0, netto: 0 });
 

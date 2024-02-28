@@ -44,7 +44,9 @@ export function StepIncome() {
     dispatch({
       data: {
         einkommen: {
+          ...steps.context.einkommen,
           antragsteller: {
+            ...steps.context.einkommen.antragsteller,
             arbeitslosengeld: income.arbeitslosengeld,
             elterngeld: income.elterngeld,
             kindergeld: income.kindergeld,

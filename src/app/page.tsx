@@ -96,11 +96,12 @@ const stepsConfig: TStepsConfig = {
       title: "Weiteres Einkommen",
     },
     6: {
-      description: "Ihre Berechnungsergebnisse",
+      description:
+        "Auf Basis Ihrer Angaben könnten sie Anspruch auf Bürgergeld haben. Hier sehen Sie Ihr Berechnungsergebniss. Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine unverbindliche Berechnung handelt.",
       id: "ergebnis",
       next: () => 6,
       previous: 5,
-      title: "Ergebnis",
+      title: "Ihr Berechnungsergebniss",
     },
     // Schwangerschaft und diverse andere Fragen fehlen
   },
@@ -113,28 +114,24 @@ export default function StepPage() {
         {Object.entries(stepsConfig.steps).map(([id, step]) => (
           <Step id={step.id} key={id} step={step} />
         ))}
-        <div className="fixed bottom-0 inset-x-0 px-8 py-8 flex justify-between items-center backdrop-blur text-zinc-400">
-          <div className="">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost">
-                  <BoltIcon className="w-5 h-5" />
-                </Button>
-              </DialogTrigger>
-              <Settings />
-            </Dialog>
-          </div>
+        <div className="fixed border-t border-zinc-50 dark:border-zinc-800 bottom-0 inset-x-0 px-8 py-8 flex justify-between items-center backdrop-blur text-zinc-400">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost">
+                <BoltIcon className="w-5 h-5" />
+              </Button>
+            </DialogTrigger>
+            <Settings />
+          </Dialog>
           <Progress />
-          <div>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost">
-                  <HelpCircleIcon className="w-5 h-5" />
-                </Button>
-              </DialogTrigger>
-              <About />
-            </Dialog>
-          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost">
+                <HelpCircleIcon className="w-5 h-5" />
+              </Button>
+            </DialogTrigger>
+            <About />
+          </Dialog>
         </div>
       </main>
     </StepsProvider>
