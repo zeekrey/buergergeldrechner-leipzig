@@ -11,10 +11,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html className="overflow-hidden" lang="de" suppressHydrationWarning>
+      {/* Suppress input zooming on mobile devices. */}
+      <meta
+        content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+        name="viewport"
+      />
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased ",
+          "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
         )}
       >

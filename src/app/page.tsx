@@ -110,7 +110,7 @@ const stepsConfig: TStepsConfig = {
 export default function StepPage() {
   return (
     <StepsProvider value={stepsConfig}>
-      <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl relative">
+      <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl">
         {Object.entries(stepsConfig.steps).map(([id, step]) => (
           <Step id={step.id} key={id} step={step} />
         ))}

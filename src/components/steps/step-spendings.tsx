@@ -4,8 +4,7 @@ import type { FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import {
   Table,
@@ -18,12 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useSteps, useStepsDispatch } from "@/lib/machine";
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-  BabyIcon,
-  CircleOffIcon,
-} from "lucide-react";
+import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useState } from "react";
 
 export function StepSpending() {
@@ -52,67 +46,77 @@ export function StepSpending() {
   return (
     <form onSubmit={handleSubmit}>
       <StepContent>
-        <Table>
-          <TableCaption>Ihre monatlichen Kosten</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Position</TableHead>
-              <TableHead className="text-right">Betrag</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">Kaltmiete</TableCell>
-              <TableCell className="w-[60px] text-right">
-                <Input
-                  className="m-0"
-                  inputMode="decimal"
-                  onChange={(e) => setRent(e.target.valueAsNumber)}
-                  type="number"
-                  value={rent}
-                />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Nebenkosten</TableCell>
-              <TableCell className="text-right">
-                <Input
-                  className="m-0"
-                  inputMode="decimal"
-                  onChange={(e) => setUtilities(e.target.valueAsNumber)}
-                  type="number"
-                  value={utilities}
-                />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Heizkosten</TableCell>
-              <TableCell className="text-right">
-                <Input
-                  className="m-0"
-                  inputMode="decimal"
-                  onChange={(e) => setHeating(e.target.valueAsNumber)}
-                  type="number"
-                  value={heating}
-                />
-              </TableCell>
-            </TableRow>
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell className="font-medium">Summe</TableCell>
-              <TableCell className="text-right">
-                <Input className="m-0" disabled value={sum.toLocaleString()} />
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
+        <ScrollArea className="sm:h-[380px]">
+          <Table>
+            <TableCaption>Ihre monatlichen Kosten</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Position</TableHead>
+                <TableHead className="text-right">Betrag</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">Kaltmiete</TableCell>
+                <TableCell className="w-[60px] text-right">
+                  <Input
+                    className="m-0"
+                    inputMode="decimal"
+                    onChange={(e) => setRent(e.target.valueAsNumber)}
+                    type="number"
+                    value={rent}
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Nebenkosten</TableCell>
+                <TableCell className="text-right">
+                  <Input
+                    className="m-0"
+                    inputMode="decimal"
+                    onChange={(e) => setUtilities(e.target.valueAsNumber)}
+                    type="number"
+                    value={utilities}
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Heizkosten</TableCell>
+                <TableCell className="text-right">
+                  <Input
+                    className="m-0"
+                    inputMode="decimal"
+                    onChange={(e) => setHeating(e.target.valueAsNumber)}
+                    type="number"
+                    value={heating}
+                  />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell className="font-medium">Summe</TableCell>
+                <TableCell className="text-right">
+                  <Input
+                    className="m-0"
+                    disabled
+                    value={sum.toLocaleString()}
+                  />
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </ScrollArea>
       </StepContent>
       <StepNavigation>
-        <Button onClick={() => dispatch({ type: "previous" })} type="button">
+        <Button
+          onClick={() => dispatch({ type: "previous" })}
+          size="lg"
+          type="button"
+        >
           <ArrowLeftCircleIcon className="w-4 h-4" />
         </Button>
-        <Button className="grow sm:grow-0 sm:w-48 " type="submit">
+        <Button className="grow sm:grow-0 sm:w-48 " size="lg" type="submit">
           Weiter
           <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
         </Button>

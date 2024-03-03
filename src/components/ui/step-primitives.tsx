@@ -19,7 +19,10 @@ export interface InputProps
 const StepRoot = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
     return (
-      <div className="sm:h-screen sm:flex sm:items-center" {...props}>
+      <div
+        className="sm:h-screen sm:flex sm:items-center snap-center"
+        {...props}
+      >
         <div
           className="sm:border sm:shadow-sm rounded-lg w-full flex flex-col min-h-dvh sm:min-h-96"
           ref={ref}

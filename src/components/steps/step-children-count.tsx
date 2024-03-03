@@ -2,6 +2,7 @@
 
 import type { FormEvent } from "react";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -42,51 +43,57 @@ export function StepChildrenCount() {
   return (
     <form onSubmit={handleSubmit}>
       <StepContent>
-        {childrenCount.map((child, index) => (
-          <div className="items-center gap-3 flex pb-3" key={index}>
-            <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
-              {index + 1}. Kind
+        <ScrollArea className="sm:h-[200px]">
+          {childrenCount.map((child, index) => (
+            <div className="items-center gap-3 flex pb-3" key={index}>
+              <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
+                {index + 1}. Kind
+              </div>
+              <Select required>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Altersgruppe" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(childAges).map(([key, value]) => (
+                    <SelectItem key={key} value={key}>
+                      {value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={() =>
+                  setChildrenCount([
+                    ...childrenCount.slice(0, index),
+                    ...childrenCount.slice(index + 1),
+                  ])
+                }
+                variant="outline"
+              >
+                <XCircleIcon className="w-4 h-4" />
+              </Button>
             </div>
-            <Select required>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Altersgruppe" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(childAges).map(([key, value]) => (
-                  <SelectItem key={key} value={key}>
-                    {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          ))}
+          <div className="items-center gap-4 flex">
             <Button
-              onClick={() =>
-                setChildrenCount([
-                  ...childrenCount.slice(0, index),
-                  ...childrenCount.slice(index + 1),
-                ])
-              }
-              variant="outline"
+              className="flex h-10 w-full items-center justify-between rounded-md border border-input text-input border-dashed cursor-pointer bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
+              onClick={() => setChildrenCount([...childrenCount, "toddler"])}
+              variant="ghost"
             >
-              <XCircleIcon className="w-4 h-4" />
+              Kind hinzufügen
             </Button>
           </div>
-        ))}
-        <div className="items-center gap-4 flex">
-          <Button
-            className="flex h-10 w-full items-center justify-between rounded-md border border-input text-input border-dashed cursor-pointer bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
-            onClick={() => setChildrenCount([...childrenCount, "toddler"])}
-            variant="ghost"
-          >
-            Kind hinzufügen
-          </Button>
-        </div>
+        </ScrollArea>
       </StepContent>
       <StepNavigation>
-        <Button onClick={() => dispatch({ type: "previous" })} type="button">
+        <Button
+          onClick={() => dispatch({ type: "previous" })}
+          size="lg"
+          type="button"
+        >
           <ArrowLeftCircleIcon className="w-4 h-4" />
         </Button>
-        <Button className="grow sm:grow-0 sm:w-48 " type="submit">
+        <Button className="grow sm:grow-0 sm:w-48 " size="lg" type="submit">
           Weiter
           <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
         </Button>

@@ -12,8 +12,6 @@ export function StepsProvider({ children, value }) {
   const { push } = useRouter();
   const [steps, dispatch] = useReducer(stepsReducer, value);
 
-  console.log(steps);
-
   useEffect(() => {
     window.history.pushState({}, "", `#${steps.steps[steps.currentStep].id}`);
     const hash = window.location.hash;
