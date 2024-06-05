@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html className="overflow-hidden" lang="de" suppressHydrationWarning>
+    <html className="" lang="de" suppressHydrationWarning>
       {/* Suppress input zooming on mobile devices. */}
       <meta
         content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"

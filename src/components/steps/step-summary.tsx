@@ -54,9 +54,9 @@ export function StepSummary() {
               mit notwendigen Dokumenten erzeugen. Sollten Sie noch Fragen
               haben, können Sie gerne mit uns Kontakt aufnahmenen.
             </p>
-            <div className="flex py-3 gap-3">
+            <div className="flex py-6 gap-3">
               <Button
-                className="flex-col px-4 h-auto flex-grow"
+                className="flex-col px-4 h-16 flex-grow"
                 variant="outline"
               >
                 <SaveIcon className="w-4 h-4" />
