@@ -148,14 +148,7 @@ export function StepSalary() {
         </ScrollArea>
       </StepContent>
       <StepNavigation>
-        <Button
-          onClick={() => dispatch({ type: "previous" })}
-          size="lg"
-          type="button"
-        >
-          <ArrowLeftCircleIcon className="w-4 h-4" />
-        </Button>
-        <Button className="grow sm:grow-0 sm:w-48 " size="lg" type="submit">
+        <Button className="sm:w-48 " size="lg" type="submit">
           Weiter
           <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
         </Button>

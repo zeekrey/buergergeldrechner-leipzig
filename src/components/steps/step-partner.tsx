@@ -7,73 +7,73 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { useSteps, useStepsDispatch } from "@/lib/machine";
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-  UserIcon,
-  UsersIcon,
-} from "lucide-react";
+import { ArrowRightCircleIcon, UserIcon, UsersIcon } from "lucide-react";
 import { useState } from "react";
 
 export function StepPartner() {
   const dispatch = useStepsDispatch();
   const steps = useSteps();
-  const [partner, setPartner] = useState(
-    steps.context.partnerschaft ?? "false"
+  const [partner, setPartner] = useState<"with-partner" | "without-partner">(
+    "without-partner"
   );
+
+  console.log(partner);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    dispatch({ data: { partnerschaft: partner }, type: "next" });
+    dispatch({
+      data: {
+        community:
+          partner === "with-partner"
+            ? [{ type: "applicant" }, { type: "partner" }]
+            : [{ type: "applicant" }],
+      },
+      type: "next",
+    });
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <StepContent>
         <RadioGroup
-          className="p-10 flex flex-col sm:flex-row gap-4"
+          className="py-6 gap-4 flex flex-col"
           defaultValue={partner}
-          onValueChange={(value: "false" | "true") => setPartner(value)}
+          onValueChange={(value: "with-partner" | "without-partner") =>
+            setPartner(value)
+          }
         >
-          <div className="grow">
+          <div>
             <RadioGroupItem
               className="peer sr-only"
               id="without-partner"
-              value={"false"}
+              value={"without-partner"}
             />
             <Label
-              className="h-full flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              className="max-w-fit flex items-center gap-2 rounded-md border-2 border-muted bg-popover py-3 px-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
               htmlFor="without-partner"
             >
-              <UserIcon className="mb-3 h-6 w-6" />
+              <UserIcon className="h-5 w-5" />
               Alleinstehend
             </Label>
           </div>
-          <div className="grow">
+          <div>
             <RadioGroupItem
               className="peer sr-only"
               id="with-partner"
-              value={"true"}
+              value={"with-partner"}
             />
             <Label
-              className="h-full flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              className="max-w-fit flex items-center gap-2 rounded-md border-2 border-muted bg-popover py-3 px-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
               htmlFor="with-partner"
             >
-              <UsersIcon className="mb-3 h-6 w-6" />
+              <UsersIcon className="h-5 w-5" />
               Partnerschaft
             </Label>
           </div>
         </RadioGroup>
       </StepContent>
       <StepNavigation>
-        <Button
-          onClick={() => dispatch({ type: "previous" })}
-          size="lg"
-          type="button"
-        >
-          <ArrowLeftCircleIcon className="w-4 h-4" />
-        </Button>
-        <Button className="grow sm:grow-0 sm:w-48 " size="lg" type="submit">
+        <Button size="lg" type="submit">
           Weiter
           <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
         </Button>

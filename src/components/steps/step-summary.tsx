@@ -39,7 +39,7 @@ export function StepSummary() {
     <form onSubmit={handleSubmit}>
       <StepContent>
         <ScrollArea className="sm:h-[380px]">
-          <div className="flex justify-between items-center p-4 mb-4 bg-green-100 rounded-lg border border-green-300">
+          <div className="flex justify-between items-center p-4 mb-4 bg-green-100 dark:bg-green-900 rounded-lg border border-green-300 dark:border-green-700">
             <div>
               <div className="text-sm">Ihr möglicher Bürgergeld-Anspruch</div>
               <div className="text-xl font-bold">500,00€</div>
@@ -81,7 +81,7 @@ export function StepSummary() {
           <Collapsible>
             <CollapsibleTrigger asChild>
               <Button
-                className="flex  justify-between w-full"
+                className="flex justify-between w-full"
                 type="button"
                 variant="outline"
               >
@@ -191,14 +191,7 @@ export function StepSummary() {
         </ScrollArea>
       </StepContent>
       <StepNavigation>
-        <Button
-          onClick={() => dispatch({ type: "previous" })}
-          size="lg"
-          type="button"
-        >
-          <ArrowLeftCircleIcon className="w-4 h-4" />
-        </Button>
-        <Button className="grow sm:grow-0 sm:w-48 " size="lg" type="submit">
+        <Button className="sm:w-48 " size="lg" type="submit">
           Weiter
           <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
         </Button>

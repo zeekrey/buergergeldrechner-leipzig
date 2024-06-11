@@ -39,6 +39,9 @@ export type TStepContext = {
   kinder: ("adult" | "child" | "teenager" | "toddler")[];
   partnerschaft: "false" | "true" | undefined;
   schwanger: "false" | "true" | undefined;
+  community: {
+    type: "applicant" | "partner" | "child" | "other";
+  }[];
 };
 
 export type TStepsConfig = {

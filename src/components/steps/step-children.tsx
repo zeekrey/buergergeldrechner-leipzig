@@ -18,14 +18,18 @@ import { useState } from "react";
 export function StepChildren() {
   const dispatch = useStepsDispatch();
   const steps = useSteps();
-  const [children, setChildren] = useState(
-    Boolean(steps.context.kinder) ? "true" : "false"
-  );
+  const [children, setChildren] = useState<
+    "with-children" | "without-children"
+  >("without-children");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     dispatch({
-      data: { kinder: children === "true" ? ["toddler"] : undefined },
+      data: {
+        community: children
+          ? [...steps.context.community, { type: "child" }]
+          : [...steps.context.community],
+      },
       type: "next",
     });
   }
@@ -34,49 +38,44 @@ export function StepChildren() {
     <form onSubmit={handleSubmit}>
       <StepContent>
         <RadioGroup
-          className="p-10 flex flex-col sm:flex-row gap-4"
+          className="py-6 gap-4 flex flex-col"
           defaultValue={children}
-          onValueChange={setChildren}
+          onValueChange={(value: "with-children" | "without-children") =>
+            setChildren(value)
+          }
         >
-          <div className="grow">
+          <div>
             <RadioGroupItem
               className="peer sr-only"
               id="with-children"
-              value="true"
+              value="with-children"
             />
             <Label
-              className="h-full flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              className="max-w-[165px] flex items-center gap-2 rounded-md border-2 border-muted bg-popover py-3 px-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
               htmlFor="with-children"
             >
-              <BabyIcon className="mb-3 h-6 w-6" />
+              <BabyIcon className="h-5 w-5" />
               Kinder
             </Label>
           </div>
-          <div className="grow">
+          <div>
             <RadioGroupItem
               className="peer sr-only"
               id="without-children"
-              value="false"
+              value="without-children"
             />
             <Label
-              className="h-full flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              className="max-w-[165px] flex items-center gap-2 rounded-md border-2 border-muted bg-popover py-3 px-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
               htmlFor="without-children"
             >
-              <CircleOffIcon className="mb-3 h-6 w-6" />
+              <CircleOffIcon className="h-5 w-5" />
               Keine Kinder
             </Label>
           </div>
         </RadioGroup>
       </StepContent>
       <StepNavigation>
-        <Button
-          onClick={() => dispatch({ type: "previous" })}
-          size="lg"
-          type="button"
-        >
-          <ArrowLeftCircleIcon className="w-4 h-4" />
-        </Button>
-        <Button className="grow sm:grow-0 sm:w-48 " size="lg" type="submit">
+        <Button className="sm:w-48 " size="lg" type="submit">
           Weiter
           <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
         </Button>
