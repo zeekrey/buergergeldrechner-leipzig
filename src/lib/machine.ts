@@ -1,39 +1,33 @@
 import { Dispatch, createContext, useContext } from "react";
+import { TAction, TStepsState } from "./types";
 
-import { TAction, TStepsConfig } from "./types";
-
-export const StepsContext = createContext<TStepsConfig>(null);
+export const StepsContext = createContext<TStepsState>(null);
 
 export const StepsDispatchContext = createContext<Dispatch<TAction>>(null);
 
-export function useSteps() {
-  return useContext(StepsContext);
+export function useStepsMachine() {
+  return [useContext(StepsContext), useContext(StepsDispatchContext)] as const;
 }
 
-export function useStepsDispatch() {
-  return useContext(StepsDispatchContext);
-}
-
-export function stepsReducer(context, action) {
+export function stepsReducer(
+  state: TStepsState,
+  action: { type: "next" | "previous"; state: TStepsState }
+) {
   switch (action.type) {
     case "next": {
-      const newContext = {
-        ...context,
-        context: { ...context.context, ...action.data },
+      const nextState = action.state ?? state;
+
+      const { steps, currentStep } = state;
+
+      return {
+        ...nextState,
+        currentStep: steps[currentStep].next(nextState.context),
       };
-
-      const nextStepId = context.steps[context.currentStep].next(
-        newContext.context
-      );
-      newContext.currentStep = nextStepId;
-
-      return newContext;
     }
     case "previous": {
-      const newContext = { ...context };
+      const { steps, currentStep } = state;
 
-      newContext.currentStep = context.steps[context.currentStep].previous;
-      return newContext;
+      return { ...state, currentStep: steps[currentStep].previous };
     }
     default: {
       throw Error("Unknown action: " + action.type);
@@ -41,37 +35,33 @@ export function stepsReducer(context, action) {
   }
 }
 
-export const stepsConfig: TStepsConfig = {
+/** Bürgergeldrechner */
+/** Step #1: Define the community and calculate the potential demand. */
+/**
+ * const community = []
+ * community.push({
+ *  name: 'person #1',
+ *  type: 'adult',
+ *  isSick: true
+ * })
+ */
+
+/** Step #2: Go through the community, and calculate the potential demand */
+/**
+ * community.forEach(person => {
+ *
+ * })
+ */
+
+export const stepsConfig: TStepsState = {
   context: {
-    community: [],
-    ausgaben: {
-      heizkosten: 0,
-      kaltmiete: 0,
-      nebenkosten: 0,
-    },
-    einkommen: {
-      antragsteller: {
-        arbeitslosengeld: 0,
-        brutto: 0,
-        elterngeld: 0,
-        kindergeld: 0,
-        netto: 0,
-        rente: 0,
-        sonstiges: 0,
+    community: [
+      {
+        type: "adult",
+        name: "Antragsteller",
       },
-      partner: {
-        arbeitslosengeld: 0,
-        brutto: 0,
-        elterngeld: 0,
-        kindergeld: 0,
-        netto: 0,
-        rente: 0,
-        sonstiges: 0,
-      },
-    },
-    kinder: [],
-    partnerschaft: "false",
-    schwanger: "false",
+    ],
+    isEmployable: false,
   },
   currentStep: 0,
   steps: {
@@ -95,11 +85,11 @@ export const stepsConfig: TStepsConfig = {
       description: "Leben Kinder in Ihren Haushhalt?",
       id: "kinder",
       next: (ctx) => {
-        if (ctx.kinder) {
+        if (ctx.community.some(({ type }) => type === "child")) {
           return 3;
         }
 
-        return 4;
+        return 5;
       },
       previous: 0,
       title: "Haben Sie Kinder?",
@@ -107,18 +97,19 @@ export const stepsConfig: TStepsConfig = {
     3: {
       description: "Wie viele Kinder leben in Ihrem Haushalt?",
       id: "kinder-anzahl",
-      next: () => 4,
-      previous: 1,
+      next: () => 5,
+      previous: 2,
       title: "Wie viele Kinder leben in Ihrem Haushalt?",
     },
-    4: {
-      description:
-        "Sind einige der folgenden Merkmale für Sie relevant? Wenn ja, aktivieren Sie bitte diese.",
-      id: "merkmale",
-      next: () => 5,
-      previous: 3,
-      title: "Merkmale Ihrer Bedarfsgemeinschaft",
-    },
+    // Skiped for now.
+    // 4: {
+    //   description:
+    //     "Sind einige der folgenden Merkmale für Sie relevant? Wenn ja, aktivieren Sie bitte diese.",
+    //   id: "merkmale",
+    //   next: () => 5,
+    //   previous: 3,
+    //   title: "Merkmale Ihrer Bedarfsgemeinschaft",
+    // },
     5: {
       description:
         "Sieht so Ihre Bedarfsgemeinschaft aus? Sie haben nun die Möglichkeit einige Merkmale Ihrer Bedarfsgemeinschaft zu erfassen. AUf welche Person genau dieses Merkmal zutrifft, können Sie im folgenden Schritt bestimmen.",
@@ -159,6 +150,5 @@ export const stepsConfig: TStepsConfig = {
       previous: 9,
       title: "Ihr Berechnungsergebnis",
     },
-    // Schwangerschaft und diverse andere Fragen fehlen
   },
 };

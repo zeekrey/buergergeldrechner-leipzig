@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { useSteps, useStepsDispatch } from "@/lib/machine";
+import { useStepsMachine } from "@/lib/machine";
 import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
@@ -14,10 +14,10 @@ import {
   CircleOffIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { produce } from "immer";
 
 export function StepChildren() {
-  const dispatch = useStepsDispatch();
-  const steps = useSteps();
+  const [state, dispatch] = useStepsMachine();
   const [children, setChildren] = useState<
     "with-children" | "without-children"
   >("without-children");
@@ -25,12 +25,15 @@ export function StepChildren() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     dispatch({
-      data: {
-        community: children
-          ? [...steps.context.community, { type: "child" }]
-          : [...steps.context.community],
-      },
       type: "next",
+      state: produce(state, (draft) => {
+        if (children === "with-children")
+          draft.context.community.push({
+            name: "Kind 1",
+            type: "child",
+            age: "0-5",
+          });
+      }),
     });
   }
 

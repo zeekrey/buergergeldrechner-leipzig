@@ -11,30 +11,21 @@ import { ModeToggle } from "@/components/mode-toggle";
 // import { GithubIcon } from "lucide-react";
 import { LanguageToggle } from "./language-toggle";
 import { Progress } from "./progress";
-import { TStepContext } from "@/lib/types";
-import { useSteps } from "@/lib/machine";
-import { useEffect } from "react";
+import { TChild, TStepContext } from "@/lib/types";
+import { useStepsMachine } from "@/lib/machine";
+import { useEffect, useMemo } from "react";
+import * as data from "../config/data.json";
 
 function calculate(context: TStepContext) {
   let sumByType = {};
   let totalSum = 0;
 
-  context.community.forEach((obj) => {
-    const type = obj.type;
+  context.community.forEach(({ type, ...attributes }) => {
     let value: number;
 
-    switch (type) {
-      case "applicant":
-        value = 506;
-        break;
-      case "partner":
-        value = 506;
-        break;
-      case "child":
-        value = 471;
-        break;
-      default:
-        break;
+    if (type === "adult") value = data[type].default;
+    else if (type === "child") {
+      value = data[type][(attributes as TChild).age];
     }
 
     sumByType[type] = (sumByType[type] || 0) + value;
@@ -45,22 +36,44 @@ function calculate(context: TStepContext) {
 }
 
 export function StatusBar() {
-  const steps = useSteps();
+  const [state] = useStepsMachine();
 
-  const result = calculate(steps.context);
+  console.log(state);
+
+  const result = calculate(state.context);
+  const communitySize = useMemo(
+    () => state.context.community.length,
+    [state.context.community]
+  );
 
   return (
     <div className="fixed bottom-8 w-full z-10">
-      {Boolean(steps.currentStep) && (
+      {Boolean(state.currentStep) && (
         <div className="mx-auto max-w-3xl border-t sm:border border-border/40 sm:shadow-sm sm:rounded-lg justify-between px-8 py-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="text-xs flex w-full justify-between items-center">
+          <div className="flex justify-between">
+            <div className="flex flex-col justify-between gap-2">
+              <small className="text-xs">Fortschritt</small>
+              <Progress state={state} />
+            </div>
+            <div className="flex flex-col gap-2 items-center">
+              <small className="text-xs">Bedarfsgemeinschaft</small>
+              <strong className="text-lg">{communitySize} Personen</strong>
+            </div>
+            <div className="flex flex-col justify-center gap-2">
+              <small className="text-xs">Möglicher Anspruch:</small>
+              <strong className="text-lg text-right">{result} €</strong>
+            </div>
+          </div>
+          {/* <div className="text-xs flex w-full justify-between items-center">
             <small>Fortschritt</small>
+            <small>Bedarfsgemeinschaft</small>
             <small>Möglicher Anspruch:</small>
           </div>
           <div className="flex w-full justify-between items-center">
-            <Progress />
+            <Progress state={state} />
+            <strong className="text-lg">{communitySize} Personen</strong>
             <strong className="text-lg">{result} €</strong>
-          </div>
+          </div> */}
         </div>
       )}
       {/* <Dialog>

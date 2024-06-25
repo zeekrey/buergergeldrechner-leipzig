@@ -16,12 +16,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useStepsDispatch } from "@/lib/machine";
+import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useState } from "react";
 
 export function StepSalary() {
-  const dispatch = useStepsDispatch();
+  const [_, dispatch] = useStepsMachine();
   const [income, setIncome] = useState({ brutto: 0, netto: 0 });
   const [incomePartner, setIncomePartner] = useState({ brutto: 0, netto: 0 });
 

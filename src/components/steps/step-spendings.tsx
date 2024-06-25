@@ -16,13 +16,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useSteps, useStepsDispatch } from "@/lib/machine";
+import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useState } from "react";
 
 export function StepSpending() {
-  const dispatch = useStepsDispatch();
-  const steps = useSteps();
+  const [state, dispatch] = useStepsMachine();
   const [rent, setRent] = useState(0);
   const [utilities, setUtilities] = useState(0);
   const [heating, setHeating] = useState(0);

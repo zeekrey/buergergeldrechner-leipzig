@@ -6,31 +6,33 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { useSteps, useStepsDispatch } from "@/lib/machine";
+import { useStepsMachine } from "@/lib/machine";
 import { ArrowRightCircleIcon, UserIcon, UsersIcon } from "lucide-react";
 import { useState } from "react";
+import { produce } from "immer";
 
 export function StepPartner() {
-  const dispatch = useStepsDispatch();
-  const steps = useSteps();
+  const [state, dispatch] = useStepsMachine();
   const [partner, setPartner] = useState<"with-partner" | "without-partner">(
     "without-partner"
   );
 
-  console.log(partner);
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch({
-      data: {
-        community:
-          partner === "with-partner"
-            ? [{ type: "applicant" }, { type: "partner" }]
-            : [{ type: "applicant" }],
-      },
       type: "next",
+      state: produce(state, ({ context }) => {
+        if (partner === "with-partner") {
+          context.community.push({ type: "adult", name: "Partner" });
+        } else {
+          const index = context.community.findIndex(
+            (person) => person.name === "Partner"
+          );
+          if (index !== -1) context.community.splice(index, 1);
+        }
+      }),
     });
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit}>

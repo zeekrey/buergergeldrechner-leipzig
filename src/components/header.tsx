@@ -9,7 +9,7 @@ import { MobileNav } from "@/components/mobile-nav";
 import { ModeToggle } from "@/components/mode-toggle";
 // import { buttonVariants } from "@/components/ui/button";
 // import { GithubIcon } from "lucide-react";
-import { LanguageToggle } from "./language-toggle";
+// import { LanguageToggle } from "./language-toggle";
 
 export function SiteHeader() {
   return (
@@ -39,7 +39,7 @@ export function SiteHeader() {
                 <span className="sr-only">GitHub</span>
               </div>
             </Link> */}
-            <LanguageToggle />
+            {/* <LanguageToggle /> */}
             <ModeToggle />
           </nav>
         </div>

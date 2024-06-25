@@ -11,43 +11,55 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { useSteps, useStepsDispatch } from "@/lib/machine";
+import { useStepsMachine } from "@/lib/machine";
 import { ArrowRightCircleIcon, XCircleIcon } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "../ui/button";
+import { produce } from "immer";
+import { TPerson, TChild } from "@/lib/types";
 
 export function StepChildrenCount() {
-  const dispatch = useStepsDispatch();
-  const steps = useSteps();
-  console.log(
-    steps.context.community.filter((entry) => entry.type === "child")
-  );
-  const [childrenCount, setChildrenCount] = useState(
-    steps.context.community.filter((entry) => entry.type === "child")
-  );
-  console.log(childrenCount);
+  const [state, dispatch] = useStepsMachine();
 
-  const childAges = {
-    adult: "Erwachsen (19+ Jahre)",
-    child: "Kind (4-6 Jahre)",
-    teen: "Teenager (7-18 Jahre)",
-    toddler: "Kleinkind (0-3 Jahre)",
+  const [children, setChildren] = useState<TPerson[]>([]);
+
+  /** FIXME: Used to sync internal state with global state object. */
+  useEffect(() => {
+    setChildren(
+      state.context.community.filter((entry) => entry.type === "child")
+    );
+  }, [state.context.community]);
+
+  const childAges: { [key in TChild["age"]]: string } = {
+    "18+": "Erwachsen (18+ Jahre)",
+    "6-13": "Kind (6-13 Jahre)",
+    "14-17": "Teenager (14-17 Jahre)",
+    "0-5": "Kleinkind (0-5 Jahre)",
   };
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch({ data: {}, type: "next" });
-  }
+
+    dispatch({
+      type: "next",
+      state: produce(state, (draft) => {
+        draft.context.community = [
+          ...draft.context.community.filter((entry) => entry.type !== "child"),
+          ...children,
+        ];
+      }),
+    });
+  };
 
   return (
     <form onSubmit={handleSubmit}>
       <StepContent>
         <ScrollArea className="sm:h-[200px]">
-          {childrenCount.map((child, index) => (
-            <div className="items-center gap-3 flex pb-3" key={index}>
+          {children.map((child, index) => (
+            <div className="items-center gap-3 flex py-3" key={index}>
               <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
-                {index + 1}. Kind
+                {child.name}
               </div>
               <Select>
                 <SelectTrigger className="w-[180px]">
@@ -63,9 +75,9 @@ export function StepChildrenCount() {
               </Select>
               <Button
                 onClick={() =>
-                  setChildrenCount([
-                    ...childrenCount.slice(0, index),
-                    ...childrenCount.slice(index + 1),
+                  setChildren([
+                    ...children.slice(0, index),
+                    ...children.slice(index + 1),
                   ])
                 }
                 variant="outline"
@@ -79,7 +91,10 @@ export function StepChildrenCount() {
             <Button
               className="flex h-10 w-full items-center justify-between rounded-md border border-input text-input border-dashed cursor-pointer bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
               onClick={() =>
-                setChildrenCount((curr) => [...curr, { type: "child" }])
+                setChildren((curr) => [
+                  ...curr,
+                  { type: "child", name: "Kind", age: "0-5" },
+                ])
               }
               variant="ghost"
               type="button"

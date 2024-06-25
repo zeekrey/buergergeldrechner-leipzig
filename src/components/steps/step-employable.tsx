@@ -4,14 +4,14 @@ import type { FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { useStepsDispatch } from "@/lib/machine";
+import { useStepsMachine } from "@/lib/machine";
 import { ArrowRightCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 
 export function StepEmployable() {
-  const dispatch = useStepsDispatch();
-  const [isEmployable, setIsEmployable] = useState(false);
+  const [state, dispatch] = useStepsMachine();
+  const [isEmployable, setIsEmployable] = useState(state.context.isEmployable);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -39,7 +39,7 @@ export function StepEmployable() {
       </StepContent>
       <StepNavigation>
         <Button size="lg" type="submit" disabled={!isEmployable}>
-          Weiter
+          Starten
           <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
         </Button>
       </StepNavigation>

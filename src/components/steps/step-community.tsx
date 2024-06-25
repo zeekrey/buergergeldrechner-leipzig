@@ -14,27 +14,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useSteps, useStepsDispatch } from "@/lib/machine";
+import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 
 export function StepCommunity() {
-  const dispatch = useStepsDispatch();
-  const steps = useSteps();
+  const [state, dispatch] = useStepsMachine();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     dispatch({
-      data: {},
+      // state: {},
       type: "next",
     });
   }
-
-  const nameMap = {
-    applicant: "Sie",
-    partner: "Ihr Partner",
-    child: "1. Kind",
-  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -50,10 +43,10 @@ export function StepCommunity() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {steps.context.community.map((person) => (
-                <TableRow key={person.type}>
+              {state.context.community.map((person, index) => (
+                <TableRow key={index}>
                   <TableCell className="font-medium w-full">
-                    {nameMap[person.type]}
+                    {person.name}
                   </TableCell>
                   <TableCell className="text-center">
                     <Checkbox />

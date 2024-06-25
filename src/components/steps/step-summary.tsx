@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { useSteps, useStepsDispatch } from "@/lib/machine";
+import { useStepsMachine } from "@/lib/machine";
 import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
@@ -24,8 +24,7 @@ import {
 import { Separator } from "../ui/separator";
 
 export function StepSummary() {
-  const dispatch = useStepsDispatch();
-  const { context } = useSteps();
+  const [state, dispatch] = useStepsMachine();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -91,23 +90,23 @@ export function StepSummary() {
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="space-y-2 text-sm px-2 py-4">
+              {/* <div className="space-y-2 text-sm px-2 py-4">
                 <div className="flex justify-between">
                   <div className="font-bold">
                     Leben Sie in einer Partnerschaft?
                   </div>
                   <div className="font-bold">
-                    {context.partnerschaft ? "Ja" : "Nein"}
+                    {state.context.partnerschaft ? "Ja" : "Nein"}
                   </div>
                 </div>
                 <Separator />
                 <div className="flex justify-between">
                   <div className="font-bold">Haben Sie Kinder?</div>
                   <div className="font-bold">
-                    {context.kinder?.length ? "Ja" : "Nein"}
+                    {state.context.kinder?.length ? "Ja" : "Nein"}
                   </div>
                 </div>
-                {context.kinder?.map((kind, index) => (
+                {state.context.kinder?.map((kind, index) => (
                   <div
                     className="flex justify-between pl-2 border-l"
                     key={index}
@@ -123,15 +122,15 @@ export function StepSummary() {
                 </div>
                 <div className="flex justify-between pl-2 border-l">
                   <div>Heizkosten</div>
-                  <div>{context.ausgaben.heizkosten}</div>
+                  <div>{state.context.ausgaben.heizkosten}</div>
                 </div>
                 <div className="flex justify-between pl-2 border-l">
                   <div>Kaltmiete</div>
-                  <div>{context.ausgaben.kaltmiete}</div>
+                  <div>{state.context.ausgaben.kaltmiete}</div>
                 </div>
                 <div className="flex justify-between pl-2 border-l">
                   <div>Nebenkosten</div>
-                  <div>{context.ausgaben.nebenkosten}</div>
+                  <div>{state.context.ausgaben.nebenkosten}</div>
                 </div>
                 <Separator />
                 <div className="flex justify-between">
@@ -185,7 +184,7 @@ export function StepSummary() {
                   <div>Sonstiges</div>
                   <div>{context.einkommen.antragsteller.sonstiges}</div>
                 </div>
-              </div>
+              </div> */}
             </CollapsibleContent>
           </Collapsible>
         </ScrollArea>

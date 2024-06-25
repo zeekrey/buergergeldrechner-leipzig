@@ -33,3 +33,73 @@ Hierbei handelt es sich um ein Projekt im Rahmen der [Smart City Challange](http
 - [ ] Clientseitig speichern
 - [ ] Accessability-Standards
 - [ ] Automatisches Akzeptieren von Eingaben (vgl. Typeform)
+
+## Architektur
+
+Der Bürgergeldanspruch richtet sich maßgeblich nach der Bedarfsgemeinschaft, deren Eigenschaften sowie Einkommen und Ausgaben. Daher wird im ersten Teil des Rechners die Bedarfsgemeinschaft beschrieben. Das Ergebnis ist beispielsweise folgendes Objekt:
+
+Alleinstehende Person
+
+```json
+// community
+[
+  {
+    "name": "Antragsteller",
+    "type": "adult",
+    "isPregnant": false
+  }
+]
+```
+
+Person mit Partner und Kind
+
+```json
+// community
+[
+  {
+    "name": "Antragsteller",
+    "type": "adult",
+    "isPregnant": false
+  },
+  {
+    "name": "Partner",
+    "type": "adult",
+    "isPregnant": false
+  },
+  {
+    "name": "Kind 1",
+    "type": "child",
+    "isPregnant": false,
+    "age": "0-3"
+  }
+]
+```
+
+Aus der Beschreibung der Bedarfsgemeinschaft ergibt sich der Regelbedarf. Anschließend wird nach den Ausgaben gefragt:
+
+- Kaltmiete
+- Nebenkosten
+- Heizkosten
+
+Aus der Summe der Ausgaben und der Regelbedarfe ergibt sich der Gesamtbedarf der Bedarfsgemeinschaft.
+
+Anschließend wird das Haushaltseinkommen erfasst.
+
+Um die höhe Freibeträge zu ermitteln wird das Bruttogehalt benötigt. Einige der Freibetragsgrenzen sind:
+
+- 100 - 520 -> 20%
+- 520 - 1000 -> 30%
+- 1000 - 1200 -> 10%
+
+Zusätzlich gibt es immer einen Freibetrag von 100euro. Beispielrechnung
+
+```
+Bruttoeinkommen     165
+Grund-Freibetrag    -100
+Freibetrag (20%)    -13
+Nettoeinkommen      165
+Freibetrag-Summe    -113
+Resteinkommen       52
+```
+
+Resteinkommen ist das "zu berücksichtigendes Einkommen". Der Bürgergeldbedarf wird um diesen Betrag verringert.

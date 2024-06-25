@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useSteps, useStepsDispatch } from "@/lib/machine";
+import { useStepsMachine } from "@/lib/machine";
 import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
@@ -28,8 +28,7 @@ import {
 import { useState } from "react";
 
 export function StepIncome() {
-  const dispatch = useStepsDispatch();
-  const steps = useSteps();
+  const [state, dispatch] = useStepsMachine();
   const [income, setIncome] = useState({
     arbeitslosengeld: 0,
     elterngeld: 0,
