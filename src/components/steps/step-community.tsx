@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/table";
 import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { Checkbox } from "../ui/checkbox";
 
 export function StepCommunity() {
   const [state, dispatch] = useStepsMachine();
@@ -24,7 +23,6 @@ export function StepCommunity() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     dispatch({
-      // state: {},
       type: "next",
     });
   }
@@ -38,8 +36,8 @@ export function StepCommunity() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">Person</TableHead>
-                <TableHead className="text-right">Schwanger</TableHead>
-                <TableHead className="text-right">Ausbildung</TableHead>
+                {/* <TableHead className="text-right">Schwanger</TableHead> */}
+                {/* <TableHead className="text-right">Ausbildung</TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -48,12 +46,12 @@ export function StepCommunity() {
                   <TableCell className="font-medium w-full">
                     {person.name}
                   </TableCell>
-                  <TableCell className="text-center">
+                  {/* <TableCell className="text-center">
                     <Checkbox />
-                  </TableCell>
-                  <TableCell className="text-center">
+                  </TableCell> */}
+                  {/* <TableCell className="text-center">
                     <Checkbox />
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

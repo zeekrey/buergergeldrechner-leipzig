@@ -19,30 +19,24 @@ import {
 import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useState } from "react";
+import { calculateSalary } from "@/lib/calculation";
 
 export function StepSalary() {
-  const [_, dispatch] = useStepsMachine();
+  const [state, dispatch] = useStepsMachine();
   const [income, setIncome] = useState({ brutto: 0, netto: 0 });
-  const [incomePartner, setIncomePartner] = useState({ brutto: 0, netto: 0 });
 
-  const sum =
-    income.brutto + income.netto + incomePartner.brutto + incomePartner.netto;
+  /** FIXME: Just for preview. */
+  const sum = calculateSalary({
+    community: [],
+    isEmployable: true,
+    isSingle: true,
+    salary: { gross: income.brutto, net: income.netto },
+    spendings: { heating: 0, rent: 0, sum: 0, utilities: 0 },
+  });
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     dispatch({
-      data: {
-        einkommen: {
-          antragsteller: {
-            brutto: income.brutto,
-            netto: income.netto,
-          },
-          partner: {
-            brutto: incomePartner.brutto,
-            netto: incomePartner.netto,
-          },
-        },
-      },
       type: "next",
     });
   }
@@ -97,50 +91,23 @@ export function StepSalary() {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell rowSpan={2}>Partner</TableCell>
-                <TableCell className="font-medium">Brutto</TableCell>
-                <TableCell className="text-right">
-                  <Input
-                    className="m-0"
-                    inputMode="decimal"
-                    onChange={(e) =>
-                      setIncomePartner((state) => ({
-                        ...state,
-                        brutto: e.target.valueAsNumber,
-                      }))
-                    }
-                    type="number"
-                    value={incomePartner.brutto}
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Netto</TableCell>
-                <TableCell className="text-right">
-                  <Input
-                    className="m-0"
-                    inputMode="decimal"
-                    onChange={(e) =>
-                      setIncomePartner((state) => ({
-                        ...state,
-                        netto: e.target.valueAsNumber,
-                      }))
-                    }
-                    type="number"
-                    value={incomePartner.netto}
-                  />
+                <TableCell className="font-medium">Freibetrag</TableCell>
+                <TableCell className="text-right" colSpan={2}>
+                  {sum.allowance.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
                 </TableCell>
               </TableRow>
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell className="font-medium">Summe</TableCell>
+                <TableCell className="font-medium">Einkommen</TableCell>
                 <TableCell className="text-right" colSpan={2}>
-                  <Input
-                    className="m-0"
-                    disabled
-                    value={sum.toLocaleString()}
-                  />
+                  {sum.income.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
                 </TableCell>
               </TableRow>
             </TableFooter>

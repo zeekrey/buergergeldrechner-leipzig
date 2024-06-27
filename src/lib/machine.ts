@@ -62,6 +62,17 @@ export const stepsConfig: TStepsState = {
       },
     ],
     isEmployable: false,
+    spendings: {
+      heating: 0,
+      rent: 0,
+      sum: 0,
+      utilities: 0,
+    },
+    isSingle: true,
+    salary: {
+      gross: 0,
+      net: 0,
+    },
   },
   currentStep: 0,
   steps: {

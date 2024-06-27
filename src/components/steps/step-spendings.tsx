@@ -19,6 +19,7 @@ import {
 import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useState } from "react";
+import { produce } from "immer";
 
 export function StepSpending() {
   const [state, dispatch] = useStepsMachine();
@@ -31,13 +32,9 @@ export function StepSpending() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     dispatch({
-      data: {
-        ausgaben: {
-          heizkosten: heating,
-          kaltmiete: rent,
-          nebenkosten: utilities,
-        },
-      },
+      state: produce(state, (draft) => {
+        draft.context.spendings = { rent, utilities, heating, sum };
+      }),
       type: "next",
     });
   }
@@ -96,11 +93,7 @@ export function StepSpending() {
               <TableRow>
                 <TableCell className="font-medium">Summe</TableCell>
                 <TableCell className="text-right">
-                  <Input
-                    className="m-0"
-                    disabled
-                    value={sum.toLocaleString()}
-                  />
+                  <Input className="m-0" disabled value={sum} />
                 </TableCell>
               </TableRow>
             </TableFooter>

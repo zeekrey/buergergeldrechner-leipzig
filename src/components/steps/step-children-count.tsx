@@ -13,16 +13,16 @@ import {
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { useStepsMachine } from "@/lib/machine";
 import { ArrowRightCircleIcon, XCircleIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "../ui/button";
 import { produce } from "immer";
-import { TPerson, TChild } from "@/lib/types";
+import { TChild } from "@/lib/types";
 
 export function StepChildrenCount() {
   const [state, dispatch] = useStepsMachine();
 
-  const [children, setChildren] = useState<TPerson[]>([]);
+  const [children, setChildren] = useState<TChild[]>([]);
 
   /** FIXME: Used to sync internal state with global state object. */
   useEffect(() => {
@@ -32,10 +32,10 @@ export function StepChildrenCount() {
   }, [state.context.community]);
 
   const childAges: { [key in TChild["age"]]: string } = {
-    "18+": "Erwachsen (18+ Jahre)",
-    "6-13": "Kind (6-13 Jahre)",
-    "14-17": "Teenager (14-17 Jahre)",
-    "0-5": "Kleinkind (0-5 Jahre)",
+    "18+": "18+ Jahre",
+    "6-13": "6-13 Jahre",
+    "14-17": "14-17 Jahre",
+    "0-5": "0-5 Jahre",
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -52,6 +52,14 @@ export function StepChildrenCount() {
     });
   };
 
+  const handleChange = (value: TChild["age"], index: number) => {
+    setChildren(
+      produce(children, (draft) => {
+        draft[index].age = value;
+      })
+    );
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <StepContent>
@@ -61,7 +69,12 @@ export function StepChildrenCount() {
               <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
                 {child.name}
               </div>
-              <Select>
+              <Select
+                value={child.age}
+                onValueChange={(value) =>
+                  handleChange(value as TChild["age"], index)
+                }
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Altersgruppe" />
                 </SelectTrigger>

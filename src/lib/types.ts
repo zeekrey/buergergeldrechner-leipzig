@@ -41,6 +41,17 @@ export type TStepContext = {
   // schwanger: "false" | "true" | undefined;
   community: TPerson[];
   isEmployable: boolean;
+  isSingle: boolean;
+  spendings: {
+    rent: number;
+    utilities: number;
+    heating: number;
+    sum: number;
+  };
+  salary: {
+    gross: number;
+    net: number;
+  };
 };
 
 export type TStepsState = {

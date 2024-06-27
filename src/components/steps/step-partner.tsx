@@ -24,11 +24,13 @@ export function StepPartner() {
       state: produce(state, ({ context }) => {
         if (partner === "with-partner") {
           context.community.push({ type: "adult", name: "Partner" });
+          context.isSingle = false;
         } else {
           const index = context.community.findIndex(
             (person) => person.name === "Partner"
           );
           if (index !== -1) context.community.splice(index, 1);
+          context.isSingle = true;
         }
       }),
     });

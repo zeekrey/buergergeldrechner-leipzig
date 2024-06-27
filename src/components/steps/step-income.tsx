@@ -42,19 +42,6 @@ export function StepIncome() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     dispatch({
-      data: {
-        einkommen: {
-          ...steps.context.einkommen,
-          antragsteller: {
-            ...steps.context.einkommen.antragsteller,
-            arbeitslosengeld: income.arbeitslosengeld,
-            elterngeld: income.elterngeld,
-            kindergeld: income.kindergeld,
-            rente: income.rente,
-            sonstiges: income.sonstiges,
-          },
-        },
-      },
       type: "next",
     });
   }
