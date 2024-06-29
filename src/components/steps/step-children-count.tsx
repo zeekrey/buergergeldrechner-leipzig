@@ -32,10 +32,10 @@ export function StepChildrenCount() {
   }, [state.context.community]);
 
   const childAges: { [key in TChild["age"]]: string } = {
-    "18+": "18+ Jahre",
+    "0-5": "0-5 Jahre",
     "6-13": "6-13 Jahre",
     "14-17": "14-17 Jahre",
-    "0-5": "0-5 Jahre",
+    "18+": "18+ Jahre",
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -65,7 +65,7 @@ export function StepChildrenCount() {
       <StepContent>
         <ScrollArea className="sm:h-[200px]">
           {children.map((child, index) => (
-            <div className="items-center gap-3 flex py-3" key={index}>
+            <div className="items-center gap-3 flex py-1" key={index}>
               <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
                 {child.name}
               </div>
@@ -100,13 +100,17 @@ export function StepChildrenCount() {
               </Button>
             </div>
           ))}
-          <div className="items-center gap-4 flex">
+          <div className="items-center gap-4 flex pt-1">
             <Button
               className="flex h-10 w-full items-center justify-between rounded-md border border-input text-input border-dashed cursor-pointer bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
               onClick={() =>
                 setChildren((curr) => [
                   ...curr,
-                  { type: "child", name: "Kind", age: "0-5" },
+                  {
+                    type: "child",
+                    name: `Kind ${children.length + 1}`,
+                    age: "0-5",
+                  },
                 ])
               }
               variant="ghost"

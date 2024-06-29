@@ -24,6 +24,13 @@ export function calculateCommunityNeed(context: TStepContext) {
 
 export function calculateSalary(context: TStepContext) {
   const { gross, net } = context.salary;
+
+  if (gross < 1 || net < 1 || net > gross)
+    return {
+      allowance: 0,
+      income: 0,
+    };
+
   const hasMinorChild = context.community.some(
     (person) =>
       person.type === "child" && ["0-5", "6-13", "14-17"].includes(person.age)
@@ -51,4 +58,24 @@ export function calculateSalary(context: TStepContext) {
     allowance: allowance,
     income: net - allowance,
   };
+}
+
+export function calculateOverall(context: TStepContext) {
+  const communityNeed = calculateCommunityNeed(context);
+  const salary = calculateSalary(context);
+
+  console.table([
+    {
+      "Community need": communityNeed,
+      Income: salary.income,
+      Allowance: salary.allowance,
+    },
+  ]);
+
+  return (
+    communityNeed +
+    context.spendings.sum -
+    salary.income -
+    context.income.childBenefit
+  );
 }

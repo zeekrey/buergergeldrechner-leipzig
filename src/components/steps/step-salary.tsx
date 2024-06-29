@@ -20,6 +20,7 @@ import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { calculateSalary } from "@/lib/calculation";
+import { produce } from "immer";
 
 export function StepSalary() {
   const [state, dispatch] = useStepsMachine();
@@ -27,17 +28,20 @@ export function StepSalary() {
 
   /** FIXME: Just for preview. */
   const sum = calculateSalary({
-    community: [],
-    isEmployable: true,
-    isSingle: true,
+    ...state.context,
     salary: { gross: income.brutto, net: income.netto },
-    spendings: { heating: 0, rent: 0, sum: 0, utilities: 0 },
   });
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     dispatch({
       type: "next",
+      state: produce(state, (draft) => {
+        draft.context.salary = {
+          gross: income.brutto,
+          net: income.netto,
+        };
+      }),
     });
   }
 

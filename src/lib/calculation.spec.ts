@@ -1,5 +1,9 @@
 import { test, expect, describe } from "vitest";
-import { calculateCommunityNeed, calculateSalary } from "./calculation";
+import {
+  calculateCommunityNeed,
+  calculateOverall,
+  calculateSalary,
+} from "./calculation";
 import { TAdult, TChild, TPerson, TStepContext } from "./types";
 
 const defaultContext: TStepContext = {
@@ -15,6 +19,9 @@ const defaultContext: TStepContext = {
   salary: {
     gross: 0,
     net: 0,
+  },
+  income: {
+    childBenefit: 0,
   },
 };
 
@@ -186,5 +193,27 @@ describe("calculateSalary", () => {
       allowance: 378,
       income: 1322,
     });
+  });
+});
+
+describe("calculateOverall", () => {
+  test("case #1", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [{ ...defaultAdult }],
+      isSingle: true,
+      spendings: {
+        heating: 100,
+        rent: 350,
+        sum: 516,
+        utilities: 66,
+      },
+      salary: {
+        gross: 1200,
+        net: 950,
+      },
+    };
+
+    expect(calculateOverall(context)).toEqual(477);
   });
 });

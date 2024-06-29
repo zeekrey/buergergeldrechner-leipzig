@@ -14,59 +14,14 @@ import { Progress } from "./progress";
 import { TChild, TStepContext } from "@/lib/types";
 import { useStepsMachine } from "@/lib/machine";
 import { useEffect, useMemo } from "react";
-import * as data from "../config/data.json";
-
-function calculate(context: TStepContext) {
-  let sumByType = {};
-  let totalSum = 0;
-
-  /** community need */
-  context.community.forEach(({ type, ...attributes }) => {
-    let value: number;
-
-    if (type === "adult") {
-      value = context.isSingle ? data[type]["single"] : data[type]["partner"];
-    } else if (type === "child") {
-      value = data[type][(attributes as TChild).age];
-    }
-
-    sumByType[type] = (sumByType[type] || 0) + value;
-    totalSum += value;
-  });
-
-  /** need by spendings */
-  totalSum += context.spendings.sum;
-
-  /** subtract salary */
-  const calculateNumber = (number: number): number => {
-    let result = number;
-
-    if (number <= 520) {
-      result -= number * 0.2; // Reduce by 20% for the first range (up to 520)
-    } else {
-      result -= 520 * 0.2; // Reduce by 20% for the first range up to 520
-      if (number <= 1000) {
-        result -= (number - 520) * 0.3; // Reduce by 30% for the second range (from 520 to 1000)
-      } else {
-        result -= (1000 - 520) * 0.3; // Reduce by 30% for the second range from 520 to 1000
-        if (number <= 1200) {
-          result -= (number - 1000) * 0.1; // Reduce by 10% for the third range (from 1000 to 1200)
-        }
-      }
-    }
-
-    return result;
-  };
-
-  return totalSum;
-}
+import { calculateOverall } from "@/lib/calculation";
 
 export function StatusBar() {
   const [state] = useStepsMachine();
 
   console.log(state);
 
-  const result = calculate(state.context);
+  const result = calculateOverall(state.context);
   const communitySize = useMemo(
     () => state.context.community.length,
     [state.context.community]

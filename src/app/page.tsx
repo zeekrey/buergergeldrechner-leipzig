@@ -1,5 +1,6 @@
 "use client";
 
+import { Hero } from "@/components/hero";
 import { StatusBar } from "@/components/status-bar";
 import { Step } from "@/components/step";
 import { StepsProvider } from "@/components/step-context-provider";
@@ -13,13 +14,16 @@ export default function StepPage() {
   );
 
   return (
-    <StepsProvider value={stepsConfig}>
-      <StatusBar />
-      <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl">
-        {steps.map(([id, step]) => (
-          <Step id={step.id} key={id} step={step} />
-        ))}
-      </main>
-    </StepsProvider>
+    <>
+      <Hero />
+      <StepsProvider value={stepsConfig}>
+        <StatusBar />
+        <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl">
+          {steps.map(([id, step]) => (
+            <Step id={step.id} key={id} step={step} />
+          ))}
+        </main>
+      </StepsProvider>
+    </>
   );
 }

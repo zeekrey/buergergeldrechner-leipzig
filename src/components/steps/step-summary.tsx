@@ -1,6 +1,6 @@
 "use client";
 
-import type { FormEvent } from "react";
+import { useMemo, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,75 +22,74 @@ import {
 } from "lucide-react";
 
 import { Separator } from "../ui/separator";
+import { calculateOverall } from "@/lib/calculation";
 
 export function StepSummary() {
   const [state, dispatch] = useStepsMachine();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    dispatch({
-      data: {},
-      type: "next",
-    });
-  }
+  const result = useMemo(
+    () => calculateOverall(state.context),
+    [state.context]
+  );
 
   return (
-    <form onSubmit={handleSubmit}>
-      <StepContent>
-        <ScrollArea className="sm:h-[380px]">
-          <div className="flex justify-between items-center p-4 mb-4 bg-green-100 dark:bg-green-900 rounded-lg border border-green-300 dark:border-green-700">
-            <div>
-              <div className="text-sm">Ihr möglicher Bürgergeld-Anspruch</div>
-              <div className="text-xl font-bold">500,00€</div>
-            </div>
-            <CheckCircle2Icon className="text-green-600" />
-          </div>
+    <StepContent>
+      <ScrollArea className="sm:h-[380px]">
+        <div className="flex justify-between items-center p-4 mb-4 bg-green-100 dark:bg-green-900 rounded-lg border border-green-300 dark:border-green-700">
           <div>
-            <h2 className="font-bold mb-2">Wie geht es weiter?</h2>
-            <p className=" text-muted-foreground">
-              Ihre Eingaben wurden nicht übermittelt. Um tatsächlich Bürgergeld
-              zu beantragen, können Sie dieses Ergebnis speichern und eine Liste
-              mit notwendigen Dokumenten erzeugen. Sollten Sie noch Fragen
-              haben, können Sie gerne mit uns Kontakt aufnahmenen.
-            </p>
-            <div className="flex py-6 gap-3">
-              <Button
-                className="flex-col px-4 h-16 flex-grow"
-                variant="outline"
-              >
-                <SaveIcon className="w-4 h-4" />
-                <div className="text-sm">Ergebnis speichern</div>
-              </Button>
-              <Button
-                className="flex-col px-4 h-auto flex-grow"
-                variant="outline"
-              >
-                <PhoneCallIcon className="w-4 h-4" />
-                <div className="text-sm">Kontakt aufnahmen</div>
-              </Button>
-              <Button
-                className="flex-col px-4 h-auto flex-grow"
-                variant="outline"
-              >
-                <LifeBuoyIcon className="w-4 h-4" />
-                <div className="text-sm">Weitere Informationen</div>
-              </Button>
+            <div className="text-sm">Ihr möglicher Bürgergeld-Anspruch</div>
+            <div className="text-xl font-bold">
+              {result.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
             </div>
           </div>
-          <Collapsible>
-            <CollapsibleTrigger asChild>
-              <Button
-                className="flex justify-between w-full"
-                type="button"
-                variant="outline"
-              >
-                <div>Ihre Eingaben</div>
-                <ChevronsUpDownIcon className="h-4 w-4" />
-                <span className="sr-only">Toggle</span>
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              {/* <div className="space-y-2 text-sm px-2 py-4">
+          <CheckCircle2Icon className="text-green-600" />
+        </div>
+        <div>
+          <h2 className="font-bold mb-2">Wie geht es weiter?</h2>
+          <p className=" text-muted-foreground">
+            Ihre Eingaben wurden nicht übermittelt. Um tatsächlich Bürgergeld zu
+            beantragen, können Sie dieses Ergebnis speichern und eine Liste mit
+            notwendigen Dokumenten erzeugen. Sollten Sie noch Fragen haben,
+            können Sie gerne mit uns Kontakt aufnahmenen.
+          </p>
+          <div className="flex py-6 gap-3">
+            <Button className="flex-col px-4 h-16 flex-grow" variant="outline">
+              <SaveIcon className="w-4 h-4" />
+              <div className="text-sm">Ergebnis speichern</div>
+            </Button>
+            <Button
+              className="flex-col px-4 h-auto flex-grow"
+              variant="outline"
+            >
+              <PhoneCallIcon className="w-4 h-4" />
+              <div className="text-sm">Kontakt aufnahmen</div>
+            </Button>
+            <Button
+              className="flex-col px-4 h-auto flex-grow"
+              variant="outline"
+            >
+              <LifeBuoyIcon className="w-4 h-4" />
+              <div className="text-sm">Weitere Informationen</div>
+            </Button>
+          </div>
+        </div>
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button
+              className="flex justify-between w-full"
+              type="button"
+              variant="outline"
+            >
+              <div>Ihre Eingaben</div>
+              <ChevronsUpDownIcon className="h-4 w-4" />
+              <span className="sr-only">Toggle</span>
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            {/* <div className="space-y-2 text-sm px-2 py-4">
                 <div className="flex justify-between">
                   <div className="font-bold">
                     Leben Sie in einer Partnerschaft?
@@ -185,16 +184,9 @@ export function StepSummary() {
                   <div>{context.einkommen.antragsteller.sonstiges}</div>
                 </div>
               </div> */}
-            </CollapsibleContent>
-          </Collapsible>
-        </ScrollArea>
-      </StepContent>
-      <StepNavigation>
-        <Button className="sm:w-48 " size="lg" type="submit">
-          Weiter
-          <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-        </Button>
-      </StepNavigation>
-    </form>
+          </CollapsibleContent>
+        </Collapsible>
+      </ScrollArea>
+    </StepContent>
   );
 }

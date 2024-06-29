@@ -73,6 +73,9 @@ export const stepsConfig: TStepsState = {
       gross: 0,
       net: 0,
     },
+    income: {
+      childBenefit: 0,
+    },
   },
   currentStep: 0,
   steps: {

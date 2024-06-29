@@ -26,15 +26,12 @@ import {
   CircleOffIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { produce } from "immer";
 
 export function StepIncome() {
   const [state, dispatch] = useStepsMachine();
   const [income, setIncome] = useState({
-    arbeitslosengeld: 0,
-    elterngeld: 0,
-    kindergeld: 0,
-    rente: 0,
-    sonstiges: 0,
+    childBenefit: 0,
   });
 
   const sum = Object.values(income).reduce((acc, curr) => acc + curr, 0);
@@ -43,6 +40,9 @@ export function StepIncome() {
     event.preventDefault();
     dispatch({
       type: "next",
+      state: produce(state, (draft) => {
+        draft.context.income.childBenefit = income.childBenefit;
+      }),
     });
   }
 
@@ -68,79 +68,11 @@ export function StepIncome() {
                     onChange={(e) =>
                       setIncome((state) => ({
                         ...state,
-                        kindergeld: e.target.valueAsNumber,
+                        childBenefit: e.target.valueAsNumber,
                       }))
                     }
                     type="number"
-                    value={income.kindergeld}
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Elterngeld</TableCell>
-                <TableCell className="text-right">
-                  <Input
-                    className="m-0"
-                    inputMode="decimal"
-                    onChange={(e) =>
-                      setIncome((state) => ({
-                        ...state,
-                        elterngeld: e.target.valueAsNumber,
-                      }))
-                    }
-                    type="number"
-                    value={income.elterngeld}
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Arbeitslosengeld</TableCell>
-                <TableCell className="text-right">
-                  <Input
-                    className="m-0"
-                    inputMode="decimal"
-                    onChange={(e) =>
-                      setIncome((state) => ({
-                        ...state,
-                        arbeitslosengeld: e.target.valueAsNumber,
-                      }))
-                    }
-                    type="number"
-                    value={income.arbeitslosengeld}
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Rente</TableCell>
-                <TableCell className="text-right">
-                  <Input
-                    className="m-0"
-                    inputMode="decimal"
-                    onChange={(e) =>
-                      setIncome((state) => ({
-                        ...state,
-                        rente: e.target.valueAsNumber,
-                      }))
-                    }
-                    type="number"
-                    value={income.rente}
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Sonstiges</TableCell>
-                <TableCell className="text-right">
-                  <Input
-                    className="m-0"
-                    inputMode="decimal"
-                    onChange={(e) =>
-                      setIncome((state) => ({
-                        ...state,
-                        sonstiges: e.target.valueAsNumber,
-                      }))
-                    }
-                    type="number"
-                    value={income.sonstiges}
+                    value={income.childBenefit}
                   />
                 </TableCell>
               </TableRow>

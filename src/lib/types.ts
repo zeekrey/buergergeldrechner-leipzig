@@ -52,6 +52,9 @@ export type TStepContext = {
     gross: number;
     net: number;
   };
+  income: {
+    childBenefit: number;
+  };
 };
 
 export type TStepsState = {
