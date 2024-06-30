@@ -1,19 +1,6 @@
-import Link from "next/link";
-
-import { siteConfig } from "@/config/site";
-import { cn } from "@/lib/utils";
-// import { CommandMenu } from "@/components/command-menu";
-// import { Icons } from "@/components/icons";
-import { MainNav } from "@/components/main-nav";
-import { MobileNav } from "@/components/mobile-nav";
-import { ModeToggle } from "@/components/mode-toggle";
-// import { buttonVariants } from "@/components/ui/button";
-// import { GithubIcon } from "lucide-react";
-import { LanguageToggle } from "./language-toggle";
 import { Progress } from "./progress";
-import { TChild, TStepContext } from "@/lib/types";
 import { useStepsMachine } from "@/lib/machine";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { calculateOverall } from "@/lib/calculation";
 
 export function StatusBar() {
