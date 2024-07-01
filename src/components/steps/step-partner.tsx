@@ -7,7 +7,12 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { useStepsMachine } from "@/lib/machine";
-import { ArrowRightCircleIcon, UserIcon, UsersIcon } from "lucide-react";
+import {
+  ArrowRightCircleIcon,
+  ArrowLeftCircleIcon,
+  UserIcon,
+  UsersIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { produce } from "immer";
 
@@ -77,7 +82,14 @@ export function StepPartner() {
         </RadioGroup>
       </StepContent>
       <StepNavigation>
-        <Button size="lg" type="submit">
+        <Button
+          onClick={() => dispatch({ type: "previous" })}
+          size="lg"
+          type="button"
+        >
+          <ArrowLeftCircleIcon className="w-4 h-4" />
+        </Button>
+        <Button className="grow sm:grow-0 sm:w-48 " size="lg" type="submit">
           Weiter
           <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
         </Button>

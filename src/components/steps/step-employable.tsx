@@ -5,7 +5,7 @@ import type { FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { useStepsMachine } from "@/lib/machine";
-import { ArrowRightCircleIcon } from "lucide-react";
+import { ArrowRightCircleIcon, ArrowLeftCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 
@@ -38,8 +38,14 @@ export function StepEmployable() {
         </div>
       </StepContent>
       <StepNavigation>
-        <Button size="lg" type="submit" disabled={!isEmployable}>
-          Starten
+        <div />
+        <Button
+          className="grow sm:grow-0 sm:w-48 "
+          size="lg"
+          type="submit"
+          disabled={!isEmployable}
+        >
+          Weiter
           <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
         </Button>
       </StepNavigation>

@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { MainNav } from "@/components/main-nav";
 import { MobileNav } from "@/components/mobile-nav";
 import { ModeToggle } from "@/components/mode-toggle";
+import { HelpCircleIcon } from "lucide-react";
+import { HelpPopup } from "./help-popup";
 // import { buttonVariants } from "@/components/ui/button";
 // import { GithubIcon } from "lucide-react";
 // import { LanguageToggle } from "./language-toggle";
@@ -41,6 +43,7 @@ export function SiteHeader() {
             </Link> */}
             {/* <LanguageToggle /> */}
             <ModeToggle />
+            <HelpPopup />
           </nav>
         </div>
       </div>

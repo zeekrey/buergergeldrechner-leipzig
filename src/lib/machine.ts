@@ -126,7 +126,7 @@ export const stepsConfig: TStepsState = {
     // },
     5: {
       description:
-        "Sieht so Ihre Bedarfsgemeinschaft aus? Sie haben nun die Möglichkeit einige Merkmale Ihrer Bedarfsgemeinschaft zu erfassen. AUf welche Person genau dieses Merkmal zutrifft, können Sie im folgenden Schritt bestimmen.",
+        "Sieht so Ihre Bedarfsgemeinschaft aus? Sie haben nun die Möglichkeit einige Merkmale Ihrer Bedarfsgemeinschaft zu erfassen. Auf welche Person genau dieses Merkmal zutrifft, können Sie im folgenden Schritt bestimmen.",
       id: "bedarfsgemeinschaft",
       next: () => 6,
       previous: 4,
