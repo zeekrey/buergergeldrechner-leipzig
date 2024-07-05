@@ -4,7 +4,7 @@ import {
   calculateOverall,
   calculateSalary,
 } from "./calculation";
-import { TAdult, TChild, TPerson, TStepContext } from "./types";
+import { TAdult, TChild, TStepContext } from "./types";
 
 const defaultContext: TStepContext = {
   community: [],

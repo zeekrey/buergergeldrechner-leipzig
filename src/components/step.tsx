@@ -14,6 +14,8 @@ import { StepSummary } from "./steps/step-summary";
 import { StepEmployable } from "./steps/step-employable";
 import { StepCommunity } from "./steps/step-community";
 import { StepAttributes } from "./steps/step-attributes";
+import { forwardRef } from "react";
+import { TStep } from "@/lib/types";
 
 const stepComponents = {
   ergebnis: (arg) => <StepSummary />,
@@ -28,14 +30,16 @@ const stepComponents = {
   merkmale: (arg) => <StepAttributes />,
 };
 
-export function Step({ id, step }) {
-  const StepToRender = stepComponents[id](step);
+export const Step = forwardRef<HTMLDivElement, { id: string; step: TStep }>(
+  ({ id, step }, ref) => {
+    const StepToRender = stepComponents[id](step);
 
-  return (
-    <StepRoot id={id}>
-      <StepTitle>{step.title}</StepTitle>
-      <StepDescription>{step.description}</StepDescription>
-      {StepToRender}
-    </StepRoot>
-  );
-}
+    return (
+      <StepRoot id={id} ref={ref}>
+        <StepTitle>{step.title}</StepTitle>
+        <StepDescription>{step.description}</StepDescription>
+        {StepToRender}
+      </StepRoot>
+    );
+  }
+);

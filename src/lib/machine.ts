@@ -19,6 +19,16 @@ export function stepsReducer(
 
       const { steps, currentStep } = state;
 
+      const nextStep = steps[currentStep].next(nextState.context);
+
+      /**
+       * Scroll the next step into view.
+       */
+      window.history.pushState({}, "", `#${steps[nextStep].id}`);
+      document
+        .querySelector(`#${steps[nextStep].id}`)
+        .scrollIntoView({ behavior: "smooth" });
+
       return {
         ...nextState,
         currentStep: steps[currentStep].next(nextState.context),
@@ -27,31 +37,23 @@ export function stepsReducer(
     case "previous": {
       const { steps, currentStep } = state;
 
-      return { ...state, currentStep: steps[currentStep].previous };
+      const previousStep = steps[currentStep].previous;
+
+      /**
+       * Scroll the previous step into view.
+       */
+      window.history.pushState({}, "", `#${steps[previousStep].id}`);
+      document
+        .querySelector(`#${steps[previousStep].id}`)
+        .scrollIntoView({ behavior: "smooth" });
+
+      return { ...state, currentStep: previousStep };
     }
     default: {
       throw Error("Unknown action: " + action.type);
     }
   }
 }
-
-/** Bürgergeldrechner */
-/** Step #1: Define the community and calculate the potential demand. */
-/**
- * const community = []
- * community.push({
- *  name: 'person #1',
- *  type: 'adult',
- *  isSick: true
- * })
- */
-
-/** Step #2: Go through the community, and calculate the potential demand */
-/**
- * community.forEach(person => {
- *
- * })
- */
 
 export const stepsConfig: TStepsState = {
   context: {
@@ -105,7 +107,7 @@ export const stepsConfig: TStepsState = {
 
         return 5;
       },
-      previous: 0,
+      previous: 1,
       title: "Haben Sie Kinder?",
     },
     3: {
@@ -129,7 +131,7 @@ export const stepsConfig: TStepsState = {
         "Sieht so Ihre Bedarfsgemeinschaft aus? Sie haben nun die Möglichkeit einige Merkmale Ihrer Bedarfsgemeinschaft zu erfassen. Auf welche Person genau dieses Merkmal zutrifft, können Sie im folgenden Schritt bestimmen.",
       id: "bedarfsgemeinschaft",
       next: () => 6,
-      previous: 4,
+      previous: 3,
       title: "Ihre Bedarfsgemeinschaft",
     },
     6: {
@@ -160,8 +162,8 @@ export const stepsConfig: TStepsState = {
       description:
         "Auf Basis Ihrer Angaben könnten sie Anspruch auf Bürgergeld haben. Hier sehen Sie Ihr Berechnungsergebnis. Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine unverbindliche Berechnung handelt.",
       id: "ergebnis",
-      next: () => 8,
-      previous: 9,
+      next: () => 10,
+      previous: 8,
       title: "Ihr Berechnungsergebnis",
     },
   },

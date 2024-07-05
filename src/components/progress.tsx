@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 
 export function Progress({ state }: { state: TStepsState }) {
-  console.log(state);
+  console.log("currentStep changed! ", state.currentStep);
   const steps = useMemo(() => Object.entries(state.steps), [state.steps]);
 
   return (

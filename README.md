@@ -103,3 +103,5 @@ Resteinkommen       52
 ```
 
 Resteinkommen ist das "zu berücksichtigendes Einkommen". Der Bürgergeldbedarf wird um diesen Betrag verringert.
+
+## Wizard

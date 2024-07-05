@@ -1,12 +1,11 @@
 import { Progress } from "./progress";
 import { useStepsMachine } from "@/lib/machine";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { calculateOverall } from "@/lib/calculation";
+import { produce } from "immer";
 
 export function StatusBar() {
   const [state] = useStepsMachine();
-
-  console.log(state);
 
   const result = calculateOverall(state.context);
   const communitySize = useMemo(
