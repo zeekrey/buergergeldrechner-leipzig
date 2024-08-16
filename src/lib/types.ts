@@ -13,37 +13,30 @@ export type TStep = {
 export type TStepContext = {
   community: TPerson[];
   isEmployable: boolean;
-  isSingle: boolean;
   spendings: {
     rent: number;
     utilities: number;
     heating: number;
     sum: number;
   };
-  salary: {
-    gross: number;
-    net: number;
-  };
   income: {
-    childBenefit: number;
+    sum: number;
+    allowance?: number;
   };
-};
-
-export type TStepsState = {
-  context: TStepContext;
-  currentStep: number;
-  steps: Record<number, TStep>;
-};
-
-export type TAction = {
-  state?: RecursivePartial<TStepsState>;
-  type: "next" | "previous";
 };
 
 export type TPersonCommon = {
+  id: string;
   name: string;
   isPregnant?: boolean;
   needsSpecialFood?: boolean;
+  income?: {
+    type: TIncomeType;
+    amount: number;
+    allowance?: number;
+    net?: number;
+    gros?: number;
+  }[];
 };
 
 export type TAdult = TPersonCommon & {
@@ -57,3 +50,71 @@ export type TChild = TPersonCommon & {
 };
 
 export type TPerson = TAdult | TChild;
+
+export type TIncomeType =
+  | "EmploymentIncome"
+  | "SelfEmploymentIncome"
+  | "ChildAllowance"
+  | "AdvanceMaintenancePayment"
+  | "Maintenance"
+  | "UnemploymentBenefits"
+  | "SicknessBenefits"
+  | "HousingAllowance"
+  | "ChildSupplement"
+  | "BAfOG"
+  | "ParentalAllowance"
+  | "Pension"
+  | "MaintenanceContributionFromMasterCraftsmen"
+  | "ShortTimeWorkAllowance"
+  | "VocationalTrainingAllowance"
+  | "TaxFreeSideJob"
+  | "VoluntarySocialYear"
+  | "OtherIncome";
+
+export type TStepsState = {
+  context: TStepContext;
+  step: TStep;
+  currentStep: number;
+};
+
+export type TAction = {
+  state?: RecursivePartial<TStepsState>;
+  type: "next" | "previous" | "load";
+};
+
+export type TIncome = {
+  id: string;
+  name: string;
+  type: TIncomeType;
+  amount: number;
+  allowance?: number;
+  gros?: number;
+  net?: number;
+};
+
+export const incomeType: {
+  [key in TIncomeType]: { label: string; standardAmount?: number };
+} = {
+  EmploymentIncome: { label: "Einkommen aus Erwerbstätigkeit" },
+  SelfEmploymentIncome: { label: "Einkommen aus Selbstständigkeit" },
+  ChildAllowance: { label: "Kindergeld", standardAmount: 250 },
+  AdvanceMaintenancePayment: { label: "Unterhaltsvorschuss" },
+  Maintenance: { label: "Unterhalt" },
+  UnemploymentBenefits: { label: "Arbeitslosengeld" },
+  SicknessBenefits: { label: "Krankengeld" },
+  HousingAllowance: { label: "Wohngeld" },
+  ChildSupplement: { label: "Kinderzuschlag" },
+  BAfOG: { label: "BAfÖG" },
+  ParentalAllowance: { label: "Elterngeld" },
+  Pension: { label: "Rente" },
+  MaintenanceContributionFromMasterCraftsmen: {
+    label: "Unterhaltsbeitrag aus Meisterbafög",
+  },
+  ShortTimeWorkAllowance: { label: "Kurzarbeitergeld" },
+  VocationalTrainingAllowance: { label: "Berufsausbildungsbeihilfe (BAB)" },
+  TaxFreeSideJob: { label: "Steuerfreie nebenberufliche Tätigkeit" },
+  VoluntarySocialYear: {
+    label: "Freiwilligendienst, Soziales/Ökologisches Jahr",
+  },
+  OtherIncome: { label: "Sonstiges Einkommen (Geldgeschenke)" },
+};

@@ -1,30 +1,61 @@
 "use client";
 
 import {
+  initialStepsState,
+  stepsConfig,
   StepsContext,
   StepsDispatchContext,
   stepsReducer,
 } from "@/lib/machine";
-import { useRouter } from "next/navigation";
-import { useEffect, useReducer } from "react";
+import { TStepsState } from "@/lib/types";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useReducer, useRef } from "react";
+import { Dispatch, SetStateAction } from "react";
+import { toast } from "sonner";
+import { Button } from "./ui/button";
+import { produce } from "immer";
 
-export function StepsProvider({ children, value }) {
-  const { push } = useRouter();
-  const [steps, dispatch] = useReducer(stepsReducer, value);
+export function StepsProvider({
+  children,
+  initialValue,
+  syncValue,
+}: {
+  children: React.ReactNode;
+  initialValue: TStepsState;
+  syncValue: Dispatch<SetStateAction<TStepsState>>;
+}) {
+  const { replace } = useRouter();
+  const slug = usePathname();
+  const [steps, dispatch] = useReducer(stepsReducer, initialValue);
 
-  // useEffect(() => {
-  //   /**
-  //    * If the steps context is changed, it will change the anchor tag and try to scroll this anchor into view.
-  //    * Should not be done here, instead this should take place one next event.
-  //    */
-  //   window.history.pushState({}, "", `#${steps.steps[steps.currentStep].id}`);
-  //   const hash = window.location.hash;
-  //   if (hash) {
-  //     setTimeout(() => {
-  //       document.querySelector(hash).scrollIntoView({ behavior: "smooth" });
-  //     }, 100);
-  //   }
-  // }, [steps, push]);
+  /**
+   * Check localstorage on load:
+   * If there is no local storage object, and the URL is not the start URL → Redirect to start
+   * If there is a local storage object, the URL is not the same is current stepp in the local storage object → Show hint with redirect option
+   */
+  useEffect(() => {
+    if (`/antrag/${initialValue.step?.id} ` !== slug) {
+      console.warn(
+        "Redirecting because no state does not match slug.",
+        `Current step is "/antrag/${initialValue.step?.id}", but slug is "${slug}."`
+      );
+      /**
+       * TODO:
+       * If there is a mismatch between the localstorage and the requested page, redirect and reset the local storage for now.
+       * The key should be stored as reference.
+       */
+      dispatch({
+        type: "load",
+        state: initialStepsState,
+      });
+      replace("/antrag/erwerbsfaehig");
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log(steps.context);
+    syncValue(steps);
+  }, [steps]);
 
   return (
     <StepsContext.Provider value={steps}>

@@ -16,13 +16,6 @@ const defaultContext: TStepContext = {
     sum: 0,
     utilities: 0,
   },
-  salary: {
-    gross: 0,
-    net: 0,
-  },
-  income: {
-    childBenefit: 0,
-  },
 };
 
 const defaultAdult: TAdult = {
@@ -30,6 +23,7 @@ const defaultAdult: TAdult = {
   type: "adult",
   isPregnant: false,
   needsSpecialFood: false,
+  income: [],
 };
 
 const defaultChild: TChild = {
@@ -129,67 +123,40 @@ describe("calculateCommunityNeed", () => {
 
 describe("calculateSalary", () => {
   test("900 gross, 600 net", () => {
-    const context: TStepContext = {
-      ...defaultContext,
-      salary: {
-        gross: 900,
-        net: 600,
-      },
-    };
-
-    expect(calculateSalary(context)).toEqual({
+    expect(
+      calculateSalary({ gross: 900, net: 600, hasMinorChild: false })
+    ).toEqual({
       allowance: 298,
       income: 600 - 298,
     });
   });
 
   test("1200 gross, 950 net", () => {
-    const context: TStepContext = {
-      ...defaultContext,
-      salary: {
-        gross: 1200,
-        net: 950,
-      },
-    };
-
-    expect(calculateSalary(context)).toEqual({
+    expect(
+      calculateSalary({ gross: 1200, net: 950, hasMinorChild: false })
+    ).toEqual({
       allowance: 348,
       income: 602,
     });
   });
 
   test("2100 gross, 1700 net", () => {
-    const context: TStepContext = {
-      ...defaultContext,
-      salary: {
-        gross: 2100,
-        net: 1700,
-      },
-    };
-
-    expect(calculateSalary(context)).toEqual({
+    expect(
+      calculateSalary({ gross: 2100, net: 1700, hasMinorChild: false })
+    ).toEqual({
       allowance: 348,
       income: 1352,
     });
   });
 
   test("2100 gross, 1700 net", () => {
-    const context: TStepContext = {
-      ...defaultContext,
-      community: [
-        {
-          name: "Child below 18",
-          type: "child",
-          age: "0-5",
-        },
-      ],
-      salary: {
+    expect(
+      calculateSalary({
         gross: 2100,
         net: 1700,
-      },
-    };
-
-    expect(calculateSalary(context)).toEqual({
+        hasMinorChild: true,
+      })
+    ).toEqual({
       allowance: 378,
       income: 1322,
     });
@@ -207,10 +174,6 @@ describe("calculateOverall", () => {
         rent: 350,
         sum: 516,
         utilities: 66,
-      },
-      salary: {
-        gross: 1200,
-        net: 950,
       },
     };
 

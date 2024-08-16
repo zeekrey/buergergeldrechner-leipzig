@@ -3,35 +3,43 @@ import { useStepsMachine } from "@/lib/machine";
 import { useEffect, useMemo } from "react";
 import { calculateOverall } from "@/lib/calculation";
 import { produce } from "immer";
+import { RotateCcwIcon } from "lucide-react";
 
 export function StatusBar() {
   const [state] = useStepsMachine();
 
-  const result = calculateOverall(state.context);
-  const communitySize = useMemo(
-    () => state.context.community.length,
-    [state.context.community]
+  const result = useMemo(
+    () => calculateOverall(state.context),
+    [state.context]
   );
+
+  // const communitySize = useMemo(
+  //   () => state.context.community.length,
+  //   [state.context.community]
+  // );
 
   return (
     <div className="fixed bottom-8 w-full z-10">
-      {Boolean(state.currentStep) && (
-        <div className="mx-auto max-w-3xl border-t sm:border border-border/40 sm:shadow-sm sm:rounded-lg justify-between px-8 py-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex justify-between">
-            <div className="flex flex-col justify-between gap-2">
-              <small className="text-xs">Fortschritt</small>
-              <Progress state={state} />
-            </div>
-            <div className="flex flex-col gap-2 items-center">
-              <small className="text-xs">Bedarfsgemeinschaft</small>
-              <strong className="text-lg">{communitySize} Personen</strong>
-            </div>
-            <div className="flex flex-col justify-center gap-2">
-              <small className="text-xs">Möglicher Anspruch:</small>
-              <strong className="text-lg text-right">{result} €</strong>
-            </div>
+      <div className="mx-auto max-w-3xl border-t sm:border border-border/40 sm:shadow-sm sm:rounded-lg justify-between px-8 py-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex justify-between">
+          <div className="flex flex-col justify-between gap-2">
+            <small className="text-xs">Fortschritt</small>
+            <Progress />
           </div>
-          {/* <div className="text-xs flex w-full justify-between items-center">
+          <div className="flex flex-col gap-2 items-center justify-center">
+            {/* <div className="flex gap-2 border border-amber-300 bg-amber-100 text-amber-950 rounded-full items-center px-1 py-1">
+              <div className="border border-amber-300 rounded-full p-1">
+                <RotateCcwIcon className="w-4 h-4 text-amber-950" />
+              </div>
+              <div className="text-xs pr-2">Wollen Sie von Vorne beginnen?</div>
+            </div> */}
+          </div>
+          <div className="flex flex-col justify-center gap-2">
+            <small className="text-xs">Möglicher Anspruch:</small>
+            <strong className="text-lg text-right">{result} €</strong>
+          </div>
+        </div>
+        {/* <div className="text-xs flex w-full justify-between items-center">
             <small>Fortschritt</small>
             <small>Bedarfsgemeinschaft</small>
             <small>Möglicher Anspruch:</small>
@@ -41,8 +49,7 @@ export function StatusBar() {
             <strong className="text-lg">{communitySize} Personen</strong>
             <strong className="text-lg">{result} €</strong>
           </div> */}
-        </div>
-      )}
+      </div>
       {/* <Dialog>
         <DialogTrigger asChild>
           <Button variant="ghost">

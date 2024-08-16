@@ -1,16 +1,19 @@
 import { TStepContext, TChild } from "./types";
 import * as data from "../config/data.json";
+import { flattenIncome } from "./utils";
 
 export function calculateCommunityNeed(context: TStepContext) {
   let sumByType = {};
   let totalSum = 0;
+
+  const isSingle = context.community.length === 1;
 
   /** community need */
   context.community.forEach(({ type, ...attributes }) => {
     let value: number;
 
     if (type === "adult") {
-      value = context.isSingle ? data[type]["single"] : data[type]["partner"];
+      value = isSingle ? data[type]["single"] : data[type]["partner"];
     } else if (type === "child") {
       value = data[type][(attributes as TChild).age];
     }
@@ -22,19 +25,20 @@ export function calculateCommunityNeed(context: TStepContext) {
   return totalSum;
 }
 
-export function calculateSalary(context: TStepContext) {
-  const { gross, net } = context.salary;
-
+export function calculateSalary({
+  gross,
+  net,
+  hasMinorChild,
+}: {
+  gross: number;
+  net: number;
+  hasMinorChild: boolean;
+}) {
   if (gross < 1 || net < 1 || net > gross)
     return {
       allowance: 0,
       income: 0,
     };
-
-  const hasMinorChild = context.community.some(
-    (person) =>
-      person.type === "child" && ["0-5", "6-13", "14-17"].includes(person.age)
-  );
 
   let allowance = 100;
 
@@ -62,20 +66,15 @@ export function calculateSalary(context: TStepContext) {
 
 export function calculateOverall(context: TStepContext) {
   const communityNeed = calculateCommunityNeed(context);
-  const salary = calculateSalary(context);
+  const flattenedIncome = flattenIncome(context.community);
+  const incomeSum = flattenedIncome.reduce((acc, curr) => acc + curr.amount, 0);
 
-  console.table([
-    {
-      "Community need": communityNeed,
-      Income: salary.income,
-      Allowance: salary.allowance,
-    },
-  ]);
+  // console.table([
+  //   {
+  //     "Community need": communityNeed,
+  //     Income: incomeSum,
+  //   },
+  // ]);
 
-  return (
-    communityNeed +
-    context.spendings.sum -
-    salary.income -
-    context.income.childBenefit
-  );
+  return communityNeed + context.spendings.sum - incomeSum;
 }

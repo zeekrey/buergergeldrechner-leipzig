@@ -11,7 +11,7 @@ import Image from "next/image";
 export function HelpPopup() {
   return (
     <Sheet>
-      <SheetTrigger>
+      <SheetTrigger asChild>
         <Button variant="ghost" className="w-9 px-0">
           <HelpCircleIcon className="h-[1.2rem] w-[1.2rem]" />
           <span className="sr-only">Hilfe anzeigen</span>
