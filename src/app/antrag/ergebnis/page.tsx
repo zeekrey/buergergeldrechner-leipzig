@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -11,13 +11,25 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { useStepsMachine } from "@/lib/machine";
 import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
+  BabyIcon,
   CheckCircle2Icon,
   ChevronsUpDownIcon,
   LifeBuoyIcon,
   PhoneCallIcon,
   SaveIcon,
+  UsersIcon,
 } from "lucide-react";
 import {
   StepRoot,
@@ -26,19 +38,65 @@ import {
 } from "@/components/ui/step-primitives";
 import { stepsConfig } from "@/lib/machine";
 import { useCallback } from "react";
+import { incomeType } from "@/lib/types";
 
 const step = stepsConfig[8];
 
 import { Separator } from "../../../components/ui/separator";
-import { calculateOverall } from "@/lib/calculation";
+import {
+  calculateAllowance,
+  calculateCommunityNeed,
+  calculateOverall,
+} from "@/lib/calculation";
 import { useRouter } from "next/navigation";
+import { flattenIncome } from "@/lib/utils";
+
+const SectionCard = ({
+  name,
+  amount,
+  description,
+  children,
+}: {
+  name: string;
+  amount: number;
+  description: string;
+  children: ReactNode;
+}) => (
+  <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+    <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+      <h3 className="tracking-tight text-sm font-medium">{name}</h3>
+      {children}
+    </div>
+    <div className="p-6 pt-0">
+      <div className="text-2xl font-bold">
+        {amount.toLocaleString("de-DE", { currency: "EUR", style: "currency" })}
+      </div>
+      <p className="text-xs text-muted-foreground">{description}</p>
+    </div>
+  </div>
+);
 
 export default function StepSummary() {
   const { push } = useRouter();
   const [state, dispatch] = useStepsMachine();
 
+  const need = useMemo(
+    () => calculateCommunityNeed(state.context),
+    [state.context]
+  );
+
   const result = useMemo(
     () => calculateOverall(state.context),
+    [state.context]
+  );
+
+  const income = useMemo(
+    () => flattenIncome(state.context.community),
+    [state.context]
+  );
+
+  const allowance = useMemo(
+    () => calculateAllowance(state.context),
     [state.context]
   );
 
@@ -59,7 +117,7 @@ export default function StepSummary() {
             <div>
               <div className="text-sm">Ihr möglicher Bürgergeld-Anspruch</div>
               <div className="text-xl font-bold">
-                {result.toLocaleString("de-DE", {
+                {result.overall.toLocaleString("de-DE", {
                   style: "currency",
                   currency: "EUR",
                 })}
@@ -67,6 +125,140 @@ export default function StepSummary() {
             </div>
             <CheckCircle2Icon className="text-green-600" />
           </div>
+
+          <Table>
+            <TableBody>
+              {/* Regelbedarf */}
+              <TableRow>
+                <TableHead className="w-full">Regelbedarf</TableHead>
+                <TableHead className="text-right">
+                  {need.need.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </TableHead>
+              </TableRow>
+              {need.community.map((person) => (
+                <TableRow className="border-none" key={person.name}>
+                  <TableCell className="py-2 text-xs">{person.name}</TableCell>
+                  <TableCell className="py-2 text-xs text-right">
+                    {person.amount.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {/* Ausgaben */}
+              <TableRow>
+                <TableHead>Ausgaben</TableHead>
+                <TableHead className="text-right">
+                  {state.context.spendings.sum.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </TableHead>
+              </TableRow>
+              <TableRow className="border-none">
+                <TableCell className="py-2 text-xs">Kaltmiete</TableCell>
+                <TableCell className="py-2 text-xs text-right">
+                  {state.context.spendings.rent.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </TableCell>
+              </TableRow>
+              <TableRow className="border-none">
+                <TableCell className="py-2 text-xs">Nebenkosten</TableCell>
+                <TableCell className="py-2 text-xs text-right">
+                  {state.context.spendings.utilities.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </TableCell>
+              </TableRow>
+              <TableRow className="border-none">
+                <TableCell className="py-2 text-xs">Heizkosten</TableCell>
+                <TableCell className="py-2 text-xs text-right">
+                  {state.context.spendings.heating.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </TableCell>
+              </TableRow>
+              {/* Einkommen */}
+              <TableRow>
+                <TableHead>Einkommen</TableHead>
+                <TableHead className="text-right">
+                  {result.income.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </TableHead>
+              </TableRow>
+              {state.context.community.map((person) => (
+                <>
+                  {person.income?.map((income) => (
+                    <TableRow className="border-none" key={person.id}>
+                      <TableCell className="py-2 text-xs">
+                        {person.name} ({income.type})
+                      </TableCell>
+                      <TableCell className="py-2 text-xs text-right">
+                        {income.amount.toLocaleString("de-DE", {
+                          style: "currency",
+                          currency: "EUR",
+                        })}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </>
+              ))}
+              {/* Freibeträge */}
+              <TableRow>
+                <TableHead>Freibeträge</TableHead>
+                <TableHead className="text-right">
+                  {result.allowance
+                    .reduce((acc, curr) => acc + curr.amount, 0)
+                    .toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+                </TableHead>
+              </TableRow>
+              {allowance.map((person) => (
+                <TableRow className="border-none" key={person.id}>
+                  <TableCell className="py-2 text-xs">{person.type}</TableCell>
+                  <TableCell className="py-2 text-xs text-right">
+                    {person.amount.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell>Bürgergeldanspruch</TableCell>
+                <TableCell className="text-right">
+                  {result.overall.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+
+          {/* <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+            <SectionCard
+              name="Regelbedarf"
+              amount={result.need}
+              description="dwq"
+            >
+              <UsersIcon className="w-4 h-4" />
+            </SectionCard>
+          </div> */}
           <div>
             <h2 className="font-bold mb-2">Wie geht es weiter?</h2>
             <p className=" text-muted-foreground">
@@ -112,42 +304,36 @@ export default function StepSummary() {
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="space-y-2 text-sm px-2 py-4">
-                <div className="flex justify-between">
-                  <div className="font-bold">
-                    Leben Sie in einer Partnerschaft?
-                  </div>
-                  <div className="font-bold">
-                    {state.context.community.length === 1 ? "Nein" : "Ja"}
-                  </div>
-                </div>
-                <Separator />
-                <div className="flex justify-between">
-                  <div className="font-bold">Haben Sie Kinder?</div>
-                  <div className="font-bold">
-                    {state.context.community.filter(
-                      (pers) => pers.type === "child"
-                    ).length === 0
-                      ? "Nein"
-                      : "Ja"}
-                  </div>
-                </div>
-                {state.context.community
-                  .filter((pers) => pers.type === "child")
-                  ?.map((kind, index) => (
-                    <div
-                      className="flex justify-between pl-2 border-l"
-                      key={kind.id}
-                    >
-                      <div>{index + 1}.Kind</div>
-                      <div>{}</div>
+              <div className="space-y-2 text-sm">
+                <h4>
+                  Die Bedarfsgemeinschaft besteht aus{" "}
+                  {state.context.community.length} Personen
+                </h4>
+                <div className="grid grid-cols-3 gap-4 text-xs">
+                  {state.context.community.map((person) => (
+                    <div className="border rounded-sm">
+                      <div className="bg-muted/70 p-2 flex justify-between">
+                        <div className="font-bold">{person.name}</div>
+                        <BabyIcon className="w-4 h-4" />
+                      </div>
+                      <div className="p-2">{person.type}</div>
                     </div>
                   ))}
-                <Separator />
-                <div className="flex justify-between">
-                  <div className="font-bold">Ihre monatlichen Ausgaben</div>
-                  <div className="font-bold">800,00€</div>
                 </div>
+                <div className="flex justify-between">
+                  <div className="font-bold">
+                    Daraus ergebender Regelbedarf (Stand 2024)
+                  </div>
+                  <div className="font-bold">
+                    {result.need.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+                  </div>
+                </div>
+
+                <Separator />
+
                 <div className="flex justify-between pl-2 border-l">
                   <div>Heizkosten</div>
                   <div>{state.context.spendings.heating}</div>
@@ -160,11 +346,98 @@ export default function StepSummary() {
                   <div>Nebenkosten</div>
                   <div>{state.context.spendings.utilities}</div>
                 </div>
+                <div className="flex justify-between">
+                  <div className="font-bold">Ihre monatlichen Ausgaben</div>
+                  <div className="font-bold">
+                    {state.context.spendings.sum.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+                  </div>
+                </div>
                 <Separator />
                 <div className="flex justify-between">
-                  <div className="font-bold">Ihre monatlichen Einnahmen</div>
-                  <div>Summe: {state.context.income.sum}</div>
-                  <div>Freibetrag: {state.context.income.allowance}</div>
+                  <div className="font-bold">Gesamtbedarf</div>
+                  <div>
+                    Summe:{" "}
+                    {result.spendingNeed.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+                  </div>
+                </div>
+                <Separator />
+                <Table>
+                  <TableCaption>
+                    Monatliches Einkommen Ihrer Bedarfsgemeinschaft
+                  </TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Person</TableHead>
+                      <TableHead className="w-[320px]">Einkommensart</TableHead>
+                      <TableHead className="w-[180px]">
+                        Betrag (Freibetrag)
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {income.map((person, index) => (
+                      <TableRow key={person.id}>
+                        <TableCell>{person.name}</TableCell>
+                        <TableCell>{incomeType[person.type].label}</TableCell>
+                        <TableCell className="">
+                          {person.amount.toLocaleString("de-DE", {
+                            style: "currency",
+                            currency: "EUR",
+                          })}
+                          {person.type === "EmploymentIncome" && (
+                            <>
+                              {" "}
+                              (
+                              {person.allowance.toLocaleString("de-DE", {
+                                style: "currency",
+                                currency: "EUR",
+                              })}
+                              )
+                            </>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow>
+                      <TableCell
+                        className="text-center"
+                        colSpan={5}
+                      ></TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+                <Separator />
+                <div className="flex justify-between">
+                  <div className="font-bold">Gesamteinkommen</div>
+                  <div>
+                    Summe:{" "}
+                    {result.income.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex justify-between">
+                  <div className="font-bold">Freibeträge</div>
+                  <div>Summe: 0</div>
+                </div>
+                <Separator />
+                <div className="flex justify-between">
+                  <div className="font-bold">Anpruch</div>
+                  <div>
+                    Summe:{" "}
+                    {result.overall.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+                  </div>
                 </div>
                 <Separator />
               </div>

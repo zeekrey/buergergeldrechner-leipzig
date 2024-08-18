@@ -69,7 +69,12 @@ export default function StepSpending() {
     event.preventDefault();
     dispatch({
       state: produce(state, (draft) => {
-        draft.context.spendings = { ...data, sum };
+        draft.context.spendings = {
+          heating: Number(data.heating),
+          rent: Number(data.rent),
+          utilities: Number(data.utilities),
+          sum,
+        };
       }),
       type: "next",
     });

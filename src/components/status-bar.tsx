@@ -9,7 +9,7 @@ export function StatusBar() {
   const [state] = useStepsMachine();
 
   const result = useMemo(
-    () => calculateOverall(state.context),
+    () => calculateOverall(state.context).overall,
     [state.context]
   );
 

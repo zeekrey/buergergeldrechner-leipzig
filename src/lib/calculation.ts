@@ -3,26 +3,26 @@ import * as data from "../config/data.json";
 import { flattenIncome } from "./utils";
 
 export function calculateCommunityNeed(context: TStepContext) {
-  let sumByType = {};
-  let totalSum = 0;
-
   const isSingle = context.community.length === 1;
 
-  /** community need */
-  context.community.forEach(({ type, ...attributes }) => {
-    let value: number;
+  const community = context.community.map(({ name, type, ...attributes }) => {
+    let amount: number;
 
     if (type === "adult") {
-      value = isSingle ? data[type]["single"] : data[type]["partner"];
+      amount = isSingle ? data[type]["single"] : data[type]["partner"];
     } else if (type === "child") {
-      value = data[type][(attributes as TChild).age];
+      amount = data[type][(attributes as TChild).age];
     }
 
-    sumByType[type] = (sumByType[type] || 0) + value;
-    totalSum += value;
+    return { name, amount };
   });
 
-  return totalSum;
+  const need = community.reduce((acc, curr) => acc + curr.amount, 0);
+
+  return {
+    need,
+    community,
+  };
 }
 
 export function calculateSalary({
@@ -65,16 +65,37 @@ export function calculateSalary({
 }
 
 export function calculateOverall(context: TStepContext) {
-  const communityNeed = calculateCommunityNeed(context);
+  const { need } = calculateCommunityNeed(context);
   const flattenedIncome = flattenIncome(context.community);
   const incomeSum = flattenedIncome.reduce((acc, curr) => acc + curr.amount, 0);
+  const allowance = calculateAllowance(context);
 
-  // console.table([
-  //   {
-  //     "Community need": communityNeed,
-  //     Income: incomeSum,
-  //   },
-  // ]);
+  return {
+    need,
+    income: incomeSum,
+    spendingNeed: need + context.spendings.sum,
+    allowance,
+    overall:
+      need +
+      context.spendings.sum +
+      allowance.reduce((acc, curr) => acc + curr.amount, 0) -
+      incomeSum,
+  };
+}
 
-  return communityNeed + context.spendings.sum - incomeSum;
+export function calculateAllowance(context: TStepContext) {
+  /** Private insurance */
+  const legitimate = context.community.filter((person) => {
+    if (
+      (person.type === "adult" || person.age === "18+") &&
+      person.income?.every((income) => income.type !== "EmploymentIncome")
+    )
+      return true;
+  });
+
+  return legitimate.map((person) => ({
+    id: person.id,
+    type: "insurance",
+    amount: 30,
+  }));
 }

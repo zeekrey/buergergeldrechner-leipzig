@@ -1,15 +1,20 @@
 import { test, expect, describe } from "vitest";
 import {
+  calculateAllowance,
   calculateCommunityNeed,
   calculateOverall,
   calculateSalary,
 } from "./calculation";
 import { TAdult, TChild, TStepContext } from "./types";
+import { generateId } from "./utils";
 
 const defaultContext: TStepContext = {
   community: [],
+  income: {
+    sum: 0,
+    allowance: 0,
+  },
   isEmployable: true,
-  isSingle: false,
   spendings: {
     heating: 0,
     rent: 0,
@@ -19,6 +24,7 @@ const defaultContext: TStepContext = {
 };
 
 const defaultAdult: TAdult = {
+  id: generateId(),
   name: "Person",
   type: "adult",
   isPregnant: false,
@@ -27,6 +33,7 @@ const defaultAdult: TAdult = {
 };
 
 const defaultChild: TChild = {
+  id: generateId(),
   name: "Person",
   type: "child",
   isPregnant: false,
@@ -38,11 +45,12 @@ describe("calculateCommunityNeed", () => {
   test("single, no kids", () => {
     const context: TStepContext = {
       ...defaultContext,
-      isSingle: true,
       community: [{ ...defaultAdult }],
     };
 
-    expect(calculateCommunityNeed(context)).toEqual(563);
+    const { need } = calculateCommunityNeed(context);
+
+    expect(need).toEqual(563);
   });
 
   test("with partner, no kids", () => {
@@ -51,7 +59,9 @@ describe("calculateCommunityNeed", () => {
       community: [{ ...defaultAdult }, { ...defaultAdult }],
     };
 
-    expect(calculateCommunityNeed(context)).toEqual(1012);
+    const { need } = calculateCommunityNeed(context);
+
+    expect(need).toEqual(1012);
   });
 
   test("with partner, one kid (18+)", () => {
@@ -64,7 +74,9 @@ describe("calculateCommunityNeed", () => {
       ],
     };
 
-    expect(calculateCommunityNeed(context)).toEqual(506 + 506 + 451);
+    const { need } = calculateCommunityNeed(context);
+
+    expect(need).toEqual(506 + 506 + 451);
   });
 
   test("with partner, one kid (14-17)", () => {
@@ -77,7 +89,9 @@ describe("calculateCommunityNeed", () => {
       ],
     };
 
-    expect(calculateCommunityNeed(context)).toEqual(506 + 506 + 471);
+    const { need } = calculateCommunityNeed(context);
+
+    expect(need).toEqual(506 + 506 + 471);
   });
 
   test("with partner, one kid (6-13)", () => {
@@ -90,7 +104,9 @@ describe("calculateCommunityNeed", () => {
       ],
     };
 
-    expect(calculateCommunityNeed(context)).toEqual(506 + 506 + 390);
+    const { need } = calculateCommunityNeed(context);
+
+    expect(need).toEqual(506 + 506 + 390);
   });
 
   test("with partner, one kid (0-5)", () => {
@@ -103,7 +119,9 @@ describe("calculateCommunityNeed", () => {
       ],
     };
 
-    expect(calculateCommunityNeed(context)).toEqual(506 + 506 + 357);
+    const { need } = calculateCommunityNeed(context);
+
+    expect(need).toEqual(506 + 506 + 357);
   });
 
   test("with partner, two kids (0-5, 6-13)", () => {
@@ -116,8 +134,9 @@ describe("calculateCommunityNeed", () => {
         { ...defaultChild, age: "6-13" },
       ],
     };
+    const { need } = calculateCommunityNeed(context);
 
-    expect(calculateCommunityNeed(context)).toEqual(506 + 506 + 357 + 390);
+    expect(need).toEqual(506 + 506 + 357 + 390);
   });
 });
 
@@ -167,8 +186,21 @@ describe("calculateOverall", () => {
   test("case #1", () => {
     const context: TStepContext = {
       ...defaultContext,
-      community: [{ ...defaultAdult }],
-      isSingle: true,
+      community: [
+        {
+          ...defaultAdult,
+          income: [
+            {
+              type: "EmploymentIncome",
+              amount: calculateSalary({
+                gross: 1200,
+                net: 950,
+                hasMinorChild: false,
+              }).income,
+            },
+          ],
+        },
+      ],
       spendings: {
         heating: 100,
         rent: 350,
@@ -177,6 +209,179 @@ describe("calculateOverall", () => {
       },
     };
 
-    expect(calculateOverall(context)).toEqual(477);
+    const { overall } = calculateOverall(context);
+
+    expect(overall).toEqual(477);
+  });
+
+  test("case #2", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+          income: [
+            {
+              type: "EmploymentIncome",
+              amount: calculateSalary({
+                gross: 2100,
+                net: 1700,
+                hasMinorChild: true,
+              }).income,
+            },
+          ],
+        },
+        {
+          ...defaultAdult,
+          income: [
+            {
+              type: "UnemploymentBenefits",
+              amount: 1200,
+            },
+          ],
+        },
+        {
+          ...defaultChild,
+          income: [
+            {
+              amount: 250,
+              type: "ChildAllowance",
+            },
+          ],
+        },
+        {
+          ...defaultChild,
+          income: [
+            {
+              amount: 250,
+              type: "ChildAllowance",
+            },
+          ],
+          age: "0-5",
+        },
+      ],
+      spendings: {
+        heating: 150,
+        rent: 650,
+        sum: 900,
+        utilities: 100,
+      },
+    };
+
+    const { overall, ...rest } = calculateOverall(context);
+
+    console.log(rest);
+
+    expect(overall).toEqual(-242);
+  });
+});
+
+describe("calculateAllowance", () => {
+  test("insurance allowance", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+        },
+      ],
+      spendings: {
+        heating: 100,
+        rent: 350,
+        sum: 516,
+        utilities: 66,
+      },
+    };
+
+    const allowance = calculateAllowance(context);
+
+    expect(allowance.length).toEqual(1);
+    expect(allowance[0].amount).toBe(30);
+  });
+
+  test("insurance allowance with kid", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+        },
+        {
+          ...defaultChild,
+          age: "0-5",
+          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+        },
+      ],
+      spendings: {
+        heating: 100,
+        rent: 350,
+        sum: 516,
+        utilities: 66,
+      },
+    };
+
+    const allowance = calculateAllowance(context);
+    const sum = allowance.reduce((acc, curr) => acc + curr.amount, 0);
+
+    expect(allowance.length).toEqual(1);
+    expect(sum).toBe(30);
+  });
+
+  test("insurance allowance with old kid", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+        },
+        {
+          ...defaultChild,
+          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+        },
+      ],
+      spendings: {
+        heating: 100,
+        rent: 350,
+        sum: 516,
+        utilities: 66,
+      },
+    };
+
+    const allowance = calculateAllowance(context);
+    const sum = allowance.reduce((acc, curr) => acc + curr.amount, 0);
+
+    expect(allowance.length).toEqual(2);
+    expect(sum).toBe(60);
+  });
+
+  test("insurance allowance with old kid but different income type", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+          income: [{ type: "EmploymentIncome", amount: 1 }],
+        },
+        {
+          ...defaultChild,
+          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+        },
+      ],
+      spendings: {
+        heating: 100,
+        rent: 350,
+        sum: 516,
+        utilities: 66,
+      },
+    };
+
+    const allowance = calculateAllowance(context);
+    const sum = allowance.reduce((acc, curr) => acc + curr.amount, 0);
+
+    expect(allowance.length).toEqual(1);
+    expect(sum).toBe(30);
   });
 });
