@@ -1,36 +1,19 @@
 "use client";
 
 import { ReactNode, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { useStepsMachine } from "@/lib/machine";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-  BabyIcon,
-  CheckCircle2Icon,
-  ChevronsUpDownIcon,
-  LifeBuoyIcon,
-  PhoneCallIcon,
-  SaveIcon,
-  UsersIcon,
-} from "lucide-react";
+import { CheckCircle2Icon } from "lucide-react";
 import {
   StepRoot,
   StepTitle,
@@ -38,11 +21,18 @@ import {
 } from "@/components/ui/step-primitives";
 import { stepsConfig } from "@/lib/machine";
 import { useCallback } from "react";
-import { incomeType } from "@/lib/types";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const step = stepsConfig[8];
 
-import { Separator } from "../../../components/ui/separator";
 import {
   calculateAllowance,
   calculateCommunityNeed,
@@ -112,10 +102,10 @@ export default function StepSummary() {
       <StepTitle>{step.title}</StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <StepContent>
-        <ScrollArea className="sm:h-[380px]">
+        {result.overall > 0 ? (
           <div className="flex justify-between items-center p-4 mb-4 bg-green-100 dark:bg-green-900 rounded-lg border border-green-300 dark:border-green-700">
             <div>
-              <div className="text-sm">Ihr möglicher Bürgergeld-Anspruch</div>
+              <div className="text-sm">Ihr möglicher Bürgergeld-Anspruch:</div>
               <div className="text-xl font-bold">
                 {result.overall.toLocaleString("de-DE", {
                   style: "currency",
@@ -125,141 +115,198 @@ export default function StepSummary() {
             </div>
             <CheckCircle2Icon className="text-green-600" />
           </div>
-
-          <Table>
-            <TableBody>
-              {/* Regelbedarf */}
-              <TableRow>
-                <TableHead className="w-full">Regelbedarf</TableHead>
-                <TableHead className="text-right">
-                  {need.need.toLocaleString("de-DE", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-                </TableHead>
-              </TableRow>
-              {need.community.map((person) => (
-                <TableRow className="border-none" key={person.name}>
-                  <TableCell className="py-2 text-xs">{person.name}</TableCell>
-                  <TableCell className="py-2 text-xs text-right">
-                    {person.amount.toLocaleString("de-DE", {
-                      style: "currency",
-                      currency: "EUR",
-                    })}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {/* Ausgaben */}
-              <TableRow>
-                <TableHead>Ausgaben</TableHead>
-                <TableHead className="text-right">
-                  {state.context.spendings.sum.toLocaleString("de-DE", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-                </TableHead>
-              </TableRow>
-              <TableRow className="border-none">
-                <TableCell className="py-2 text-xs">Kaltmiete</TableCell>
-                <TableCell className="py-2 text-xs text-right">
-                  {state.context.spendings.rent.toLocaleString("de-DE", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-                </TableCell>
-              </TableRow>
-              <TableRow className="border-none">
-                <TableCell className="py-2 text-xs">Nebenkosten</TableCell>
-                <TableCell className="py-2 text-xs text-right">
-                  {state.context.spendings.utilities.toLocaleString("de-DE", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-                </TableCell>
-              </TableRow>
-              <TableRow className="border-none">
-                <TableCell className="py-2 text-xs">Heizkosten</TableCell>
-                <TableCell className="py-2 text-xs text-right">
-                  {state.context.spendings.heating.toLocaleString("de-DE", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-                </TableCell>
-              </TableRow>
-              {/* Einkommen */}
-              <TableRow>
-                <TableHead>Einkommen</TableHead>
-                <TableHead className="text-right">
-                  {result.income.toLocaleString("de-DE", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-                </TableHead>
-              </TableRow>
-              {state.context.community.map((person) => (
-                <>
-                  {person.income?.map((income) => (
-                    <TableRow className="border-none" key={person.id}>
+        ) : (
+          <div className="flex justify-between items-center p-4 mb-4 bg-red-100 dark:bg-red-900 rounded-lg border border-red-300 dark:red-green-700">
+            <div>
+              <div className="text-sm">
+                Sie haben wahrscheinlich keinen Anspruch auf Bürgergeld
+              </div>
+              <div className="text-xl font-bold">
+                {result.overall.toLocaleString("de-DE", {
+                  style: "currency",
+                  currency: "EUR",
+                })}
+              </div>
+            </div>
+            <CheckCircle2Icon className="text-red-600" />
+          </div>
+        )}
+        <ScrollArea className="sm:h-[380px]">
+          <Card className="overflow-hidden">
+            <CardHeader className="flex flex-row items-start bg-muted/50">
+              <div className="grid gap-0.5">
+                <CardTitle className="group flex items-center gap-2 text-lg">
+                  Berechnungsergebnis
+                </CardTitle>
+                <CardDescription>
+                  Erstellungsdatum:{" "}
+                  {new Intl.DateTimeFormat("de-DE").format(Date.now())}
+                </CardDescription>
+              </div>
+              {/* TODO: Print and share here. */}
+              {/* <div className="ml-auto flex items-center gap-1">
+                <Button size="sm" variant="outline" className="h-8 gap-1">
+                  <Truck className="h-3.5 w-3.5" />
+                  <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                    Track Order
+                  </span>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="icon" variant="outline" className="h-8 w-8">
+                      <MoreVertical className="h-3.5 w-3.5" />
+                      <span className="sr-only">More</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem>Export</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>Trash</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div> */}
+            </CardHeader>
+            <CardContent className="p-6 text-sm">
+              <Table>
+                <TableBody>
+                  {/* Regelbedarf */}
+                  <TableRow>
+                    <TableHead className="w-full">Regelbedarf</TableHead>
+                    <TableHead className="text-right">
+                      {need.need.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}
+                    </TableHead>
+                  </TableRow>
+                  {need.community.map((person) => (
+                    <TableRow className="border-none" key={person.name}>
                       <TableCell className="py-2 text-xs">
-                        {person.name} ({income.type})
+                        {person.name}
                       </TableCell>
                       <TableCell className="py-2 text-xs text-right">
-                        {income.amount.toLocaleString("de-DE", {
+                        {person.amount.toLocaleString("de-DE", {
                           style: "currency",
                           currency: "EUR",
                         })}
                       </TableCell>
                     </TableRow>
                   ))}
-                </>
-              ))}
-              {/* Freibeträge */}
-              <TableRow>
-                <TableHead>Freibeträge</TableHead>
-                <TableHead className="text-right">
-                  {result.allowance
-                    .reduce((acc, curr) => acc + curr.amount, 0)
-                    .toLocaleString("de-DE", {
-                      style: "currency",
-                      currency: "EUR",
-                    })}
-                </TableHead>
-              </TableRow>
-              {allowance.map((person) => (
-                <TableRow className="border-none" key={person.id}>
-                  <TableCell className="py-2 text-xs">{person.type}</TableCell>
-                  <TableCell className="py-2 text-xs text-right">
-                    {person.amount.toLocaleString("de-DE", {
-                      style: "currency",
-                      currency: "EUR",
-                    })}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell>Bürgergeldanspruch</TableCell>
-                <TableCell className="text-right">
-                  {result.overall.toLocaleString("de-DE", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
+                  {/* Ausgaben */}
+                  <TableRow>
+                    <TableHead>Ausgaben</TableHead>
+                    <TableHead className="text-right">
+                      {state.context.spendings.sum.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}
+                    </TableHead>
+                  </TableRow>
+                  <TableRow className="border-none">
+                    <TableCell className="py-2 text-xs">Kaltmiete</TableCell>
+                    <TableCell className="py-2 text-xs text-right">
+                      {state.context.spendings.rent.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className="border-none">
+                    <TableCell className="py-2 text-xs">Nebenkosten</TableCell>
+                    <TableCell className="py-2 text-xs text-right">
+                      {state.context.spendings.utilities.toLocaleString(
+                        "de-DE",
+                        {
+                          style: "currency",
+                          currency: "EUR",
+                        }
+                      )}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className="border-none">
+                    <TableCell className="py-2 text-xs">Heizkosten</TableCell>
+                    <TableCell className="py-2 text-xs text-right">
+                      {state.context.spendings.heating.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}
+                    </TableCell>
+                  </TableRow>
+                  {/* Einkommen */}
+                  <TableRow>
+                    <TableHead>Einkommen</TableHead>
+                    <TableHead className="text-right">
+                      {result.income.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}
+                    </TableHead>
+                  </TableRow>
+                  {state.context.community.map((person) => (
+                    <>
+                      {person.income?.map((income) => (
+                        <TableRow className="border-none" key={person.id}>
+                          <TableCell className="py-2 text-xs">
+                            {person.name} ({income.type})
+                          </TableCell>
+                          <TableCell className="py-2 text-xs text-right">
+                            {income.amount.toLocaleString("de-DE", {
+                              style: "currency",
+                              currency: "EUR",
+                            })}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </>
+                  ))}
+                  {/* Freibeträge */}
+                  <TableRow>
+                    <TableHead>Freibeträge</TableHead>
+                    <TableHead className="text-right">
+                      {result.allowance
+                        .reduce((acc, curr) => acc + curr.amount, 0)
+                        .toLocaleString("de-DE", {
+                          style: "currency",
+                          currency: "EUR",
+                        })}
+                    </TableHead>
+                  </TableRow>
+                  {allowance.map((person) => (
+                    <TableRow className="border-none" key={person.id}>
+                      <TableCell className="py-2 text-xs">
+                        {person.type}
+                      </TableCell>
+                      <TableCell className="py-2 text-xs text-right">
+                        {person.amount.toLocaleString("de-DE", {
+                          style: "currency",
+                          currency: "EUR",
+                        })}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell>Bürgergeldanspruch</TableCell>
+                    <TableCell className="text-right">
+                      {result.overall.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </CardContent>
+            <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
+              <div className="text-xs text-muted-foreground">
+                Es handelt sich um eine Beispielrechnung.
+              </div>
+            </CardFooter>
+          </Card>
 
-          {/* <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-            <SectionCard
-              name="Regelbedarf"
-              amount={result.need}
-              description="dwq"
-            >
-              <UsersIcon className="w-4 h-4" />
-            </SectionCard>
-          </div> */}
-          <div>
+          {/* <div>
             <h2 className="font-bold mb-2">Wie geht es weiter?</h2>
             <p className=" text-muted-foreground">
               Ihre Eingaben wurden nicht übermittelt. Um tatsächlich Bürgergeld
@@ -442,7 +489,7 @@ export default function StepSummary() {
                 <Separator />
               </div>
             </CollapsibleContent>
-          </Collapsible>
+          </Collapsible> */}
         </ScrollArea>
       </StepContent>
     </StepRoot>
