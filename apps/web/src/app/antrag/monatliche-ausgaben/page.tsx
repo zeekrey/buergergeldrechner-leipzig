@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import {
@@ -41,6 +42,7 @@ import { useForm, useWatch } from "react-hook-form";
 const step = stepsConfig[6];
 
 type TFormData = {
+  hasNoSpendings: boolean;
   rent: number;
   utilities: number;
   heating: number;
@@ -62,8 +64,9 @@ export default function StepSpending() {
   const rent = form.watch("rent");
   const utilities = form.watch("utilities");
   const heating = form.watch("heating");
+  const hasNoSpendings = form.watch("hasNoSpendings");
 
-  const sum = Number(rent) + Number(utilities) + Number(heating);
+  const sum = Number(rent ?? 0) + Number(utilities ?? 0) + Number(heating ?? 0);
 
   function onSubmit(data: TFormData, event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -96,6 +99,25 @@ export default function StepSpending() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           <StepContent>
+            <FormField
+              control={form.control}
+              name="hasNoSpendings"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Mir entstehen keine Kosten für Unterkunft und Heizung
+                    </FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
             <ScrollArea className="sm:h-[380px]">
               <Table>
                 <TableCaption>Ihre monatlichen Kosten</TableCaption>
@@ -110,9 +132,9 @@ export default function StepSpending() {
                     <TableCell className="font-medium">Kaltmiete</TableCell>
                     <TableCell className="w-[60px] text-right">
                       <FormField
+                        disabled={hasNoSpendings}
                         control={form.control}
                         name="rent"
-                        rules={{ min: 1 }}
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
@@ -132,9 +154,9 @@ export default function StepSpending() {
                     <TableCell className="font-medium">Nebenkosten</TableCell>
                     <TableCell className="text-right">
                       <FormField
+                        disabled={hasNoSpendings}
                         control={form.control}
                         name="utilities"
-                        rules={{ min: 1 }}
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
@@ -154,9 +176,9 @@ export default function StepSpending() {
                     <TableCell className="font-medium">Heizkosten</TableCell>
                     <TableCell className="text-right">
                       <FormField
+                        disabled={hasNoSpendings}
                         control={form.control}
                         name="heating"
-                        rules={{ min: 1 }}
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>

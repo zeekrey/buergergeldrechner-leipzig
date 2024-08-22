@@ -1,13 +1,9 @@
-// "use client";
-
 import { Button } from "@/components/ui/button";
 import { HelpCircleIcon } from "lucide-react";
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { forwardRef } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -19,7 +15,10 @@ export interface InputProps
 const StepRoot = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
     return (
-      <div className="sm:h-screen sm:flex sm:items-center" {...props}>
+      <div
+        className="sm:min-h-screen sm:flex sm:items-center sm:pt-24 sm:pb-36"
+        {...props}
+      >
         <div
           className="sm:border sm:shadow-sm rounded-lg w-full flex flex-col min-h-dvh sm:min-h-96 bg-background pt-14 sm:pt-0"
           ref={ref}

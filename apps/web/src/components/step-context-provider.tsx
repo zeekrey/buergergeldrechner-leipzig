@@ -34,22 +34,22 @@ export function StepsProvider({
    * If there is a local storage object, the URL is not the same is current stepp in the local storage object → Show hint with redirect option
    */
   useEffect(() => {
-    // if (`/antrag/${initialValue.step?.id} ` !== slug) {
-    //   console.warn(
-    //     "Redirecting because no state does not match slug.",
-    //     `Current step is "/antrag/${initialValue.step?.id}", but slug is "${slug}."`
-    //   );
-    //   /**
-    //    * TODO:
-    //    * If there is a mismatch between the localstorage and the requested page, redirect and reset the local storage for now.
-    //    * The key should be stored as reference.
-    //    */
-    //   dispatch({
-    //     type: "load",
-    //     state: initialStepsState,
-    //   });
-    //   replace("/antrag/erwerbsfaehig");
-    // }
+    if (`/antrag/${initialValue.step?.id} ` !== slug) {
+      console.warn(
+        "Redirecting because no state does not match slug.",
+        `Current step is "/antrag/${initialValue.step?.id}", but slug is "${slug}."`
+      );
+      /**
+       * TODO:
+       * If there is a mismatch between the localstorage and the requested page, redirect and reset the local storage for now.
+       * The key should be stored as reference.
+       */
+      dispatch({
+        type: "load",
+        state: initialStepsState,
+      });
+      replace("/antrag/erwerbsfaehig");
+    }
   }, []);
 
   useEffect(() => {
