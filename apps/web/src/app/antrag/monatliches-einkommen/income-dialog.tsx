@@ -26,7 +26,7 @@ import {
   type SetStateAction,
   useCallback,
 } from "react";
-import { TIncomeType, TPerson } from "@/lib/types";
+import { TIncomeType, TPerson, TStepContext } from "@/lib/types";
 import { type TIncome, incomeType } from "@/lib/types";
 import {
   Form,
@@ -42,7 +42,7 @@ import { calculateSalary } from "@/lib/calculation";
 import { generateId } from "@/lib/utils";
 
 type TFormData = {
-  name: string;
+  person: TPerson;
   type: TIncomeType;
   amount: number;
   gros: number;
@@ -55,13 +55,15 @@ let nextId = 100;
 export const IncomeDialog = ({
   children,
   selectedPerson,
-  community,
-  setIncome,
+  selectedIncome,
+  state,
+  setState,
 }: {
   children: React.ReactNode;
-  selectedPerson?: TIncome;
-  community: TPerson[];
-  setIncome: Dispatch<SetStateAction<TIncome[]>>;
+  selectedPerson?: TPerson;
+  selectedIncome?: TIncome;
+  state: TStepContext;
+  setState: Dispatch<SetStateAction<TStepContext>>;
 }) => {
   const [open, setOpen] = useState(false);
   const incomeTypeList = useMemo(
@@ -71,13 +73,12 @@ export const IncomeDialog = ({
 
   const form = useForm<TFormData>({
     defaultValues: {
-      name:
-        selectedPerson?.name ?? community[0]?.name ?? "Keine Person erfasst",
-      type: selectedPerson?.type ?? "EmploymentIncome",
-      amount: selectedPerson?.amount ?? 0,
-      gros: selectedPerson?.gros ?? 0,
-      net: selectedPerson?.net ?? 0,
-      allowance: selectedPerson?.allowance ?? 0,
+      person: selectedPerson ?? state.community[0],
+      type: selectedIncome?.type ?? "EmploymentIncome",
+      amount: selectedIncome?.amount ?? 0,
+      gros: selectedIncome?.gros ?? 0,
+      net: selectedIncome?.net ?? 0,
+      allowance: selectedIncome?.allowance ?? 0,
     },
   });
 
@@ -104,57 +105,57 @@ export const IncomeDialog = ({
   const onSubmit = (data: TFormData, event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (selectedIncomeType === "EmploymentIncome") {
-      /** Calculate allowance */
-      const { allowance, income } = calculateSalary({
-        gross: Number(data.gros),
-        net: Number(data.net),
-        hasMinorChild: community.some(
-          (person) =>
-            person.type === "child" &&
-            ["0-5", "6-13", "14-17"].includes(person.age)
-        ),
-      });
+    console.log(data);
 
-      setIncome(
-        produce((draft) => {
-          /** Push to array if it's a new entry. */
-          if (!selectedPerson)
-            draft.push({
-              allowance,
-              amount: Number(income),
-              name: data.name,
-              type: data.type,
-              id: generateId(),
-              gros: data.gros,
-              net: data.net,
-            });
-          /** Inplace update if it is an existing entry (selectedPerson is available). */ else {
-            const index = draft.findIndex(
-              (person) => person.id === selectedPerson.id
-            );
-            if (index !== -1) draft[index] = { ...data, id: selectedPerson.id };
-          }
-        })
-      );
-    } else {
-      setIncome(
-        produce((draft) => {
-          /** Push to array if it's a new entry. */
-          if (!selectedPerson)
-            draft.push({
-              ...data,
-              amount: Number(data.amount),
-              id: generateId(),
-            });
-          /** Inplace update if it is an existing entry (selectedPerson is available). */ else {
-            const index = draft.findIndex(
-              (person) => person.id === selectedPerson.id
-            );
-            if (index !== -1) draft[index] = { ...data, id: selectedPerson.id };
-          }
-        })
-      );
+    const selectedPersonIndex = state.community.findIndex(
+      (person) => person.id === data.person.id
+    );
+
+    console.log("Selected person is: ", selectedPersonIndex);
+
+    if (selectedPersonIndex !== -1) {
+      const { allowance, income } =
+        selectedIncomeType === "EmploymentIncome"
+          ? calculateSalary({
+              gross: Number(data.gros),
+              net: Number(data.net),
+              hasMinorChild: state.community.some(
+                (person) =>
+                  person.type === "child" &&
+                  ["0-5", "6-13", "14-17"].includes(person.age)
+              ),
+            })
+          : { allowance: 0, income: data.amount };
+
+      let newState: TStepContext;
+
+      if (selectedIncome) {
+        /** Inplace update income if it is an existing one. */
+        newState = produce(state, (draft) => {
+          draft.community[selectedPersonIndex].income[selectedIncome.id] = {
+            ...selectedIncome,
+            allowance,
+            amount: Number(income),
+            type: data.type,
+            gros: data.gros,
+            net: data.net,
+          };
+        });
+      } else {
+        newState = produce(state, (draft) => {
+          draft.community[selectedPersonIndex].income.push({
+            allowance,
+            amount: Number(income),
+            type: data.type,
+            id: generateId(),
+            gros: data.gros,
+            net: data.net,
+          });
+        });
+      }
+
+      console.log("Setting state: ", newState);
+      setState(newState);
     }
 
     setOpen(false);
@@ -168,7 +169,7 @@ export const IncomeDialog = ({
       const { allowance } = calculateSalary({
         gross: gros,
         net,
-        hasMinorChild: community.some(
+        hasMinorChild: state.community.some(
           (person) =>
             person.type === "child" &&
             ["0-5", "6-13", "14-17"].includes(person.age)
@@ -200,13 +201,14 @@ export const IncomeDialog = ({
           >
             <FormField
               control={form.control}
-              name="name"
+              name="person"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Person</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    // FIXME:
+                    // defaultValue={field.value.id}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -214,8 +216,8 @@ export const IncomeDialog = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {community.map((person) => (
-                        <SelectItem value={person.name} key={person.name}>
+                      {state.community.map((person) => (
+                        <SelectItem value={person.id} key={person.name}>
                           {person.name}
                         </SelectItem>
                       ))}

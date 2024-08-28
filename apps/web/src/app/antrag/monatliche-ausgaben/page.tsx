@@ -26,7 +26,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useState, useCallback } from "react";
 import { produce } from "immer";
@@ -38,6 +37,7 @@ import {
 import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
+import { useStateContext } from "@/components/context";
 
 const step = stepsConfig[6];
 
@@ -50,13 +50,13 @@ type TFormData = {
 
 export default function StepSpending() {
   const { push } = useRouter();
-  const [state, dispatch] = useStepsMachine();
+  const [state, setState] = useStateContext();
 
   const form = useForm<TFormData>({
     defaultValues: {
-      rent: state.context.spendings.rent ?? 0,
-      utilities: state.context.spendings.utilities ?? 0,
-      heating: state.context.spendings.heating ?? 0,
+      rent: state.spendings.rent ?? 0,
+      utilities: state.spendings.utilities ?? 0,
+      heating: state.spendings.heating ?? 0,
     },
   });
 
@@ -70,26 +70,24 @@ export default function StepSpending() {
 
   function onSubmit(data: TFormData, event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    dispatch({
-      state: produce(state, (draft) => {
-        draft.context.spendings = {
-          heating: Number(data.heating),
-          rent: Number(data.rent),
-          utilities: Number(data.utilities),
-          sum,
-        };
-      }),
-      type: "next",
+
+    const newState = produce(state, (draft) => {
+      draft.spendings = {
+        heating: Number(data.heating),
+        rent: Number(data.rent),
+        utilities: Number(data.utilities),
+        sum,
+      };
     });
-    const nextStep = stepsConfig[state.currentStep].next(state.context);
+
+    setState(newState);
+
+    const nextStep = step.next(state);
     push(`${stepsConfig[nextStep].id}`);
   }
 
   const handleBack = useCallback(() => {
-    dispatch({ type: "previous" });
-
-    const previousStep = stepsConfig[state.currentStep].previous;
-    push(`${stepsConfig[previousStep].id}`);
+    push(`${stepsConfig[step.previous].id}`);
   }, [state]);
 
   return (

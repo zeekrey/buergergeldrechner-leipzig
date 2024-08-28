@@ -3,7 +3,6 @@
 import { ReactNode, useMemo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { useStepsMachine } from "@/lib/machine";
 import {
   Table,
   TableBody,
@@ -40,6 +39,7 @@ import {
 } from "@/lib/calculation";
 import { useRouter } from "next/navigation";
 import { flattenIncome } from "@/lib/utils";
+import { useStateContext } from "@/components/context";
 
 const SectionCard = ({
   name,
@@ -68,33 +68,18 @@ const SectionCard = ({
 
 export default function StepSummary() {
   const { push } = useRouter();
-  const [state, dispatch] = useStepsMachine();
+  const [state, setState] = useStateContext();
 
-  const need = useMemo(
-    () => calculateCommunityNeed(state.context),
-    [state.context]
-  );
+  const need = useMemo(() => calculateCommunityNeed(state), [state]);
 
-  const result = useMemo(
-    () => calculateOverall(state.context),
-    [state.context]
-  );
+  const result = useMemo(() => calculateOverall(state), [state]);
 
-  const income = useMemo(
-    () => flattenIncome(state.context.community),
-    [state.context]
-  );
+  const income = useMemo(() => flattenIncome(state.community), [state]);
 
-  const allowance = useMemo(
-    () => calculateAllowance(state.context),
-    [state.context]
-  );
+  const allowance = useMemo(() => calculateAllowance(state), [state]);
 
   const handleBack = useCallback(() => {
-    dispatch({ type: "previous" });
-
-    const previousStep = stepsConfig[state.currentStep].previous;
-    push(`${stepsConfig[previousStep].id}`);
+    push(`${stepsConfig[step.previous].id}`);
   }, [state]);
 
   return (
@@ -197,7 +182,7 @@ export default function StepSummary() {
                   <TableRow>
                     <TableHead>Ausgaben</TableHead>
                     <TableHead className="text-right">
-                      {state.context.spendings.sum.toLocaleString("de-DE", {
+                      {state.spendings.sum.toLocaleString("de-DE", {
                         style: "currency",
                         currency: "EUR",
                       })}
@@ -206,7 +191,7 @@ export default function StepSummary() {
                   <TableRow className="border-none">
                     <TableCell className="py-2 text-xs">Kaltmiete</TableCell>
                     <TableCell className="py-2 text-xs text-right">
-                      {state.context.spendings.rent.toLocaleString("de-DE", {
+                      {state.spendings.rent.toLocaleString("de-DE", {
                         style: "currency",
                         currency: "EUR",
                       })}
@@ -215,19 +200,16 @@ export default function StepSummary() {
                   <TableRow className="border-none">
                     <TableCell className="py-2 text-xs">Nebenkosten</TableCell>
                     <TableCell className="py-2 text-xs text-right">
-                      {state.context.spendings.utilities.toLocaleString(
-                        "de-DE",
-                        {
-                          style: "currency",
-                          currency: "EUR",
-                        }
-                      )}
+                      {state.spendings.utilities.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}
                     </TableCell>
                   </TableRow>
                   <TableRow className="border-none">
                     <TableCell className="py-2 text-xs">Heizkosten</TableCell>
                     <TableCell className="py-2 text-xs text-right">
-                      {state.context.spendings.heating.toLocaleString("de-DE", {
+                      {state.spendings.heating.toLocaleString("de-DE", {
                         style: "currency",
                         currency: "EUR",
                       })}
@@ -243,7 +225,7 @@ export default function StepSummary() {
                       })}
                     </TableHead>
                   </TableRow>
-                  {state.context.community.map((person) => (
+                  {state.community.map((person) => (
                     <>
                       {person.income?.map((income) => (
                         <TableRow className="border-none" key={person.id}>

@@ -1,13 +1,5 @@
-import { Dispatch, createContext, useContext } from "react";
-import { TAction, TStepsState, TStep } from "./types";
-
-export const StepsContext = createContext<TStepsState>(null);
-
-export const StepsDispatchContext = createContext<Dispatch<TAction>>(null);
-
-export function useStepsMachine() {
-  return [useContext(StepsContext), useContext(StepsDispatchContext)] as const;
-}
+import { Dispatch, SetStateAction, createContext, useContext } from "react";
+import { TAction, TStepsState, TStep, TStepContext } from "./types";
 
 export function stepsReducer(
   state: TStepsState,

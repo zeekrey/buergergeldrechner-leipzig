@@ -40,7 +40,7 @@ export function SiteHeader() {
                   </div>
                   </Link> */}
             {/* <LanguageToggle /> */}
-            <CommandMenu />
+            {/* <CommandMenu /> */}
             <ModeToggle />
             <HelpPopup />
           </nav>

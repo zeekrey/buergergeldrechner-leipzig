@@ -39,6 +39,7 @@ const PersonCommon = z.object({
   income: z.optional(
     z.array(
       z.object({
+        id: z.string(),
         type: IncomeTyp,
         amount: z.number(),
         allowance: z.optional(z.number()),
@@ -49,14 +50,13 @@ const PersonCommon = z.object({
   ),
 });
 
-const Adult = z.union([PersonCommon, z.object({ type: z.literal("adult") })]);
-const Child = z.union([
-  PersonCommon,
+const Adult = PersonCommon.merge(z.object({ type: z.literal("adult") }));
+const Child = PersonCommon.merge(
   z.object({
     type: z.literal("child"),
     age: z.enum(["0-5", "6-13", "14-17", "18+"]),
-  }),
-]);
+  })
+);
 const Person = z.union([Adult, Child]);
 
 export const StepContext = z.object({

@@ -11,13 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { useStepsMachine } from "@/lib/machine";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
   XCircleIcon,
 } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import {
   StepRoot,
   StepTitle,
@@ -26,26 +25,23 @@ import {
 
 import { Button } from "../../../components/ui/button";
 import { produce } from "immer";
-import { TChild } from "@/lib/types";
+import { TChild, TPerson } from "@/lib/types";
 import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { generateId } from "@/lib/utils";
 import { incomeType } from "@/lib/types";
+import { useStateContext } from "@/components/context";
 
 const step = stepsConfig[3];
 
 export default function StepChildrenCount() {
   const { push } = useRouter();
-  const [state, dispatch] = useStepsMachine();
+  const [state, setState] = useStateContext();
 
-  const [children, setChildren] = useState<TChild[]>([]);
-
-  /** FIXME: Used to sync internal state with global state object. */
-  useEffect(() => {
-    setChildren(
-      state.context.community.filter((entry) => entry.type === "child")
-    );
-  }, [state.context.community]);
+  const children = useMemo(
+    () => state.community.filter((person) => person.type === "child"),
+    [state]
+  );
 
   const childAges: { [key in TChild["age"]]: string } = {
     "0-5": "0-5 Jahre",
@@ -57,34 +53,59 @@ export default function StepChildrenCount() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    dispatch({
-      type: "next",
-      state: produce(state, (draft) => {
-        draft.context.community = [
-          ...draft.context.community.filter((entry) => entry.type !== "child"),
-          ...children,
-        ];
-      }),
+    const newState = produce(state, (draft) => {
+      draft.community = [
+        ...draft.community.filter((entry) => entry.type !== "child"),
+        ...children,
+      ];
     });
 
-    const nextStep = stepsConfig[state.currentStep].next(state.context);
+    setState(newState);
+
+    const nextStep = step.next(newState);
     push(`${stepsConfig[nextStep].id}`);
   };
 
-  const handleChange = (value: TChild["age"], index: number) => {
-    setChildren(
-      produce(children, (draft) => {
-        draft[index].age = value;
-      })
-    );
+  const handleChange = (age: TChild["age"], id: TPerson["id"]) => {
+    const newState = produce(state, (draft) => {
+      const index = draft.community.findIndex((person) => person.id === id);
+      if (index !== -1) (draft.community[index] as TChild).age = age;
+    });
+
+    setState(newState);
   };
 
   const handleBack = useCallback(() => {
-    dispatch({ type: "previous" });
-
-    const previousStep = stepsConfig[state.currentStep].previous;
-    push(`${stepsConfig[previousStep].id}`);
+    push(`${stepsConfig[step.previous].id}`);
   }, [state]);
+
+  const addChildren = () => {
+    const newState = produce(state, (draft) => {
+      draft.community.push({
+        id: generateId(),
+        type: "child",
+        name: `Kind ${children.length + 1}`,
+        age: "0-5",
+        income: [
+          {
+            type: "ChildAllowance",
+            amount: incomeType.ChildAllowance.standardAmount,
+          },
+        ],
+      });
+    });
+
+    setState(newState);
+  };
+
+  const removeChildren = (id: TPerson["id"]) => {
+    const newState = produce(state, (draft) => {
+      const index = draft.community.findIndex((person) => person.id === id);
+      if (index !== -1) draft.community.splice(index, 1);
+    });
+
+    setState(newState);
+  };
 
   return (
     <StepRoot id={step.id}>
@@ -101,7 +122,7 @@ export default function StepChildrenCount() {
                 <Select
                   value={child.age}
                   onValueChange={(value) =>
-                    handleChange(value as TChild["age"], index)
+                    handleChange(value as TChild["age"], child.id)
                   }
                 >
                   <SelectTrigger className="w-[180px]">
@@ -116,12 +137,7 @@ export default function StepChildrenCount() {
                   </SelectContent>
                 </Select>
                 <Button
-                  onClick={() =>
-                    setChildren([
-                      ...children.slice(0, index),
-                      ...children.slice(index + 1),
-                    ])
-                  }
+                  onClick={() => removeChildren(child.id)}
                   variant="outline"
                   type="button"
                 >
@@ -132,23 +148,7 @@ export default function StepChildrenCount() {
             <div className="items-center gap-4 flex pt-1">
               <Button
                 className="flex h-10 w-full items-center justify-between rounded-md border border-input text-input border-dashed cursor-pointer bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
-                onClick={() =>
-                  setChildren((curr) => [
-                    ...curr,
-                    {
-                      id: generateId(),
-                      type: "child",
-                      name: `Kind ${children.length + 1}`,
-                      age: "0-5",
-                      income: [
-                        {
-                          type: "ChildAllowance",
-                          amount: incomeType.ChildAllowance.standardAmount,
-                        },
-                      ],
-                    },
-                  ])
-                }
+                onClick={addChildren}
                 variant="ghost"
                 type="button"
               >

@@ -19,17 +19,17 @@ const useHash = () => {
  * Used to check if the localstorage holds an valid state object and if so, load it.
  * @param dispatch
  */
-const useLocalStorageState = (dispatch) => {
+const useLocalStorageState = (setState) => {
   useEffect(() => {
     const localState = localStorage.getItem("state");
 
     if (localState) {
       const { success, data } = StepState.safeParse(JSON.parse(localState));
       if (success) {
-        dispatch({ type: "load", state: data });
+        setState(data);
       }
     }
-  }, [dispatch]);
+  }, [setState]);
 };
 
 export { useLocalStorageState };

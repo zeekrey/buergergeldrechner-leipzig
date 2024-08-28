@@ -14,7 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import {
   StepRoot,
@@ -24,27 +23,23 @@ import {
 import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
+import { useStateContext } from "@/components/context";
 
 const step = stepsConfig[5];
 
 export default function StepCommunity() {
   const { push } = useRouter();
-  const [state, dispatch] = useStepsMachine();
+  const [state, setState] = useStateContext();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    dispatch({
-      type: "next",
-    });
-    const nextStep = stepsConfig[state.currentStep].next(state.context);
+
+    const nextStep = step.next(state);
     push(`${stepsConfig[nextStep].id}`);
   }
 
   const handleBack = useCallback(() => {
-    dispatch({ type: "previous" });
-
-    const previousStep = stepsConfig[state.currentStep].previous;
-    push(`${stepsConfig[previousStep].id}`);
+    push(`${stepsConfig[step.previous].id}`);
   }, [state]);
 
   return (
@@ -64,7 +59,7 @@ export default function StepCommunity() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {state.context.community.map((person, index) => (
+                {state.community.map((person, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium w-full">
                       {person.name}

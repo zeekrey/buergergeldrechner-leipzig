@@ -15,68 +15,65 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useStepsMachine } from "@/lib/machine";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback } from "react";
 import { produce } from "immer";
-import { type TIncome, incomeType } from "@/lib/types";
+import { type TIncome, TPerson, incomeType } from "@/lib/types";
 import {
   StepRoot,
   StepTitle,
   StepDescription,
 } from "@/components/ui/step-primitives";
 import { stepsConfig } from "@/lib/machine";
-import { groupBy, flattenIncome } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useStateContext } from "@/components/context";
 
 const step = stepsConfig[7];
 
 export default function StepSalary() {
   const { push } = useRouter();
-  const [state, dispatch] = useStepsMachine();
-  const [income, setIncome] = useState(flattenIncome(state.context.community));
+  const [state, setState] = useStateContext();
 
-  const incomeSum = useMemo(
-    () => income.reduce((acc, curr) => acc + Number(curr.amount), 0),
-    [income]
+  // const incomeSum = useMemo(
+  //   () => flattendedIncome.reduce((acc, curr) => acc + Number(curr.amount), 0),
+  //   [flattendedIncome]
+  // );
+
+  const handleRemove = useCallback(
+    (person: TPerson, income: TIncome) => {
+      const newState = produce(state, (draft) => {
+        const personIndex = draft.community.findIndex(
+          (_person) => _person.id === person.id
+        );
+        if (personIndex !== -1) {
+          const incomeIndex = draft.community[personIndex].income.findIndex(
+            (_income) => _income.id === income.id
+          );
+          if (incomeIndex !== -1)
+            draft.community[personIndex].income.splice(incomeIndex, 1);
+        }
+      });
+
+      setState(newState);
+    },
+    [state]
   );
 
-  useEffect(() => {
-    setIncome(flattenIncome(state.context.community));
-  }, [state]);
-
-  const handleRemove = useCallback((index: number) => {
-    setIncome(
-      produce((draft) => {
-        draft.splice(index, 1);
-      })
-    );
-  }, []);
-
   function handleSubmit() {
-    const res = groupBy<TIncome>(income, "name");
-
-    dispatch({
-      type: "next",
-      state: produce(state, (draft) => {
-        Object.entries(res).forEach(([key, value]) => {
-          const index = draft.context.community.findIndex(
-            (pers) => pers.name === key
-          );
-          if (index !== -1) draft.context.community[index].income = value;
-        });
-      }),
-    });
-
-    const nextStep = stepsConfig[state.currentStep].next(state.context);
-    push(`${stepsConfig[nextStep].id}`);
+    // const res = groupBy<TIncome>(income, "name");
+    // const newState = produce(state, (draft) => {
+    //   Object.entries(res).forEach(([key, value]) => {
+    //     const index = draft.community.findIndex((pers) => pers.name === key);
+    //     if (index !== -1) draft.community[index].income = value;
+    //   });
+    // });
+    // setState(newState);
+    // const nextStep = step.next(newState);
+    // push(`${stepsConfig[nextStep].id}`);
   }
 
   const handleBack = useCallback(() => {
-    dispatch({ type: "previous" });
-
-    const previousStep = stepsConfig[state.currentStep].previous;
-    push(`${stepsConfig[previousStep].id}`);
+    push(`${stepsConfig[step.previous].id}`);
   }, [state]);
 
   return (
@@ -98,53 +95,51 @@ export default function StepSalary() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {income.map((person, index) => (
-                <TableRow key={person.id}>
-                  <TableCell>{person.name}</TableCell>
-                  <TableCell>{incomeType[person.type].label}</TableCell>
-                  <TableCell className="">
-                    {person.amount.toLocaleString("de-DE", {
-                      style: "currency",
-                      currency: "EUR",
-                    })}
-                    {person.type === "EmploymentIncome" && (
-                      <>
-                        {" "}
-                        (
-                        {person.allowance.toLocaleString("de-DE", {
+              {state.community.map((person) => (
+                <>
+                  {person.income?.map((income) => (
+                    <TableRow key={person.id}>
+                      <TableCell>{person.name}</TableCell>
+                      <TableCell>{incomeType[person.type].label}</TableCell>
+                      <TableCell className="">
+                        {income.amount.toLocaleString("de-DE", {
                           style: "currency",
                           currency: "EUR",
                         })}
-                        )
-                      </>
-                    )}
-                  </TableCell>
-                  <TableCell className="flex text-center">
-                    <IncomeDialog
-                      community={state.context.community}
-                      setIncome={setIncome}
-                      selectedPerson={person}
-                    >
-                      <Button variant="ghost" type="button">
-                        <PenIcon className="w-4 h-4" />
-                      </Button>
-                    </IncomeDialog>
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={() => handleRemove(index)}
-                    >
-                      <XCircleIcon className="w-4 h-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                        {income.type === "EmploymentIncome" && (
+                          <>
+                            {" "}
+                            (
+                            {income.allowance.toLocaleString("de-DE", {
+                              style: "currency",
+                              currency: "EUR",
+                            })}
+                            )
+                          </>
+                        )}
+                      </TableCell>
+                      <TableCell className="flex text-center">
+                        <IncomeDialog state={state} setState={setState}>
+                          <Button variant="ghost" type="button">
+                            <PenIcon className="w-4 h-4" />
+                          </Button>
+                        </IncomeDialog>
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          onClick={() => handleRemove(person, income)}
+                        >
+                          <XCircleIcon className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </>
               ))}
+
               <TableRow>
                 <TableCell className="text-center" colSpan={5}>
-                  <IncomeDialog
-                    community={state.context.community}
-                    setIncome={setIncome}
-                  >
+                  <IncomeDialog state={state} setState={setState}>
                     <Button variant="secondary" type="button">
                       <PlusCircleIcon className="w-4 h-4 mr-2" />
                       Einkommen hinzufügen
@@ -158,12 +153,12 @@ export default function StepSalary() {
                 <TableCell colSpan={3} className="font-bold">
                   Gesamteinkommen
                 </TableCell>
-                <TableCell className="text-right" colSpan={2}>
+                {/* <TableCell className="text-right" colSpan={2}>
                   {incomeSum.toLocaleString("de-DE", {
                     style: "currency",
                     currency: "EUR",
                   })}
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             </TableFooter>
           </Table>

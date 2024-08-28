@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { stepsConfig, useStepsMachine } from "@/lib/machine";
+import { stepsConfig } from "@/lib/machine";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
   UserIcon,
   UsersIcon,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { produce } from "immer";
 import {
   StepRoot,
@@ -22,50 +22,56 @@ import {
 } from "@/components/ui/step-primitives";
 import { useRouter } from "next/navigation";
 import { generateId } from "@/lib/utils";
+import { useStateContext } from "@/components/context";
 
+type RadioValue = "with-partner" | "without-partner";
 const step = stepsConfig[1];
 
 export default function StepPartner() {
   const { push } = useRouter();
-  const [state, dispatch] = useStepsMachine();
-  const [partner, setPartner] = useState<"with-partner" | "without-partner">(
-    "without-partner"
+  const [state, setState] = useStateContext();
+
+  const partner = useMemo(
+    () =>
+      state.community.findIndex((person) => person.name === "Partner") !== -1
+        ? "with-partner"
+        : "without-partner",
+    [state]
   );
+
+  const handleChange = useCallback((value: RadioValue) => {
+    const newState = produce(state, (draft) => {
+      /** Add a partner only if not already existing. */
+      if (
+        value === "with-partner" &&
+        draft.community.findIndex((person) => person.name === "Partner") === -1
+      ) {
+        draft.community.push({
+          id: generateId(),
+          type: "adult",
+          name: "Partner",
+        });
+      } else {
+        /** Remove partner if one exists. */
+        const index = draft.community.findIndex(
+          (person) => person.name === "Partner"
+        );
+        if (index !== -1) draft.community.splice(index, 1);
+      }
+    });
+
+    setState(newState);
+  }, []);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch({
-      type: "next",
-      state: produce(state, ({ context }) => {
-        /** Add a partner only if not already existing. */
-        if (
-          partner === "with-partner" &&
-          context.community.findIndex((person) => person.name === "Partner") ===
-            -1
-        ) {
-          context.community.push({
-            id: generateId(),
-            type: "adult",
-            name: "Partner",
-          });
-        } else {
-          /** Remove partner if one exists. */
-          const index = context.community.findIndex(
-            (person) => person.name === "Partner"
-          );
-          if (index !== -1) context.community.splice(index, 1);
-        }
-      }),
-    });
-    const nextStep = stepsConfig[state.currentStep].next(state.context);
+
+    const nextStep = step.next(state);
     push(`${stepsConfig[nextStep].id}`);
   };
 
   const handleBack = useCallback(() => {
-    dispatch({ type: "previous" });
-
-    const previousStep = stepsConfig[state.currentStep].previous;
-    push(`${stepsConfig[previousStep].id}`);
+    push(`${stepsConfig[step.previous].id}`);
   }, [state]);
 
   return (
@@ -76,10 +82,8 @@ export default function StepPartner() {
         <StepContent>
           <RadioGroup
             className="py-6 gap-4 flex flex-col"
-            defaultValue={partner}
-            onValueChange={(value: "with-partner" | "without-partner") =>
-              setPartner(value)
-            }
+            value={partner}
+            onValueChange={(value: RadioValue) => handleChange(value)}
           >
             <div>
               <RadioGroupItem
