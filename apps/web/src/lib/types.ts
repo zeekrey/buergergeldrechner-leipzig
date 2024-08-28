@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
 };
@@ -10,20 +12,90 @@ export type TStep = {
   title: string;
 };
 
-export type TStepContext = {
-  community: TPerson[];
-  isEmployable: boolean;
-  spendings: {
-    rent: number;
-    utilities: number;
-    heating: number;
-    sum: number;
-  };
-  income: {
-    sum: number;
-    allowance?: number;
-  };
-};
+const IncomeTyp = z.enum([
+  "EmploymentIncome",
+  "SelfEmploymentIncome",
+  "ChildAllowance",
+  "AdvanceMaintenancePayment",
+  "Maintenance",
+  "UnemploymentBenefits",
+  "SicknessBenefits",
+  "HousingAllowance",
+  "ChildSupplement",
+  "BAfOG",
+  "ParentalAllowance",
+  "Pension",
+  "MaintenanceContributionFromMasterCraftsmen",
+  "ShortTimeWorkAllowance",
+  "VocationalTrainingAllowance",
+  "TaxFreeSideJob",
+  "VoluntarySocialYear",
+  "OtherIncome",
+]);
+
+const PersonCommon = z.object({
+  id: z.string(),
+  name: z.string(),
+  income: z.optional(
+    z.array(
+      z.object({
+        type: IncomeTyp,
+        amount: z.number(),
+        allowance: z.optional(z.number()),
+        net: z.optional(z.number()),
+        gros: z.optional(z.number()),
+      })
+    )
+  ),
+});
+
+const Adult = z.union([PersonCommon, z.object({ type: z.literal("adult") })]);
+const Child = z.union([
+  PersonCommon,
+  z.object({
+    type: z.literal("child"),
+    age: z.enum(["0-5", "6-13", "14-17", "18+"]),
+  }),
+]);
+const Person = z.union([Adult, Child]);
+
+export const StepContext = z.object({
+  community: z.array(Person),
+  isEmployable: z.boolean(),
+  spendings: z.object({
+    rent: z.number(),
+    utilities: z.number(),
+    heating: z.number(),
+    sum: z.number(),
+  }),
+  income: z.object({
+    sum: z.number(),
+    allowance: z.optional(z.number()),
+  }),
+});
+
+export const StepState = z.object({
+  context: StepContext,
+  currentStep: z.number(),
+  step: z.any(),
+});
+
+export type TStepContext = z.infer<typeof StepContext>;
+
+// export type TStepContext = {
+//   community: TPerson[];
+//   isEmployable: boolean;
+//   spendings: {
+//     rent: number;
+//     utilities: number;
+//     heating: number;
+//     sum: number;
+//   };
+//   income: {
+//     sum: number;
+//     allowance?: number;
+//   };
+// };
 
 export type TPersonCommon = {
   id: string;

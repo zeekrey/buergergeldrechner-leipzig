@@ -1,6 +1,5 @@
 import { Dispatch, createContext, useContext } from "react";
 import { TAction, TStepsState, TStep } from "./types";
-import { useRouter } from "next/navigation";
 
 export const StepsContext = createContext<TStepsState>(null);
 
