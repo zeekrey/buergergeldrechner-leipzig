@@ -88,6 +88,7 @@ export default function StepChildrenCount() {
         age: "0-5",
         income: [
           {
+            id: generateId(),
             type: "ChildAllowance",
             amount: incomeType.ChildAllowance.standardAmount,
           },

@@ -40,9 +40,17 @@ export function StateProvider({
     const localState = localStorage.getItem("state");
 
     if (localState) {
-      const { success, data } = StepContext.safeParse(JSON.parse(localState));
+      const { success, data, error } = StepContext.safeParse(
+        JSON.parse(localState)
+      );
       if (success) {
+        console.log("Syncing new state: ", data);
         setState(data);
+      } else {
+        console.warn(
+          "State objects in localstorage does not match with current version."
+        );
+        console.warn(error.issues);
       }
     }
   }, [setState]);

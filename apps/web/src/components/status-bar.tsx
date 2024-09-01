@@ -1,17 +1,12 @@
 import { Progress } from "./progress";
-import { useStepsMachine } from "@/lib/machine";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { calculateOverall } from "@/lib/calculation";
-import { produce } from "immer";
-import { RotateCcwIcon } from "lucide-react";
+import { useStateContext } from "./context";
 
 export function StatusBar() {
-  const [state] = useStepsMachine();
+  const [state] = useStateContext();
 
-  const result = useMemo(
-    () => calculateOverall(state.context).overall,
-    [state.context]
-  );
+  const result = useMemo(() => calculateOverall(state).overall, [state]);
 
   // const communitySize = useMemo(
   //   () => state.context.community.length,

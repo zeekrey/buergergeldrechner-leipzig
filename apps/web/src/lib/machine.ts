@@ -93,7 +93,7 @@ export const stepsConfig: Record<number, TStep> = {
     id: "monatliche-ausgaben",
     next: () => 7,
     previous: 5,
-    title: "Ihre Monatlichen Ausgaben",
+    title: "Kosten für Unterkunft und Heizung",
   },
   7: {
     description:

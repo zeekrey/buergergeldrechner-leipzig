@@ -50,6 +50,7 @@ export default function StepPartner() {
           id: generateId(),
           type: "adult",
           name: "Partner",
+          income: [],
         });
       } else {
         /** Remove partner if one exists. */

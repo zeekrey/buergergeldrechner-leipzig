@@ -41,6 +41,8 @@ export function flattenIncome(community: TPerson[]) {
     person.income?.forEach((income) => {
       result.push({
         id: person.id,
+        // FIXME:
+        //@ts-ignore
         name: person.name,
         ...income,
       });

@@ -1,5 +1,13 @@
 # buergergeldrechner
 
+## 0.2.1
+
+### Patch Changes
+
+- Auf der Ergebnisseite werden nun die korrekten Texte für Einkommen angezeigt.
+- 87a5660: Ein Fehler wurde behoben, bei dem der Rechner abstürzte, wenn ein veralteter Stand geladen wurde.
+- Einige Texte wurden angepasst.
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,10 +1,7 @@
 import StepResult from "./page";
 import type { Story } from "@ladle/react";
-import { StepsProvider } from "@/components/step-context-provider";
-import { initialStepsState } from "@/lib/machine";
-import { useState } from "react";
+import { StateProvider } from "@/components/context";
 import { coupleWithKids, singleWithoutKids } from "@/config/fixtures";
-import { TStepsState } from "@/lib/types";
 import { stepsConfig } from "@/lib/machine";
 
 const step = stepsConfig[8];
@@ -14,32 +11,24 @@ export const StepResultStoryNegative: Story = () => <StepResult />;
 
 StepResultStory.decorators = [
   (Component) => {
-    const [value, setValue] = useState<TStepsState>({
-      currentStep: 8,
-      step,
-      context: singleWithoutKids,
-    });
+    const value = singleWithoutKids;
 
     return (
-      <StepsProvider initialValue={value} syncValue={setValue}>
+      <StateProvider initialState={value}>
         <Component />
-      </StepsProvider>
+      </StateProvider>
     );
   },
 ];
 
 StepResultStoryNegative.decorators = [
   (Component) => {
-    const [value, setValue] = useState<TStepsState>({
-      currentStep: 8,
-      step,
-      context: coupleWithKids,
-    });
+    const value = coupleWithKids;
 
     return (
-      <StepsProvider initialValue={value} syncValue={setValue}>
+      <StateProvider initialState={value}>
         <Component />
-      </StepsProvider>
+      </StateProvider>
     );
   },
 ];

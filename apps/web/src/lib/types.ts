@@ -36,17 +36,15 @@ const IncomeTyp = z.enum([
 const PersonCommon = z.object({
   id: z.string(),
   name: z.string(),
-  income: z.optional(
-    z.array(
-      z.object({
-        id: z.string(),
-        type: IncomeTyp,
-        amount: z.number(),
-        allowance: z.optional(z.number()),
-        net: z.optional(z.number()),
-        gros: z.optional(z.number()),
-      })
-    )
+  income: z.array(
+    z.object({
+      id: z.string(),
+      type: IncomeTyp,
+      amount: z.number(),
+      allowance: z.optional(z.number()),
+      net: z.optional(z.number()),
+      gros: z.optional(z.number()),
+    })
   ),
 });
 
@@ -57,7 +55,7 @@ const Child = PersonCommon.merge(
     age: z.enum(["0-5", "6-13", "14-17", "18+"]),
   })
 );
-const Person = z.union([Adult, Child]);
+const Person = z.discriminatedUnion("type", [Adult, Child]);
 
 export const StepContext = z.object({
   community: z.array(Person),
@@ -81,6 +79,9 @@ export const StepState = z.object({
 });
 
 export type TStepContext = z.infer<typeof StepContext>;
+export type TPerson = z.infer<typeof Person>;
+export type TChild = z.infer<typeof Child>;
+export type TIncome = z.infer<typeof Person>["income"][0];
 
 // export type TStepContext = {
 //   community: TPerson[];
@@ -97,31 +98,31 @@ export type TStepContext = z.infer<typeof StepContext>;
 //   };
 // };
 
-export type TPersonCommon = {
-  id: string;
-  name: string;
-  isPregnant?: boolean;
-  needsSpecialFood?: boolean;
-  income?: {
-    type: TIncomeType;
-    amount: number;
-    allowance?: number;
-    net?: number;
-    gros?: number;
-  }[];
-};
+// export type TPersonCommon = {
+//   id: string;
+//   name: string;
+//   isPregnant?: boolean;
+//   needsSpecialFood?: boolean;
+//   income: {
+//     type: TIncomeType;
+//     amount: number;
+//     allowance?: number;
+//     net?: number;
+//     gros?: number;
+//   }[];
+// };
 
-export type TAdult = TPersonCommon & {
-  type: "adult";
-};
+// export type TAdult = TPersonCommon & {
+//   type: "adult";
+// };
 
-export type TChild = TPersonCommon & {
-  type: "child";
-  age: "0-5" | "6-13" | "14-17" | "18+";
-  isInTraining?: boolean;
-};
+// export type TChild = TPersonCommon & {
+//   type: "child";
+//   age: "0-5" | "6-13" | "14-17" | "18+";
+//   isInTraining?: boolean;
+// };
 
-export type TPerson = TAdult | TChild;
+// export type TPerson = TAdult | TChild;
 
 export type TIncomeType =
   | "EmploymentIncome"
@@ -154,14 +155,18 @@ export type TAction = {
   type: "next" | "previous" | "load";
 };
 
-export type TIncome = {
-  id: string;
-  name: string;
-  type: TIncomeType;
-  amount: number;
-  allowance?: number;
-  gros?: number;
-  net?: number;
+// export type TIncome = {
+//   id: string;
+//   name: string;
+//   type: TIncomeType;
+//   amount: number;
+//   allowance?: number;
+//   gros?: number;
+//   net?: number;
+// };
+
+export const allowanceType = {
+  insurance: "Pauschale für angemessene private Versicherungen",
 };
 
 export const incomeType: {

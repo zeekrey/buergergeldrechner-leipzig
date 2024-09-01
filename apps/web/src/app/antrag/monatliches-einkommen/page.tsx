@@ -16,7 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { useCallback } from "react";
+import { Fragment, useCallback } from "react";
 import { produce } from "immer";
 import { type TIncome, TPerson, incomeType } from "@/lib/types";
 import {
@@ -33,11 +33,6 @@ const step = stepsConfig[7];
 export default function StepSalary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
-
-  // const incomeSum = useMemo(
-  //   () => flattendedIncome.reduce((acc, curr) => acc + Number(curr.amount), 0),
-  //   [flattendedIncome]
-  // );
 
   const handleRemove = useCallback(
     (person: TPerson, income: TIncome) => {
@@ -60,16 +55,8 @@ export default function StepSalary() {
   );
 
   function handleSubmit() {
-    // const res = groupBy<TIncome>(income, "name");
-    // const newState = produce(state, (draft) => {
-    //   Object.entries(res).forEach(([key, value]) => {
-    //     const index = draft.community.findIndex((pers) => pers.name === key);
-    //     if (index !== -1) draft.community[index].income = value;
-    //   });
-    // });
-    // setState(newState);
-    // const nextStep = step.next(newState);
-    // push(`${stepsConfig[nextStep].id}`);
+    const nextStep = step.next(state);
+    push(`${stepsConfig[nextStep].id}`);
   }
 
   const handleBack = useCallback(() => {
@@ -96,11 +83,11 @@ export default function StepSalary() {
             </TableHeader>
             <TableBody>
               {state.community.map((person) => (
-                <>
+                <Fragment key={person.id}>
                   {person.income?.map((income) => (
-                    <TableRow key={person.id}>
+                    <TableRow key={income.id}>
                       <TableCell>{person.name}</TableCell>
-                      <TableCell>{incomeType[person.type].label}</TableCell>
+                      <TableCell>{incomeType[income.type].label}</TableCell>
                       <TableCell className="">
                         {income.amount.toLocaleString("de-DE", {
                           style: "currency",
@@ -119,7 +106,12 @@ export default function StepSalary() {
                         )}
                       </TableCell>
                       <TableCell className="flex text-center">
-                        <IncomeDialog state={state} setState={setState}>
+                        <IncomeDialog
+                          state={state}
+                          setState={setState}
+                          selectedPerson={person}
+                          selectedIncome={income}
+                        >
                           <Button variant="ghost" type="button">
                             <PenIcon className="w-4 h-4" />
                           </Button>
@@ -134,7 +126,7 @@ export default function StepSalary() {
                       </TableCell>
                     </TableRow>
                   ))}
-                </>
+                </Fragment>
               ))}
 
               <TableRow>

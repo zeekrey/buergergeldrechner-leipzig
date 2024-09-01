@@ -43,6 +43,7 @@ export default function StepEmployable() {
             id: generateId(),
             type: "adult",
             name: "Antragsteller",
+            income: [],
           });
         }
       });

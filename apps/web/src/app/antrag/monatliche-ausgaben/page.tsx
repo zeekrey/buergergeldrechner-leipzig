@@ -27,7 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { produce } from "immer";
 import {
   StepRoot,
@@ -42,7 +42,6 @@ import { useStateContext } from "@/components/context";
 const step = stepsConfig[6];
 
 type TFormData = {
-  hasNoSpendings: boolean;
   rent: number;
   utilities: number;
   heating: number;
@@ -51,20 +50,29 @@ type TFormData = {
 export default function StepSpending() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
+  const [hasNoSpendings, setHasNoSpendings] = useState(false);
 
   const form = useForm<TFormData>({
     defaultValues: {
-      rent: state.spendings.rent ?? 0,
-      utilities: state.spendings.utilities ?? 0,
-      heating: state.spendings.heating ?? 0,
+      rent: 0,
+      utilities: 0,
+      heating: 0,
     },
   });
 
-  /** TODO: Not sure if this can be optimized. */
-  const rent = form.watch("rent");
-  const utilities = form.watch("utilities");
-  const heating = form.watch("heating");
-  const hasNoSpendings = form.watch("hasNoSpendings");
+  /** The form default values are only evaluated at first render. That's why we need to update the default values once localstorage is loaded. */
+  useEffect(() => {
+    form.reset({
+      rent: state.spendings.rent,
+      utilities: state.spendings.utilities,
+      heating: state.spendings.heating,
+    });
+  }, [state]);
+
+  const [rent, heating, utilities] = useWatch({
+    control: form.control,
+    name: ["rent", "heating", "utilities"],
+  });
 
   const sum = Number(rent ?? 0) + Number(utilities ?? 0) + Number(heating ?? 0);
 
@@ -90,32 +98,30 @@ export default function StepSpending() {
     push(`${stepsConfig[step.previous].id}`);
   }, [state]);
 
+  const handleHasNoSpendingsChange = useCallback(() => {
+    setHasNoSpendings(!hasNoSpendings);
+    form.reset();
+  }, [hasNoSpendings]);
+
   return (
     <StepRoot id={step.id}>
       <StepTitle>{step.title}</StepTitle>
       <StepDescription>{step.description}</StepDescription>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           <StepContent>
-            <FormField
-              control={form.control}
-              name="hasNoSpendings"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Mir entstehen keine Kosten für Unterkunft und Heizung
-                    </FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <div>
+                <Checkbox
+                  checked={hasNoSpendings}
+                  onCheckedChange={handleHasNoSpendingsChange}
+                />
+              </div>
+              <div className="space-y-1 leading-none">
+                <div>Mir entstehen keine Kosten für Unterkunft und Heizung</div>
+              </div>
+            </div>
             <ScrollArea className="sm:h-[380px]">
               <Table>
                 <TableCaption>Ihre monatlichen Kosten</TableCaption>

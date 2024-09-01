@@ -42,15 +42,13 @@ import { calculateSalary } from "@/lib/calculation";
 import { generateId } from "@/lib/utils";
 
 type TFormData = {
-  person: TPerson;
+  person: TPerson["id"];
   type: TIncomeType;
   amount: number;
   gros: number;
   net: number;
   allowance: number;
 };
-
-let nextId = 100;
 
 export const IncomeDialog = ({
   children,
@@ -73,7 +71,7 @@ export const IncomeDialog = ({
 
   const form = useForm<TFormData>({
     defaultValues: {
-      person: selectedPerson ?? state.community[0],
+      person: selectedPerson?.id ?? state.community[0]?.id,
       type: selectedIncome?.type ?? "EmploymentIncome",
       amount: selectedIncome?.amount ?? 0,
       gros: selectedIncome?.gros ?? 0,
@@ -105,13 +103,15 @@ export const IncomeDialog = ({
   const onSubmit = (data: TFormData, event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    console.log(data);
+    // if (selectedPerson && selectedIncome) {
+    //   /** Do an inplace update */
+    //   console.log("kep1");
+    //   return;
+    // }
 
     const selectedPersonIndex = state.community.findIndex(
-      (person) => person.id === data.person.id
+      (person) => person.id === data.person
     );
-
-    console.log("Selected person is: ", selectedPersonIndex);
 
     if (selectedPersonIndex !== -1) {
       const { allowance, income } =
@@ -131,14 +131,18 @@ export const IncomeDialog = ({
 
       if (selectedIncome) {
         /** Inplace update income if it is an existing one. */
+        const selectedIncomeIndex = state.community[
+          selectedPersonIndex
+        ].income.findIndex((income) => income.id === selectedIncome.id);
+
         newState = produce(state, (draft) => {
-          draft.community[selectedPersonIndex].income[selectedIncome.id] = {
+          draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
             ...selectedIncome,
             allowance,
             amount: Number(income),
             type: data.type,
-            gros: data.gros,
-            net: data.net,
+            gros: Number(data.gros),
+            net: Number(data.net),
           };
         });
       } else {
@@ -148,8 +152,8 @@ export const IncomeDialog = ({
             amount: Number(income),
             type: data.type,
             id: generateId(),
-            gros: data.gros,
-            net: data.net,
+            gros: Number(data.gros),
+            net: Number(data.net),
           });
         });
       }
@@ -159,7 +163,6 @@ export const IncomeDialog = ({
     }
 
     setOpen(false);
-    form.reset();
   };
 
   const handleIncomeChange = useCallback(
@@ -207,8 +210,7 @@ export const IncomeDialog = ({
                   <FormLabel>Person</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    // FIXME:
-                    // defaultValue={field.value.id}
+                    defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>

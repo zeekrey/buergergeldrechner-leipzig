@@ -11,7 +11,7 @@ export default function Layout({ children }) {
     <StateProvider initialState={initialStepsState.context}>
       <Toaster position="top-right" />
       <SiteHeader />
-      {/* <StatusBar /> */}
+      <StatusBar />
       <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl">
         {children}
       </main>

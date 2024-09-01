@@ -15,12 +15,12 @@ import {
 } from "@/components/ui/command";
 import { CommandIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { useStepsMachine } from "@/lib/machine";
 import { coupleWithoutKids, singleWithoutKids } from "@/config/fixtures";
+import { useStateContext } from "./context";
 
 export function CommandMenu() {
   const [open, setOpen] = useState(false);
-  const [state, dispatch] = useStepsMachine();
+  const [state, setState] = useStateContext();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -41,18 +41,18 @@ export function CommandMenu() {
   }, []);
 
   const handleSingleWithoutKids = useCallback(() => {
-    dispatch({
-      type: "load",
-      state: { ...state, context: singleWithoutKids },
-    });
+    // dispatch({
+    //   type: "load",
+    //   state: { ...state, context: singleWithoutKids },
+    // });
     setOpen(false);
   }, []);
 
   const handleCoupleWithoutKids = useCallback(() => {
-    dispatch({
-      type: "load",
-      state: { ...state, context: coupleWithoutKids },
-    });
+    // dispatch({
+    //   type: "load",
+    //   state: { ...state, context: coupleWithoutKids },
+    // });
     setOpen(false);
   }, []);
 
