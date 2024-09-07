@@ -93,9 +93,23 @@ export function calculateAllowance(context: TStepContext) {
       return true;
   });
 
-  return legitimate.map((person) => ({
-    id: person.id,
-    type: "insurance",
-    amount: 30,
-  }));
+  /** Allowance from income */
+  const incomeAllowance = context.community.flatMap((group) =>
+    group.income
+      .filter((income) => income.allowance)
+      .map((person) => ({
+        id: person.id,
+        amount: person.allowance,
+        type: "income",
+      }))
+  );
+
+  return [
+    ...legitimate.map((person) => ({
+      id: person.id,
+      type: "insurance",
+      amount: 30,
+    })),
+    ...incomeAllowance,
+  ];
 }

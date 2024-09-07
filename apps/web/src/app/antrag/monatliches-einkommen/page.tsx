@@ -70,9 +70,9 @@ export default function StepSalary() {
       <StepContent>
         <ScrollArea className="sm:h-[380px]">
           <Table>
-            <TableCaption>
+            {/* <TableCaption>
               Monatliches Einkommen Ihrer Bedarfsgemeinschaft
-            </TableCaption>
+            </TableCaption> */}
             <TableHeader>
               <TableRow>
                 <TableHead>Person</TableHead>

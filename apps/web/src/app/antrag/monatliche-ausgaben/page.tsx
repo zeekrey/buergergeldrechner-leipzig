@@ -119,12 +119,14 @@ export default function StepSpending() {
                 />
               </div>
               <div className="space-y-1 leading-none">
-                <div>Mir entstehen keine Kosten für Unterkunft und Heizung</div>
+                <p className="text-sm">
+                  Mir entstehen keine Kosten für Unterkunft und Heizung
+                </p>
               </div>
             </div>
             <ScrollArea className="sm:h-[380px]">
               <Table>
-                <TableCaption>Ihre monatlichen Kosten</TableCaption>
+                {/* <TableCaption>Ihre monatlichen Kosten</TableCaption> */}
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[100px]">Position</TableHead>

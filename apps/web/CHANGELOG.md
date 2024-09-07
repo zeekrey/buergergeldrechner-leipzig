@@ -1,5 +1,14 @@
 # buergergeldrechner
 
+## 0.2.2
+
+### Patch Changes
+
+- Freibeträge für Einkommen aus Erwerbstätigkeiten werden nun in der Kategorie Freibeträge ausgewiesen.
+- Die Ergebnisseite wurden verbessert. Es wird nun korrekt angezeigt, dass wahrscheinlich kein Anspruch besteht. In diesem Fall wird auf Wohngeld und Kinderzuschlag verlinkt (Links fehlen noch).
+- Verbesserungen einige Texte.
+- Ein Fehler bei der Navigation über den Fortschrittsbalken wurde behoben.
+
 ## 0.2.1
 
 ### Patch Changes

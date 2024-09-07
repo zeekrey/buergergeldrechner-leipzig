@@ -1,10 +1,11 @@
 import StepResult from "./page";
 import type { Story } from "@ladle/react";
 import { StateProvider } from "@/components/context";
-import { coupleWithKids, singleWithoutKids } from "@/config/fixtures";
-import { stepsConfig } from "@/lib/machine";
-
-const step = stepsConfig[8];
+import {
+  coupleWithKids,
+  singleWithoutKids,
+  singleWithoutKidsNoNeed,
+} from "@/config/fixtures";
 
 export const StepResultStory: Story = () => <StepResult />;
 export const StepResultStoryNegative: Story = () => <StepResult />;
@@ -23,7 +24,7 @@ StepResultStory.decorators = [
 
 StepResultStoryNegative.decorators = [
   (Component) => {
-    const value = coupleWithKids;
+    const value = singleWithoutKidsNoNeed;
 
     return (
       <StateProvider initialState={value}>

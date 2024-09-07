@@ -45,11 +45,11 @@ export function stepsReducer(
 export const stepsConfig: Record<number, TStep> = {
   0: {
     description:
-      "Willkommen beim Bürgergeldrechner des Jobcenter Leipzig. Ermitteln den Bürgergeldanspruch ihrer Bedarfsgemeinsschaft in wenigen Klicks. Bürgergeldberechtigt, sind nur Personen die erwerbsfähig sind. Das bedeutet, dass Sie in der Lage sein müssen, mindestens drei Stunden pro Tag arbeiten zu können. Sollte dies nicht der Fall sein, haben Sie anspruch auf andere Hilfeleistungen, jedoch keinen Anspruch auf Bürgergeld.",
+      "Bürgergeldberechtigt, sind Personen die erwerbsfähig sind. Das bedeutet, dass Sie in der Lage sein müssen, mindestens drei Stunden pro Tag arbeiten zu können. Sollte dies nicht der Fall sein, können Sie Anspruch auf andere Hilfeleistungen haben.",
     id: "erwerbsfaehig",
     next: () => 1,
     previous: 0,
-    title: "Ermitteln Sie Ihren persönlichen Bürgergeldbedarf",
+    title: "Sind Sie erwerbsfähig?",
   },
   1: {
     description:
@@ -60,7 +60,8 @@ export const stepsConfig: Record<number, TStep> = {
     title: "Leben Sie in einer Partnerschaft?",
   },
   2: {
-    description: "Leben Kinder in Ihren Haushhalt?",
+    description:
+      "Bitte geben Sie an, ob Kinder in Ihrem Haushalt leben. Sie erhalten dann die Möglichkeit genauerer Angaben zu tätigen.",
     id: "kinder",
     next: (ctx) => {
       if (ctx.community.some(({ type }) => type === "child")) {
@@ -70,10 +71,11 @@ export const stepsConfig: Record<number, TStep> = {
       return 5;
     },
     previous: 1,
-    title: "Haben Sie Kinder?",
+    title: "Leben Kinder in Ihrem Haushhalt?",
   },
   3: {
-    description: "Wie viele Kinder leben in Ihrem Haushalt?",
+    description:
+      "Der Bedarf auf Bürgergeld richtet sich nach der Anzahl und dem Alter der Kinder, die in Ihrem Haushalt leben.",
     id: "kinder-anzahl",
     next: () => 5,
     previous: 2,
@@ -81,7 +83,7 @@ export const stepsConfig: Record<number, TStep> = {
   },
   5: {
     description:
-      "Sieht so Ihre Bedarfsgemeinschaft aus? Sie haben nun die Möglichkeit einige Merkmale Ihrer Bedarfsgemeinschaft zu erfassen. Auf welche Person genau dieses Merkmal zutrifft, können Sie im folgenden Schritt bestimmen.",
+      "Sieht so Ihre Bedarfsgemeinschaft aus? Wenn nicht, gehen Sie bitte Schritte zurück um sie anzupassen.",
     id: "bedarfsgemeinschaft",
     next: () => 6,
     previous: 3,
@@ -89,7 +91,8 @@ export const stepsConfig: Record<number, TStep> = {
   },
   6: {
     description:
-      "Tragen Sie hier bitte Ihre Kaltmiete, Heiz- und Betriebskosten ein. Wenn Sie Bürgergeld beziehen, übernimmt Ihr Jobcenter die Kosten für Unterkunft und Heizung in angemessener Höhe (die Höhe der Kosten für die Unterkunft werden regional unterschiedlich berechnet). Ist Ihre Wohnung nicht angemessen, müssen Sie die Kosten möglichst senken.",
+      "Tragen Sie hier bitte Ihre aktuelle Kaltmiete, Heiz- und Betriebskosten ein.",
+    // FIXME: Sollte auch kosten für Unterkunft und Heiztung heißen
     id: "monatliche-ausgaben",
     next: () => 7,
     previous: 5,
@@ -97,15 +100,15 @@ export const stepsConfig: Record<number, TStep> = {
   },
   7: {
     description:
-      "Geben Sie hier bitte jeweils Ihr Brutto- und Nettoeinkommen (bitte beide Werte eintragen) an und wenn zutreffend ebenfalls das Ihrer Partnerin /Ihres Partners.",
+      "Für die Berechnung des Anspruchs geben Sie bitte das Einkommen aller erwerbstätigen Personen ein.",
     id: "monatliches-einkommen",
     next: () => 8,
     previous: 6,
-    title: "Einkommen aus Erwerbstätigkeit",
+    title: "Erfassung des Einkommens",
   },
   8: {
     description:
-      "Auf Basis Ihrer Angaben könnten sie Anspruch auf Bürgergeld haben. Hier sehen Sie Ihr Berechnungsergebnis. Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine unverbindliche Berechnung handelt.",
+      "Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des Bürgergeldes. Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine unverbindliche Berechnung handelt.",
     id: "ergebnis",
     next: () => 10,
     previous: 7,

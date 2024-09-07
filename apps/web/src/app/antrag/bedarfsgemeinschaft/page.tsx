@@ -50,7 +50,7 @@ export default function StepCommunity() {
         <StepContent>
           <ScrollArea className="sm:h-[380px]">
             <Table>
-              <TableCaption>Ihre Bedarfsgemeinschaft</TableCaption>
+              {/* <TableCaption>Ihre Bedarfsgemeinschaft</TableCaption> */}
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">Person</TableHead>

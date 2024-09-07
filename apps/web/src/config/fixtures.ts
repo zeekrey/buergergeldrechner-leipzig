@@ -28,6 +28,33 @@ export const singleWithoutKids: TStepContext = {
   },
 };
 
+export const singleWithoutKidsNoNeed: TStepContext = {
+  community: [
+    {
+      id: generateId(),
+      type: "adult",
+      name: "Antragsteller",
+      income: [
+        {
+          type: "UnemploymentBenefits",
+          amount: 5000,
+        },
+      ],
+    },
+  ],
+  isEmployable: true,
+  spendings: {
+    rent: 350,
+    utilities: 66,
+    heating: 100,
+    sum: 516,
+  },
+  income: {
+    allowance: 348,
+    sum: 602,
+  },
+};
+
 export const coupleWithoutKids: TStepContext = {
   community: [
     {
