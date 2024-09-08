@@ -103,12 +103,6 @@ export const IncomeDialog = ({
   const onSubmit = (data: TFormData, event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // if (selectedPerson && selectedIncome) {
-    //   /** Do an inplace update */
-    //   console.log("kep1");
-    //   return;
-    // }
-
     const selectedPersonIndex = state.community.findIndex(
       (person) => person.id === data.person
     );
@@ -158,7 +152,6 @@ export const IncomeDialog = ({
         });
       }
 
-      console.log("Setting state: ", newState);
       setState(newState);
     }
 

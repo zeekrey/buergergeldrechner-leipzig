@@ -60,7 +60,7 @@ export function calculateSalary({
 
   return {
     allowance: allowance,
-    income: net - allowance,
+    income: net,
   };
 }
 
@@ -88,6 +88,7 @@ export function calculateAllowance(context: TStepContext) {
   const legitimate = context.community.filter((person) => {
     if (
       (person.type === "adult" || person.age === "18+") &&
+      person.income?.length > 0 &&
       person.income?.every((income) => income.type !== "EmploymentIncome")
     )
       return true;

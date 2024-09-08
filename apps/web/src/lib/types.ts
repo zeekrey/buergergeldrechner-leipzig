@@ -81,6 +81,7 @@ export const StepState = z.object({
 export type TStepContext = z.infer<typeof StepContext>;
 export type TPerson = z.infer<typeof Person>;
 export type TChild = z.infer<typeof Child>;
+export type TAdult = z.infer<typeof Adult>;
 export type TIncome = z.infer<typeof Person>["income"][0];
 
 export type TIncomeType =

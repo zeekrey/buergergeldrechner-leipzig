@@ -27,8 +27,6 @@ const defaultAdult: TAdult = {
   id: generateId(),
   name: "Person",
   type: "adult",
-  isPregnant: false,
-  needsSpecialFood: false,
   income: [],
 };
 
@@ -36,8 +34,6 @@ const defaultChild: TChild = {
   id: generateId(),
   name: "Person",
   type: "child",
-  isPregnant: false,
-  needsSpecialFood: false,
   age: "18+",
 };
 
@@ -226,6 +222,40 @@ describe("calculateOverall", () => {
               amount: calculateSalary({
                 gross: 2100,
                 net: 1700,
+                hasMinorChild: false,
+              }).income,
+            },
+          ],
+        },
+        {
+          ...defaultAdult,
+        },
+      ],
+      spendings: {
+        heating: 100,
+        rent: 350,
+        sum: 516,
+        utilities: 66,
+      },
+    };
+
+    const { overall } = calculateOverall(context);
+
+    expect(overall).toEqual(176);
+  });
+
+  test("case #3", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+          income: [
+            {
+              type: "EmploymentIncome",
+              amount: calculateSalary({
+                gross: 2100,
+                net: 1700,
                 hasMinorChild: true,
               }).income,
             },
@@ -272,7 +302,7 @@ describe("calculateOverall", () => {
 
     console.log(rest);
 
-    expect(overall).toEqual(-242);
+    expect(overall).toEqual(-620);
   });
 });
 

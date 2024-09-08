@@ -8,7 +8,6 @@ import { IncomeDialog } from "./income-dialog";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableFooter,
   TableHead,
