@@ -18,10 +18,10 @@ jobs:
       - name: Change Directory
         run: |
           cd apps/web
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
       - name: Install dependencies
         run: pnpm install
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - name: Run Playwright tests
         run: npx playwright test
       - uses: actions/upload-artifact@v4
