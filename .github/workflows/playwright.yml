@@ -26,9 +26,9 @@ jobs:
         run: |
           cd apps/web
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+        run: pnpm --filter buergergeldrechner exec playwright install --with-deps
       - name: Run Playwright tests
-        run: pnpm exec playwright test
+        run: pnpm --filter buergergeldrechner exec playwright test
       - uses: actions/upload-artifact@v4
         if: always()
         with:
