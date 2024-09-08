@@ -6,20 +6,29 @@ jobs:
   test:
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: lts/*
-      - name: Change Directory
+          version: 9
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Change directory and run a command
         run: |
           cd apps/web
-      - name: Install dependencies
-        run: npm install
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install --with-deps
       - name: Run Playwright tests
-        run: npx playwright test
+        run: pnpm exec playwright test
       - uses: actions/upload-artifact@v4
         if: always()
         with:
