@@ -142,7 +142,10 @@ export default function StepSpending() {
                         control={form.control}
                         name="rent"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="relative">
+                            <i className="absolute right-3 top-2 not-italic text-input">
+                              €
+                            </i>
                             <FormControl>
                               <Input
                                 placeholder="0,00€"
@@ -164,7 +167,10 @@ export default function StepSpending() {
                         control={form.control}
                         name="utilities"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="relative">
+                            <i className="absolute right-3 top-2 not-italic text-input">
+                              €
+                            </i>
                             <FormControl>
                               <Input
                                 placeholder="0,00€"
@@ -186,7 +192,10 @@ export default function StepSpending() {
                         control={form.control}
                         name="heating"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="relative">
+                            <i className="absolute right-3 top-2 not-italic text-input">
+                              €
+                            </i>
                             <FormControl>
                               <Input
                                 placeholder="0,00€"
@@ -204,7 +213,10 @@ export default function StepSpending() {
                 <TableFooter>
                   <TableRow>
                     <TableCell className="font-medium">Summe</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right relative">
+                      <i className="absolute right-7 top-6 not-italic text-input">
+                        €
+                      </i>
                       <Input className="m-0" disabled value={sum} />
                     </TableCell>
                   </TableRow>

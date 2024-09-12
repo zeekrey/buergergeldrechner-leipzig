@@ -61,7 +61,7 @@ export const stepsConfig: Record<number, TStep> = {
   },
   2: {
     description:
-      "Bitte geben Sie an, ob Kinder in Ihrem Haushalt leben. Sie erhalten dann die Möglichkeit genauerer Angaben zu tätigen.",
+      "Bitte geben Sie an, ob Kinder in Ihrem Haushalt leben. Sie erhalten dann die Möglichkeit genauere Angaben zu tätigen.",
     id: "kinder",
     next: (ctx) => {
       if (ctx.community.some(({ type }) => type === "child")) {
@@ -100,7 +100,7 @@ export const stepsConfig: Record<number, TStep> = {
   },
   7: {
     description:
-      "Für die Berechnung des Anspruchs geben Sie bitte das Einkommen aller erwerbstätigen Personen ein.",
+      "Für die Berechnung des Anspruchs geben Sie bitte das Einkommen aller erwerbstätigen Personen ein. Es gibt verschiedene Arten von Einkommen. Unter Einkommen hinzufügen stehen die Arten von Einkommen zur Verfügung. Bitte geben Sie alle Einkommen an, welche die Bedarfsgemeinschaft hat.",
     id: "monatliches-einkommen",
     next: () => 8,
     previous: 6,

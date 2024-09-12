@@ -26,16 +26,26 @@ export function Result({
   return (
     <div className="py-6 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-5">
       <div className="flex items-center">
-        <p className="text-base leading-7 text-gray-600">
-          Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des Bürgergeldes.
-          Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab.
-          Bitte beachten Sie, dass es sich hierbei um eine unverbindliche
-          Berechnung handelt.
-        </p>
+        {isPositive ? (
+          <p className="text-base leading-7 text-gray-600">
+            Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des
+            Bürgergeldes. Ob Sie tatsächlich Anspruch haben, hängt von weiteren
+            Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine
+            unverbindliche Berechnung handelt.
+          </p>
+        ) : (
+          <p className="text-base leading-7 text-gray-600">
+            Entsprechend Ihrer Angaben werden Sie keinen Anspruch auf Bürgergeld
+            haben. Verfügen Sie über niedriges Einkommen, dann können Sie
+            Wohngeld beantragen. Verfügen Sie über niedriges Einkommen und haben
+            Kinder in Ihrer Bedarfsgemeinschaft können Sie Kinderzuschlag
+            beantragen.
+          </p>
+        )}
       </div>
       <div
         className={cn(
-          "row-span-2 rounded-2xl bg-green-50 px-8 text-center ring-1 ring-inset ring-green-200 lg:flex lg:flex-col lg:justify-center lg:py-16",
+          "row-span-2 rounded-2xl bg-green-50 px-8 text-center ring-1 ring-inset ring-green-200 md:flex md:flex-col md:justify-center lg:py-16",
           { "ring-yellow-400 bg-yellow-50": !isPositive }
         )}
       >

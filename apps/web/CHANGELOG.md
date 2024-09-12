@@ -1,5 +1,11 @@
 # buergergeldrechner
 
+## 0.2.3
+
+### Patch Changes
+
+- Es ist nun möglich den Bürgergeldrechner über die Navigationsleiste neu zu starten.
+
 ## 0.2.2
 
 ### Patch Changes
