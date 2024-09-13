@@ -321,14 +321,14 @@ export const IncomeDialog = ({
                     {allowance > 0 ? (
                       <>
                         Durch das eingegeben Einkommen aus Erwerbstätigkeit wird
-                        Ihnen eine Freibetrag von{" "}
+                        Ihnen ein Freibetrag von{" "}
                         <b>
                           {allowance.toLocaleString("de-DE", {
                             style: "currency",
                             currency: "EUR",
                           })}
                         </b>{" "}
-                        angerechnet.
+                        gewährt.
                       </>
                     ) : (
                       <>

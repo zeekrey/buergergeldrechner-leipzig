@@ -158,7 +158,7 @@ export default function StepSummary() {
                         </TableRow>
                         <TableRow className="border-none">
                           <TableCell className="py-2 text-xs">
-                            Kaltmiete
+                            Kaltmiete (oder Schuldzins bei Wohneigentum)
                           </TableCell>
                           <TableCell className="py-2 text-xs text-right">
                             {state.spendings.rent.toLocaleString("de-DE", {

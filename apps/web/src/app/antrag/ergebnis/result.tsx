@@ -50,7 +50,10 @@ export function Result({
         )}
       >
         <p className="flex items-baseline justify-center gap-x-2">
-          <span className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
+          <span
+            className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900"
+            data-testid="result"
+          >
             {isPositive ? overall : "Kein Anspruch"}
           </span>
           {isPositive && (
@@ -103,7 +106,7 @@ export function Result({
               aria-hidden="true"
               className="h-6 w-5 flex-none text-primary"
             />
-            {communitySize} {communitySize < 1 ? "Personen" : "Person"}
+            {communitySize} {communitySize > 1 ? "Personen" : "Person"}
           </li>
           <li className="flex gap-x-3">
             <PiggyBankIcon

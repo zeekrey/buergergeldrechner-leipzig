@@ -71,7 +71,7 @@ export const stepsConfig: Record<number, TStep> = {
       return 5;
     },
     previous: 1,
-    title: "Leben Kinder in Ihrem Haushhalt?",
+    title: "Leben Kinder in Ihrem Haushalt?",
   },
   3: {
     description:
