@@ -127,7 +127,6 @@ export default function StepSalary() {
                   ))}
                 </Fragment>
               ))}
-
               <TableRow>
                 <TableCell className="text-center" colSpan={5}>
                   <IncomeDialog state={state} setState={setState}>

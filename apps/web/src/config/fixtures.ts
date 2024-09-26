@@ -121,7 +121,7 @@ export const coupleWithKids: TStepContext = {
       id: "1724096620691548",
       name: "Kind 1",
       type: "child",
-      age: "18+",
+      age: 19,
       income: [
         {
           type: "ChildAllowance",
@@ -133,7 +133,7 @@ export const coupleWithKids: TStepContext = {
       id: "1724096622144916",
       type: "child",
       name: "Kind 2",
-      age: "0-5",
+      age: 4,
       income: [
         {
           type: "ChildAllowance",

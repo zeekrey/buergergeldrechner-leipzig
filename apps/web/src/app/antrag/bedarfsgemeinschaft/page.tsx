@@ -14,7 +14,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
+import {
+  ArrowLeftCircleIcon,
+  ArrowRightCircleIcon,
+  XCircleIcon,
+} from "lucide-react";
 import {
   StepRoot,
   StepTitle,
@@ -24,6 +28,10 @@ import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useStateContext } from "@/components/context";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TPerson } from "@/lib/types";
+import { produce } from "immer";
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 const step = stepsConfig[5];
 
@@ -42,6 +50,40 @@ export default function StepCommunity() {
     push(`${stepsConfig[step.previous].id}`);
   }, [state]);
 
+  const handleRemove = useCallback(
+    (person: TPerson) => {
+      setState(
+        produce(state, (draft) => {
+          const index = draft.community.findIndex(
+            (pers) => pers.id === person.id
+          );
+          if (index !== -1) draft.community.splice(index, 1);
+        })
+      );
+    },
+    [state]
+  );
+
+  const handlePregnantChange = useCallback(
+    (person: TPerson, checked: CheckedState) => {
+      setState(
+        produce(state, (draft) => {
+          const index = draft.community.findIndex(
+            (pers) => pers.id === person.id
+          );
+
+          if (index !== -1)
+            draft.community[index].attributes = {
+              ...state.community[index].attributes,
+              isPregnant: Boolean(checked),
+            };
+        })
+      );
+    },
+
+    [state]
+  );
+
   return (
     <StepRoot id={step.id}>
       <StepTitle>{step.title}</StepTitle>
@@ -54,8 +96,9 @@ export default function StepCommunity() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">Person</TableHead>
-                  {/* <TableHead className="text-right">Schwanger</TableHead> */}
-                  {/* <TableHead className="text-right">Ausbildung</TableHead> */}
+                  <TableHead className="text-center">Schwanger</TableHead>
+                  {/* <TableHead className="text-center">Krankheit</TableHead> */}
+                  <TableHead className="text-center"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -69,12 +112,29 @@ export default function StepCommunity() {
                         </span>
                       )}
                     </TableCell>
+                    {/* isPregnant */}
+                    <TableCell className="text-center">
+                      {(person.type === "adult" || person.age > 10) && (
+                        <Checkbox
+                          checked={person.attributes?.isPregnant}
+                          onCheckedChange={(checked) =>
+                            handlePregnantChange(person, checked)
+                          }
+                        />
+                      )}
+                    </TableCell>
                     {/* <TableCell className="text-center">
-                    <Checkbox />
-                  </TableCell> */}
-                    {/* <TableCell className="text-center">
-                    <Checkbox />
-                  </TableCell> */}
+                      <Checkbox />
+                    </TableCell> */}
+                    <TableCell className="text-center">
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        onClick={() => handleRemove(person)}
+                      >
+                        <XCircleIcon className="w-4 h-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

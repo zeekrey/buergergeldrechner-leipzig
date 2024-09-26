@@ -54,13 +54,13 @@ export function Result({
             className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900"
             data-testid="result"
           >
-            {isPositive ? overall : "Kein Anspruch"}
+            {isPositive
+              ? overall.toLocaleString("de-DE", {
+                  currency: "EUR",
+                  style: "currency",
+                })
+              : "Kein Anspruch"}
           </span>
-          {isPositive && (
-            <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
-              €
-            </span>
-          )}
         </p>
         {overall > 0 ? (
           <Button asChild>

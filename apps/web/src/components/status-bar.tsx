@@ -31,7 +31,12 @@ export function StatusBar() {
           </div>
           <div className="flex flex-col justify-center gap-2">
             <small className="text-xs">Möglicher Anspruch:</small>
-            <strong className="text-lg text-right">{result} €</strong>
+            <strong className="text-lg text-right">
+              {result.toLocaleString("de-DE", {
+                currency: "EUR",
+                style: "currency",
+              })}
+            </strong>
           </div>
         </div>
         {/* <div className="text-xs flex w-full justify-between items-center">

@@ -1,17 +1,22 @@
-import { TStepContext, TChild } from "./types";
+import { TStepContext, TChild, TPerson } from "./types";
 import * as data from "../config/data.json";
-import { flattenIncome } from "./utils";
+import {
+  additionalChildNeedsCategory,
+  flattenIncome,
+  getChildAgeGroup,
+} from "./utils";
 
 export function calculateCommunityNeed(context: TStepContext) {
-  const isSingle = context.community.length === 1;
+  const isSingle =
+    context.community.filter((person) => person.type === "adult").length === 1;
 
-  const community = context.community.map(({ name, type, ...attributes }) => {
+  const community = context.community.map(({ name, type, ...rest }) => {
     let amount: number;
 
     if (type === "adult") {
       amount = isSingle ? data[type]["single"] : data[type]["partner"];
     } else if (type === "child") {
-      amount = data[type][(attributes as TChild).age];
+      amount = data[type][getChildAgeGroup((rest as TChild).age)];
     }
 
     return { name, amount };
@@ -23,6 +28,163 @@ export function calculateCommunityNeed(context: TStepContext) {
     need,
     community,
   };
+}
+
+type TAdditional = { name: string; amount: number };
+
+export function calculateAdditionalNeeds(context: TStepContext) {
+  const isSingle =
+    context.community.filter((person) => person.type === "adult").length === 1;
+
+  const additionalNeeds = context.community.reduce<
+    {
+      personId: string;
+      name: string;
+      additionals: TAdditional[];
+    }[]
+  >((acc, { name, type, ...rest }) => {
+    let additionals: TAdditional[] = [];
+    /** isPregnant, 17% of base need */
+    if (rest.attributes?.isPregnant) {
+      if (isSingle)
+        additionals.push({
+          name: "Schwanger",
+          amount: Math.round(data[type]["single"] * 0.17 * 100) / 100,
+        });
+      else {
+        if ((type = "adult"))
+          additionals.push({
+            name: "Schwanger",
+            amount: Math.round(data[type]["partner"] * 0.17 * 100) / 100,
+          });
+        else {
+          if (getChildAgeGroup((rest as TChild).age) === "18+")
+            additionals.push({
+              name: "Schwanger",
+              amount:
+                Math.round(data[type][(rest as TChild).age] * 0.17 * 100) / 100,
+            });
+          if (getChildAgeGroup((rest as TChild).age) === "14-17")
+            additionals.push({
+              name: "Schwanger",
+              amount:
+                Math.round(
+                  data[type][getChildAgeGroup((rest as TChild).age)] *
+                    0.17 *
+                    100
+                ) / 100,
+            });
+        }
+      }
+    }
+
+    return additionals.length
+      ? [...acc, { personId: rest.id, name, additionals }]
+      : acc;
+  }, []);
+
+  /** single with kids */
+  if (isSingle) {
+    let additionals: TAdditional[] = [];
+    const baseNeed = data["adult"].single;
+
+    const children = context.community.filter(
+      (person) => person.type === "child"
+    );
+
+    const ages = children.map((child) => child.age);
+    const under7 = ages.filter((age) => age < 7).length;
+    const under16 = ages.filter((age) => age < 16).length;
+    const over16 = ages.filter((age) => age > 16).length;
+    const over7 = ages.filter((age) => age > 7).length;
+    const totalChildren = children.length;
+
+    for (const category of additionalChildNeedsCategory) {
+      switch (category.description) {
+        case "1 Kind unter 7 Jahre":
+          if (under7 === 1 && totalChildren === 1) {
+            additionals.push({
+              name: category.description,
+              amount: (baseNeed * category.percentage) / 100,
+            });
+          }
+          break;
+        case "1 Kind über 7 Jahre":
+          if (over7 === 1 && totalChildren === 1) {
+            additionals.push({
+              name: category.description,
+              amount: (baseNeed * category.percentage) / 100,
+            });
+          }
+          break;
+        case "2 Kinder unter 16 Jahre":
+          if (under16 === 2 && over16 === 0) {
+            additionals.push({
+              name: category.description,
+              amount: (baseNeed * category.percentage) / 100,
+            });
+          }
+          break;
+        case "2 Kinder über 16 Jahre":
+          if (over16 === 2) {
+            additionals.push({
+              name: category.description,
+              amount: (baseNeed * category.percentage) / 100,
+            });
+          }
+          break;
+        case "1 Kind über 7 Jahre und 1 Kind über 16 Jahre":
+          if (over7 === 1 && over16 === 1 && totalChildren === 2) {
+            additionals.push({
+              name: category.description,
+              amount: (baseNeed * category.percentage) / 100,
+            });
+          }
+          break;
+        case "1 Kind unter 7 Jahre und 1 Kind unter 16 Jahre":
+          if (under7 === 1 && under16 === 1 && totalChildren === 2) {
+            additionals.push({
+              name: category.description,
+              amount: (baseNeed * category.percentage) / 100,
+            });
+          }
+          break;
+        case "3 Kinder":
+          if (totalChildren === 3) {
+            additionals.push({
+              name: category.description,
+              amount: (baseNeed * category.percentage) / 100,
+            });
+          }
+          break;
+        case "4 Kinder":
+          if (totalChildren === 4) {
+            additionals.push({
+              name: category.description,
+              amount: (baseNeed * category.percentage) / 100,
+            });
+          }
+          break;
+        case "ab 5 Kinder":
+          if (totalChildren >= 5) {
+            additionals.push({
+              name: category.description,
+              amount: (baseNeed * category.percentage) / 100,
+            });
+          }
+          break;
+      }
+    }
+
+    if (additionals.length)
+      additionalNeeds.push({
+        personId: context.community[0].id,
+        name: context.community[0].name,
+        additionals,
+      });
+  }
+
+  return additionalNeeds;
 }
 
 export function calculateSalary({
@@ -66,9 +228,19 @@ export function calculateSalary({
 
 export function calculateOverall(context: TStepContext) {
   const { need } = calculateCommunityNeed(context);
+  const additionalNeeds = calculateAdditionalNeeds(context);
   const flattenedIncome = flattenIncome(context.community);
   const incomeSum = flattenedIncome.reduce((acc, curr) => acc + curr.amount, 0);
   const allowance = calculateAllowance(context);
+
+  const additionalNeedsSum = additionalNeeds.reduce((totalSum, item) => {
+    // Sum the values of additionals for the current item
+    const additionalsSum = item.additionals.reduce(
+      (sum, additional) => sum + additional.amount,
+      0
+    );
+    return totalSum + additionalsSum; // Add to the total sum
+  }, 0);
 
   return {
     need,
@@ -77,6 +249,7 @@ export function calculateOverall(context: TStepContext) {
     allowance,
     overall:
       need +
+      additionalNeedsSum +
       context.spendings.sum +
       allowance.reduce((acc, curr) => acc + curr.amount, 0) -
       incomeSum,
@@ -87,7 +260,7 @@ export function calculateAllowance(context: TStepContext) {
   /** Private insurance */
   const legitimate = context.community.filter((person) => {
     if (
-      (person.type === "adult" || person.age === "18+") &&
+      (person.type === "adult" || getChildAgeGroup(person.age) === "18+") &&
       person.income?.length > 0 &&
       person.income?.every((income) => income.type !== "EmploymentIncome")
     )

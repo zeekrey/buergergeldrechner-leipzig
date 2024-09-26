@@ -43,13 +43,6 @@ export default function StepChildrenCount() {
     [state]
   );
 
-  const childAges: { [key in TChild["age"]]: string } = {
-    "0-5": "0-5 Jahre",
-    "6-13": "6-13 Jahre",
-    "14-17": "14-17 Jahre",
-    "18+": "18+ Jahre",
-  };
-
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -85,7 +78,7 @@ export default function StepChildrenCount() {
         id: generateId(),
         type: "child",
         name: `Kind ${children.length + 1}`,
-        age: "0-5",
+        age: 1,
         income: [
           {
             id: generateId(),
@@ -121,20 +114,25 @@ export default function StepChildrenCount() {
                   {child.name}
                 </div>
                 <Select
-                  value={child.age}
+                  value={child.age.toString()}
                   onValueChange={(value) =>
-                    handleChange(value as TChild["age"], child.id)
+                    handleChange(Number(value), child.id)
                   }
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Altersgruppe" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(childAges).map(([key, value]) => (
-                      <SelectItem key={key} value={key}>
-                        {value}
-                      </SelectItem>
-                    ))}
+                    {Array.from({ length: 24 }, (_, i) => i + 1).map(
+                      (value) => (
+                        <SelectItem
+                          key={value.toString()}
+                          value={value.toString()}
+                        >
+                          {value}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
                 <Button

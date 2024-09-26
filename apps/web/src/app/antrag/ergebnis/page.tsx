@@ -34,6 +34,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const step = stepsConfig[8];
 
 import {
+  calculateAdditionalNeeds,
   calculateAllowance,
   calculateCommunityNeed,
   calculateOverall,
@@ -74,11 +75,28 @@ export default function StepSummary() {
 
   const communitySize = useMemo(() => state.community.length, [state]);
   const need = useMemo(() => calculateCommunityNeed(state), [state]);
+  const additionalNeeds = useMemo(
+    () => calculateAdditionalNeeds(state),
+    [state]
+  );
   const result = useMemo(() => calculateOverall(state), [state]);
   const allowance = useMemo(() => calculateAllowance(state), [state]);
   const allowanceSum = useMemo(
     () => result.allowance.reduce((acc, curr) => acc + curr.amount, 0),
     [allowance]
+  );
+
+  const additionalNeedsSum = useMemo(
+    () =>
+      additionalNeeds.reduce((totalSum, item) => {
+        // Sum the values of additionals for the current item
+        const additionalsSum = item.additionals.reduce(
+          (sum, additional) => sum + additional.amount,
+          0
+        );
+        return totalSum + additionalsSum; // Add to the total sum
+      }, 0),
+    [additionalNeeds]
   );
 
   const handleBack = useCallback(() => {
@@ -143,6 +161,33 @@ export default function StepSummary() {
                               })}
                             </TableCell>
                           </TableRow>
+                        ))}
+                        {/* Mehrbedarf */}
+                        <TableRow>
+                          <TableHead className="w-full">Mehrbedarf</TableHead>
+                          <TableHead className="text-right">
+                            {additionalNeedsSum.toLocaleString("de-DE", {
+                              style: "currency",
+                              currency: "EUR",
+                            })}
+                          </TableHead>
+                        </TableRow>
+                        {additionalNeeds.map((need) => (
+                          <Fragment key={need.personId}>
+                            {need.additionals.map((additional) => (
+                              <TableRow className="border-none">
+                                <TableCell className="py-2 text-xs">
+                                  {need.name} ({additional.name})
+                                </TableCell>
+                                <TableCell className="py-2 text-xs text-right">
+                                  {additional.amount.toLocaleString("de-DE", {
+                                    style: "currency",
+                                    currency: "EUR",
+                                  })}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </Fragment>
                         ))}
                         {/* Ausgaben */}
                         <TableRow>

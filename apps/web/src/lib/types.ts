@@ -46,13 +46,25 @@ const PersonCommon = z.object({
       gros: z.optional(z.number()),
     })
   ),
+  attributes: z.object({
+    isPregnant: z.boolean(),
+    isSingleParent: z.boolean(),
+    diseases: z.array(
+      z.enum([
+        "renalInsufficiency",
+        "liverDiseases",
+        "celiacDisease",
+        "cysticFibrosis",
+      ])
+    ),
+  }),
 });
 
 const Adult = PersonCommon.merge(z.object({ type: z.literal("adult") }));
 const Child = PersonCommon.merge(
   z.object({
     type: z.literal("child"),
-    age: z.enum(["0-5", "6-13", "14-17", "18+"]),
+    age: z.number(),
   })
 );
 const Person = z.discriminatedUnion("type", [Adult, Child]);

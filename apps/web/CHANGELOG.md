@@ -1,5 +1,11 @@
 # buergergeldrechner
 
+## 0.3.0
+
+### Minor Changes
+
+- Es wurde die Möglichkeit Mehrbedarf zu erfassen hinzugefügt. Derzeit werden Mehrbedarfe für Alleinerziehende und werdende Mütter berücksichtigt.
+
 ## 0.2.3
 
 ### Patch Changes

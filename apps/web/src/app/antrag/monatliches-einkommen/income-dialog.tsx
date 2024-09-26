@@ -114,9 +114,7 @@ export const IncomeDialog = ({
               gross: Number(data.gros),
               net: Number(data.net),
               hasMinorChild: state.community.some(
-                (person) =>
-                  person.type === "child" &&
-                  ["0-5", "6-13", "14-17"].includes(person.age)
+                (person) => person.type === "child" && person.age < 18
               ),
             })
           : { allowance: 0, income: data.amount };
@@ -166,9 +164,7 @@ export const IncomeDialog = ({
         gross: gros,
         net,
         hasMinorChild: state.community.some(
-          (person) =>
-            person.type === "child" &&
-            ["0-5", "6-13", "14-17"].includes(person.age)
+          (person) => person.type === "child" && person.age < 18
         ),
       });
 

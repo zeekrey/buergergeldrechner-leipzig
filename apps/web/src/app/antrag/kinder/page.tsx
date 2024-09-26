@@ -51,7 +51,7 @@ export default function StepChildren() {
             id: generateId(),
             name: "Kind 1",
             type: "child",
-            age: "0-5",
+            age: 1,
             income: [
               {
                 id: generateId(),
