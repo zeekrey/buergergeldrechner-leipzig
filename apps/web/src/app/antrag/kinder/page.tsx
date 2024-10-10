@@ -21,7 +21,7 @@ import { useMemo, useCallback } from "react";
 import { produce } from "immer";
 import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
-import { generateId } from "@/lib/utils";
+import { generateId, generateMember } from "@/lib/utils";
 import { incomeType } from "@/lib/types";
 import { useStateContext } from "@/components/context";
 
@@ -47,19 +47,21 @@ export default function StepChildren() {
           value === "with-children" &&
           !draft.community.find((person) => person.type === "child")
         ) {
-          draft.community.push({
-            id: generateId(),
-            name: "Kind 1",
-            type: "child",
-            age: 1,
-            income: [
-              {
-                id: generateId(),
-                type: "ChildAllowance",
-                amount: incomeType.ChildAllowance.standardAmount,
-              },
-            ],
-          });
+          draft.community.push(
+            generateMember({
+              id: generateId(),
+              name: "Kind 1",
+              type: "child",
+              age: 1,
+              income: [
+                {
+                  id: generateId(),
+                  type: "ChildAllowance",
+                  amount: incomeType.ChildAllowance.standardAmount,
+                },
+              ],
+            })
+          );
         } else {
           /** without children */
           draft.community = draft.community.filter(

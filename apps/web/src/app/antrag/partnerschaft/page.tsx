@@ -21,7 +21,7 @@ import {
   StepDescription,
 } from "@/components/ui/step-primitives";
 import { useRouter } from "next/navigation";
-import { generateId } from "@/lib/utils";
+import { generateId, generateMember } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 
 type RadioValue = "with-partner" | "without-partner";
@@ -39,30 +39,36 @@ export default function StepPartner() {
     [state]
   );
 
-  const handleChange = useCallback((value: RadioValue) => {
-    const newState = produce(state, (draft) => {
-      /** Add a partner only if not already existing. */
-      if (
-        value === "with-partner" &&
-        draft.community.findIndex((person) => person.name === "Partner") === -1
-      ) {
-        draft.community.push({
-          id: generateId(),
-          type: "adult",
-          name: "Partner",
-          income: [],
-        });
-      } else {
-        /** Remove partner if one exists. */
-        const index = draft.community.findIndex(
-          (person) => person.name === "Partner"
-        );
-        if (index !== -1) draft.community.splice(index, 1);
-      }
-    });
+  const handleChange = useCallback(
+    (value: RadioValue) => {
+      const newState = produce(state, (draft) => {
+        /** Add a partner only if not already existing. */
+        if (
+          value === "with-partner" &&
+          draft.community.findIndex((person) => person.name === "Partner") ===
+            -1
+        ) {
+          draft.community.push(
+            generateMember({
+              id: generateId(),
+              type: "adult",
+              name: "Partner",
+              income: [],
+            })
+          );
+        } else {
+          /** Remove partner if one exists. */
+          const index = draft.community.findIndex(
+            (person) => person.name === "Partner"
+          );
+          if (index !== -1) draft.community.splice(index, 1);
+        }
+      });
 
-    setState(newState);
-  }, []);
+      setState(newState);
+    },
+    [state]
+  );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

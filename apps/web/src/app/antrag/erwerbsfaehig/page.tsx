@@ -15,7 +15,7 @@ import {
 import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { produce } from "immer";
-import { generateId } from "@/lib/utils";
+import { generateId, generateMember } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 
 const step = stepsConfig[0];
@@ -39,12 +39,13 @@ export default function StepEmployable() {
       const newState = produce(state, (draft) => {
         /** Create a new person if the community is empty. */
         if (!draft.community.length) {
-          draft.community.push({
-            id: generateId(),
-            type: "adult",
-            name: "Antragsteller",
-            income: [],
-          });
+          draft.community.push(
+            generateMember({
+              id: generateId(),
+              type: "adult",
+              name: "Antragsteller",
+            })
+          );
         }
       });
 

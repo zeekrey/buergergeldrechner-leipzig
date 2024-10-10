@@ -28,7 +28,7 @@ import { produce } from "immer";
 import { TChild, TPerson } from "@/lib/types";
 import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
-import { generateId } from "@/lib/utils";
+import { generateId, generateMember } from "@/lib/utils";
 import { incomeType } from "@/lib/types";
 import { useStateContext } from "@/components/context";
 
@@ -74,19 +74,21 @@ export default function StepChildrenCount() {
 
   const addChildren = () => {
     const newState = produce(state, (draft) => {
-      draft.community.push({
-        id: generateId(),
-        type: "child",
-        name: `Kind ${children.length + 1}`,
-        age: 1,
-        income: [
-          {
-            id: generateId(),
-            type: "ChildAllowance",
-            amount: incomeType.ChildAllowance.standardAmount,
-          },
-        ],
-      });
+      draft.community.push(
+        generateMember({
+          id: generateId(),
+          type: "child",
+          name: `Kind ${children.length + 1}`,
+          age: 1,
+          income: [
+            {
+              id: generateId(),
+              type: "ChildAllowance",
+              amount: incomeType.ChildAllowance.standardAmount,
+            },
+          ],
+        })
+      );
     });
 
     setState(newState);

@@ -44,8 +44,7 @@ export function stepsReducer(
 
 export const stepsConfig: Record<number, TStep> = {
   0: {
-    description:
-      "Bürgergeldberechtigt, sind Personen die erwerbsfähig sind. Das bedeutet, dass Sie in der Lage sein müssen, mindestens drei Stunden pro Tag arbeiten zu können. Sollte dies nicht der Fall sein, können Sie Anspruch auf andere Hilfeleistungen haben.",
+    description: `Bürgergeldberechtigt, sind Personen die **erwerbsfähig** sind. Das bedeutet, dass Sie in der Lage sein müssen, mindestens **drei Stunden pro Tag arbeiten** zu können. Sollte dies nicht der Fall sein, können Sie Anspruch auf andere Hilfeleistungen haben.`,
     id: "erwerbsfaehig",
     next: () => 1,
     previous: 0,
@@ -67,7 +66,6 @@ export const stepsConfig: Record<number, TStep> = {
       if (ctx.community.some(({ type }) => type === "child")) {
         return 3;
       }
-
       return 5;
     },
     previous: 1,
@@ -82,36 +80,49 @@ export const stepsConfig: Record<number, TStep> = {
     title: "Wie viele Kinder leben in Ihrem Haushalt?",
   },
   5: {
-    description:
-      "Sieht so Ihre Bedarfsgemeinschaft aus? Wenn nicht, gehen Sie bitte Schritte zurück um sie anzupassen.",
+    description: `
+  Sieht so Ihre Bedarfsgemeinschaft aus? Wenn nicht, gehen Sie bitte Schritte zurück um sie anzupassen. Sie haben ausßerdem die Möglchkeit **Mehrbedarfe** zu erfassen.
+  `,
     id: "bedarfsgemeinschaft",
-    next: () => 6,
+    next: (ctx) => {
+      if (ctx.community.some(({ attributes }) => attributes.hasDiseases))
+        return 6;
+      else return 7;
+    },
     previous: 3,
     title: "Ihre Bedarfsgemeinschaft",
   },
   6: {
-    description:
-      "Tragen Sie hier bitte Ihre aktuelle Kaltmiete, Heiz- und Betriebskosten ein.",
-    // FIXME: Sollte auch kosten für Unterkunft und Heiztung heißen
-    id: "monatliche-ausgaben",
+    description: `
+  Um welche Krankheiten handelt es sich.
+  `,
+    id: "krankheiten",
     next: () => 7,
     previous: 5,
-    title: "Kosten für Unterkunft und Heizung",
+    title: "Krankheiten",
   },
   7: {
     description:
-      "Für die Berechnung des Anspruchs geben Sie bitte das Einkommen aller erwerbstätigen Personen ein. Es gibt verschiedene Arten von Einkommen. Unter Einkommen hinzufügen stehen die Arten von Einkommen zur Verfügung. Bitte geben Sie alle Einkommen an, welche die Bedarfsgemeinschaft hat.",
-    id: "monatliches-einkommen",
+      "Tragen Sie hier bitte Ihre aktuelle Kaltmiete (oder Schuldzins bei Wohneigentum), Heiz- und Betriebskosten ein.",
+    id: "kosten-unterkunft-heizung",
     next: () => 8,
     previous: 6,
-    title: "Erfassung des Einkommens",
+    title: "Kosten für Unterkunft und Heizung",
   },
   8: {
+    description:
+      "Für die Berechnung des Anspruchs geben Sie bitte das Einkommen aller erwerbstätigen Personen ein. Es gibt verschiedene Arten von Einkommen. Unter Einkommen hinzufügen stehen die Arten von Einkommen zur Verfügung. Bitte geben Sie alle Einkommen an, welche die Bedarfsgemeinschaft hat.",
+    id: "monatliches-einkommen",
+    next: () => 9,
+    previous: 7,
+    title: "Erfassung des Einkommens",
+  },
+  9: {
     description:
       "Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des Bürgergeldes. Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine unverbindliche Berechnung handelt.",
     id: "ergebnis",
     next: () => 10,
-    previous: 7,
+    previous: 8,
     title: "Ihr Berechnungsergebnis",
   },
 };

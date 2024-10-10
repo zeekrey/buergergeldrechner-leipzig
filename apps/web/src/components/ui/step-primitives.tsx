@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import Markdown from "react-markdown";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -86,11 +87,11 @@ const StepTitle = forwardRef<HTMLDivElement, InputProps>(
 
 StepTitle.displayName = "StepTitle";
 
-const StepDescription = forwardRef<HTMLDivElement, InputProps>(
+const StepDescription = forwardRef<HTMLDivElement, { children: string }>(
   ({ children, ...props }, ref) => {
     return (
       <div className="px-8 pt-4" ref={ref} {...props}>
-        <p className="text-muted-foreground">{children}</p>
+        <Markdown className="text-muted-foreground">{children}</Markdown>
       </div>
     );
   }

@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const step = stepsConfig[8];
+const step = stepsConfig[9];
 
 import {
   calculateAdditionalNeeds,
@@ -203,7 +203,7 @@ export default function StepSummary() {
                         </TableRow>
                         <TableRow className="border-none">
                           <TableCell className="py-2 text-xs">
-                            Kaltmiete (oder Schuldzins bei Wohneigentum)
+                            Kaltmiete (Schuldzins bei Wohneigentum)
                           </TableCell>
                           <TableCell className="py-2 text-xs text-right">
                             {state.spendings.rent.toLocaleString("de-DE", {

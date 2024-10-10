@@ -126,3 +126,12 @@ export const additionalChildNeedsCategory: AdditionalChildNeedsCategory[] = [
     // values: [337.8, 270.6],
   },
 ];
+
+export const generateMember = (member?: Partial<TPerson>): TPerson => ({
+  id: generateId(),
+  type: "adult",
+  name: "Antragsteller",
+  income: [],
+  attributes: {},
+  ...member,
+});

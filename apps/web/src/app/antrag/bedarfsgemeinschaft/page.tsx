@@ -8,7 +8,6 @@ import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -28,12 +27,35 @@ import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useStateContext } from "@/components/context";
-import { Checkbox } from "@/components/ui/checkbox";
-import { TPerson } from "@/lib/types";
+import { TChild, TPerson } from "@/lib/types";
 import { produce } from "immer";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const step = stepsConfig[5];
+
+function getExistingAttributes(obj: TPerson["attributes"]): string {
+  const existingKeys: string[] = [];
+
+  if ("isPregnant" in obj && obj.isPregnant) {
+    existingKeys.push("Schwanger");
+  }
+  if ("hasDiseases" in obj && obj.hasDiseases) {
+    existingKeys.push("Krankheit");
+  }
+
+  return existingKeys.length > 0
+    ? existingKeys.join(", ")
+    : "Keine Mehrbedarfe";
+}
 
 export default function StepCommunity() {
   const { push } = useRouter();
@@ -80,7 +102,26 @@ export default function StepCommunity() {
         })
       );
     },
+    [state]
+  );
 
+  const handleDiseasesChange = useCallback(
+    (person: TPerson, checked: CheckedState) => {
+      setState(
+        produce(state, (draft) => {
+          const index = draft.community.findIndex(
+            (pers) => pers.id === person.id
+          );
+
+          if (index !== -1)
+            draft.community[index].attributes = {
+              ...state.community[index].attributes,
+              hasDiseases: Boolean(checked),
+              diseases: [],
+            };
+        })
+      );
+    },
     [state]
   );
 
@@ -92,19 +133,17 @@ export default function StepCommunity() {
         <StepContent>
           <ScrollArea className="sm:h-[380px]">
             <Table>
-              {/* <TableCaption>Ihre Bedarfsgemeinschaft</TableCaption> */}
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">Person</TableHead>
-                  <TableHead className="text-center">Schwanger</TableHead>
-                  {/* <TableHead className="text-center">Krankheit</TableHead> */}
+                  <TableHead className="">Person</TableHead>
+                  <TableHead className="text-center">Mehrbedarfe</TableHead>
                   <TableHead className="text-center"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {state.community.map((person, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium w-full">
+                    <TableCell className="font-medium">
                       {person.name}
                       {person.type === "child" && (
                         <span className="ml-1 text-muted-foreground">
@@ -112,20 +151,34 @@ export default function StepCommunity() {
                         </span>
                       )}
                     </TableCell>
-                    {/* isPregnant */}
                     <TableCell className="text-center">
-                      {(person.type === "adult" || person.age > 10) && (
-                        <Checkbox
-                          checked={person.attributes?.isPregnant}
-                          onCheckedChange={(checked) =>
-                            handlePregnantChange(person, checked)
-                          }
-                        />
-                      )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger>
+                          {getExistingAttributes(person.attributes)}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          {(person.type === "adult" ||
+                            (person as TChild).age > 12) && (
+                            <DropdownMenuCheckboxItem
+                              checked={person.attributes?.isPregnant}
+                              onCheckedChange={(checked) =>
+                                handlePregnantChange(person, checked)
+                              }
+                            >
+                              Ist Schwanger
+                            </DropdownMenuCheckboxItem>
+                          )}
+                          <DropdownMenuCheckboxItem
+                            checked={Boolean(person.attributes?.hasDiseases)}
+                            onCheckedChange={(checked) =>
+                              handleDiseasesChange(person, checked)
+                            }
+                          >
+                            Krankheitsbedinge Ernährung
+                          </DropdownMenuCheckboxItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
-                    {/* <TableCell className="text-center">
-                      <Checkbox />
-                    </TableCell> */}
                     <TableCell className="text-center">
                       <Button
                         variant="ghost"

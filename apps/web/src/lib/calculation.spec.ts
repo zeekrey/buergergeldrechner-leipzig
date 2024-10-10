@@ -62,7 +62,8 @@ describe("calculateAdditionalNeeds", () => {
     expect(res).toStrictEqual([
       {
         personId: adult.id,
-        additionals: [{ name: "isPregnant", amount: 95.71 }],
+        name: "Person",
+        additionals: [{ name: "Schwanger", amount: 95.71 }],
       },
     ]);
   });
@@ -80,7 +81,8 @@ describe("calculateAdditionalNeeds", () => {
     expect(res).toStrictEqual([
       {
         personId: adult.id,
-        additionals: [{ name: "isPregnant", amount: 86.02 }],
+        name: "Partner",
+        additionals: [{ name: "Schwanger", amount: 86.02 }],
       },
     ]);
   });
@@ -98,7 +100,55 @@ describe("calculateAdditionalNeeds", () => {
     expect(res).toStrictEqual([
       {
         personId: adult.id,
+        name: "Person",
         additionals: [{ amount: 202.68, name: "1 Kind unter 7 Jahre" }],
+      },
+    ]);
+  });
+
+  test("single, with one child younger then 7 and disease", () => {
+    const adult = defaultAdult;
+
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        { ...adult, attributes: { diseases: ["celiacDisease"] } },
+        { ...defaultChild, age: 1 },
+      ],
+    };
+
+    const res = calculateAdditionalNeeds(context);
+
+    expect(res).toStrictEqual([
+      {
+        personId: adult.id,
+        name: "Person",
+        additionals: [
+          { amount: 202.68, name: "1 Kind unter 7 Jahre" },
+          { amount: 112.6, name: "celiacDisease" },
+        ],
+      },
+    ]);
+  });
+
+  test("partner has disease", () => {
+    const adult = defaultAdult;
+
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        { ...defaultAdult },
+        { ...adult, attributes: { diseases: ["celiacDisease"] } },
+      ],
+    };
+
+    const res = calculateAdditionalNeeds(context);
+
+    expect(res).toStrictEqual([
+      {
+        personId: adult.id,
+        name: "Person",
+        additionals: [{ amount: 101.2, name: "celiacDisease" }],
       },
     ]);
   });

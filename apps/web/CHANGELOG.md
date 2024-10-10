@@ -1,5 +1,12 @@
 # buergergeldrechner
 
+## 0.3.1
+
+### Patch Changes
+
+- Es ist nun möglich Mehrbedarfe durch Krankheiten zu erfassen.
+- Ein Fehler bei der Berechnung der Kosten für Unterkunft und Heizung wurde korrigiert.
+
 ## 0.3.0
 
 ### Minor Changes

@@ -128,7 +128,7 @@ export function Result({
               style: "currency",
               currency: "EUR",
             })}{" "}
-            Ausgaben
+            Kosten für Unterkunft und Heizung
           </li>
           <li className="flex gap-x-3">
             <ScaleIcon

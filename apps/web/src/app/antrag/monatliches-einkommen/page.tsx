@@ -27,7 +27,7 @@ import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/components/context";
 
-const step = stepsConfig[7];
+const step = stepsConfig[8];
 
 export default function StepSalary() {
   const { push } = useRouter();

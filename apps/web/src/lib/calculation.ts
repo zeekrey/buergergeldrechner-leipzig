@@ -1,5 +1,5 @@
-import { TStepContext, TChild, TPerson } from "./types";
-import * as data from "../config/data.json";
+import { TStepContext, TChild, diseases as DiseaseMap } from "./types";
+import data from "../config/data.json";
 import {
   additionalChildNeedsCategory,
   flattenIncome,
@@ -36,40 +36,127 @@ export function calculateAdditionalNeeds(context: TStepContext) {
   const isSingle =
     context.community.filter((person) => person.type === "adult").length === 1;
 
-  const additionalNeeds = context.community.reduce<
-    {
-      personId: string;
-      name: string;
-      additionals: TAdditional[];
-    }[]
-  >((acc, { name, type, ...rest }) => {
+  const additionalNeeds = context.community.reduce((acc, person) => {
+    const { type } = person;
     let additionals: TAdditional[] = [];
-    /** isPregnant, 17% of base need */
-    if (rest.attributes?.isPregnant) {
+    /** isSingle */
+    if (isSingle && type === "adult") {
+      const baseNeed = data["adult"].single;
+      const children = context.community.filter(
+        (person) => person.type === "child"
+      );
+
+      const ages = children.map((child) => child.age);
+      const under7 = ages.filter((age) => age < 7).length;
+      const under16 = ages.filter((age) => age < 16).length;
+      const over16 = ages.filter((age) => age > 16).length;
+      const over7 = ages.filter((age) => age > 7).length;
+      const totalChildren = children.length;
+
+      for (const category of additionalChildNeedsCategory) {
+        switch (category.description) {
+          case "1 Kind unter 7 Jahre":
+            if (under7 === 1 && totalChildren === 1) {
+              additionals.push({
+                name: category.description,
+                amount: (baseNeed * category.percentage) / 100,
+              });
+            }
+            break;
+          case "1 Kind über 7 Jahre":
+            if (over7 === 1 && totalChildren === 1) {
+              additionals.push({
+                name: category.description,
+                amount: (baseNeed * category.percentage) / 100,
+              });
+            }
+            break;
+          case "2 Kinder unter 16 Jahre":
+            if (under16 === 2 && over16 === 0) {
+              additionals.push({
+                name: category.description,
+                amount: (baseNeed * category.percentage) / 100,
+              });
+            }
+            break;
+          case "2 Kinder über 16 Jahre":
+            if (over16 === 2) {
+              additionals.push({
+                name: category.description,
+                amount: (baseNeed * category.percentage) / 100,
+              });
+            }
+            break;
+          case "1 Kind über 7 Jahre und 1 Kind über 16 Jahre":
+            if (over7 === 1 && over16 === 1 && totalChildren === 2) {
+              additionals.push({
+                name: category.description,
+                amount: (baseNeed * category.percentage) / 100,
+              });
+            }
+            break;
+          case "1 Kind unter 7 Jahre und 1 Kind unter 16 Jahre":
+            if (under7 === 1 && under16 === 1 && totalChildren === 2) {
+              additionals.push({
+                name: category.description,
+                amount: (baseNeed * category.percentage) / 100,
+              });
+            }
+            break;
+          case "3 Kinder":
+            if (totalChildren === 3) {
+              additionals.push({
+                name: category.description,
+                amount: (baseNeed * category.percentage) / 100,
+              });
+            }
+            break;
+          case "4 Kinder":
+            if (totalChildren === 4) {
+              additionals.push({
+                name: category.description,
+                amount: (baseNeed * category.percentage) / 100,
+              });
+            }
+            break;
+          case "ab 5 Kinder":
+            if (totalChildren >= 5) {
+              additionals.push({
+                name: category.description,
+                amount: (baseNeed * category.percentage) / 100,
+              });
+            }
+            break;
+        }
+      }
+    }
+    /** isPregnant */
+    if (person.attributes?.isPregnant) {
       if (isSingle)
         additionals.push({
           name: "Schwanger",
           amount: Math.round(data[type]["single"] * 0.17 * 100) / 100,
         });
       else {
-        if ((type = "adult"))
+        if (type === "adult")
           additionals.push({
             name: "Schwanger",
             amount: Math.round(data[type]["partner"] * 0.17 * 100) / 100,
           });
         else {
-          if (getChildAgeGroup((rest as TChild).age) === "18+")
+          if (getChildAgeGroup((person as TChild).age) === "18+")
             additionals.push({
               name: "Schwanger",
               amount:
-                Math.round(data[type][(rest as TChild).age] * 0.17 * 100) / 100,
+                Math.round(data[type][(person as TChild).age] * 0.17 * 100) /
+                100,
             });
-          if (getChildAgeGroup((rest as TChild).age) === "14-17")
+          if (getChildAgeGroup((person as TChild).age) === "14-17")
             additionals.push({
               name: "Schwanger",
               amount:
                 Math.round(
-                  data[type][getChildAgeGroup((rest as TChild).age)] *
+                  data[type][getChildAgeGroup((person as TChild).age)] *
                     0.17 *
                     100
                 ) / 100,
@@ -77,112 +164,84 @@ export function calculateAdditionalNeeds(context: TStepContext) {
         }
       }
     }
+    /** hasDeseases */
+    if (person.attributes.diseases?.length) {
+      person.attributes.diseases.map((disease) => {
+        if (disease === "celiacDisease") {
+          if (type === "adult") {
+            return additionals.push({
+              name: DiseaseMap[disease].label,
+              amount: isSingle
+                ? Math.round(data[type]["single"] * 0.2 * 100) / 100
+                : Math.round(data[type]["partner"] * 0.2 * 100) / 100,
+            });
+          } else {
+            const ageGroup = getChildAgeGroup((person as TChild).age);
+            return additionals.push({
+              name: DiseaseMap[disease].label,
+              amount: Math.round(data[type][ageGroup] * 0.2 * 100) / 100,
+            });
+          }
+        }
 
-    return additionals.length
-      ? [...acc, { personId: rest.id, name, additionals }]
-      : acc;
-  }, []);
+        if (disease === "cysticFibrosis") {
+          if (type === "adult") {
+            return additionals.push({
+              name: DiseaseMap[disease].label,
+              amount: isSingle
+                ? Math.round(data[type]["single"] * 0.3 * 100) / 100
+                : Math.round(data[type]["partner"] * 0.3 * 100) / 100,
+            });
+          } else {
+            const ageGroup = getChildAgeGroup((person as TChild).age);
+            return additionals.push({
+              name: DiseaseMap[disease].label,
+              amount: Math.round(data[type][ageGroup] * 0.3 * 100) / 100,
+            });
+          }
+        }
 
-  /** single with kids */
-  if (isSingle) {
-    let additionals: TAdditional[] = [];
-    const baseNeed = data["adult"].single;
+        if (disease === "liverDiseases") {
+          if (type === "adult") {
+            return additionals.push({
+              name: DiseaseMap[disease].label,
+              amount: isSingle
+                ? Math.round(data[type]["single"] * 0.05 * 100) / 100
+                : Math.round(data[type]["partner"] * 0.05 * 100) / 100,
+            });
+          } else {
+            const ageGroup = getChildAgeGroup((person as TChild).age);
+            return additionals.push({
+              name: DiseaseMap[disease].label,
+              amount: Math.round(data[type][ageGroup] * 0.05 * 100) / 100,
+            });
+          }
+        }
 
-    const children = context.community.filter(
-      (person) => person.type === "child"
-    );
-
-    const ages = children.map((child) => child.age);
-    const under7 = ages.filter((age) => age < 7).length;
-    const under16 = ages.filter((age) => age < 16).length;
-    const over16 = ages.filter((age) => age > 16).length;
-    const over7 = ages.filter((age) => age > 7).length;
-    const totalChildren = children.length;
-
-    for (const category of additionalChildNeedsCategory) {
-      switch (category.description) {
-        case "1 Kind unter 7 Jahre":
-          if (under7 === 1 && totalChildren === 1) {
-            additionals.push({
-              name: category.description,
-              amount: (baseNeed * category.percentage) / 100,
+        if (disease === "renalInsufficiency") {
+          if (type === "adult") {
+            return additionals.push({
+              name: DiseaseMap[disease].label,
+              amount: isSingle
+                ? Math.round(data[type]["single"] * 0.1 * 100) / 100
+                : Math.round(data[type]["partner"] * 0.1 * 100) / 100,
+            });
+          } else {
+            const ageGroup = getChildAgeGroup((person as TChild).age);
+            return additionals.push({
+              name: DiseaseMap[disease].label,
+              amount: Math.round(data[type][ageGroup] * 0.1 * 100) / 100,
             });
           }
-          break;
-        case "1 Kind über 7 Jahre":
-          if (over7 === 1 && totalChildren === 1) {
-            additionals.push({
-              name: category.description,
-              amount: (baseNeed * category.percentage) / 100,
-            });
-          }
-          break;
-        case "2 Kinder unter 16 Jahre":
-          if (under16 === 2 && over16 === 0) {
-            additionals.push({
-              name: category.description,
-              amount: (baseNeed * category.percentage) / 100,
-            });
-          }
-          break;
-        case "2 Kinder über 16 Jahre":
-          if (over16 === 2) {
-            additionals.push({
-              name: category.description,
-              amount: (baseNeed * category.percentage) / 100,
-            });
-          }
-          break;
-        case "1 Kind über 7 Jahre und 1 Kind über 16 Jahre":
-          if (over7 === 1 && over16 === 1 && totalChildren === 2) {
-            additionals.push({
-              name: category.description,
-              amount: (baseNeed * category.percentage) / 100,
-            });
-          }
-          break;
-        case "1 Kind unter 7 Jahre und 1 Kind unter 16 Jahre":
-          if (under7 === 1 && under16 === 1 && totalChildren === 2) {
-            additionals.push({
-              name: category.description,
-              amount: (baseNeed * category.percentage) / 100,
-            });
-          }
-          break;
-        case "3 Kinder":
-          if (totalChildren === 3) {
-            additionals.push({
-              name: category.description,
-              amount: (baseNeed * category.percentage) / 100,
-            });
-          }
-          break;
-        case "4 Kinder":
-          if (totalChildren === 4) {
-            additionals.push({
-              name: category.description,
-              amount: (baseNeed * category.percentage) / 100,
-            });
-          }
-          break;
-        case "ab 5 Kinder":
-          if (totalChildren >= 5) {
-            additionals.push({
-              name: category.description,
-              amount: (baseNeed * category.percentage) / 100,
-            });
-          }
-          break;
-      }
+        }
+      });
     }
 
     if (additionals.length)
-      additionalNeeds.push({
-        personId: context.community[0].id,
-        name: context.community[0].name,
-        additionals,
-      });
-  }
+      acc.push({ personId: person.id, name: person.name, additionals });
+
+    return acc;
+  }, []);
 
   return additionalNeeds;
 }
