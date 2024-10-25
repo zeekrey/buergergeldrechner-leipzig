@@ -41,6 +41,7 @@ export function calculateAdditionalNeeds(context: TStepContext) {
   >((acc, person) => {
     const { type } = person;
     let additionals: TAdditional[] = [];
+
     /** isSingle */
     if (isSingle && type === "adult") {
       const baseNeed = data["adult"].single;
@@ -134,39 +135,34 @@ export function calculateAdditionalNeeds(context: TStepContext) {
     }
     /** isPregnant */
     if (person.attributes?.isPregnant) {
-      if (isSingle)
-        additionals.push({
-          name: "Schwanger",
-          amount:
-            Math.round(data[type as "adult"]["single"] * 0.17 * 100) / 100,
-        });
-      else {
-        if (type === "adult")
+      if (person.type === "adult") {
+        // Check adult pregnancy
+        if (isSingle)
           additionals.push({
             name: "Schwanger",
-            amount: Math.round(data[type]["partner"] * 0.17 * 100) / 100,
+            amount:
+              Math.round(data[type as "adult"]["single"] * 0.17 * 100) / 100,
           });
         else {
-          if (getChildAgeGroup((person as TChild).age) === "18+")
+          if (type === "adult")
             additionals.push({
               name: "Schwanger",
-              amount:
-                Math.round(
-                  data[type as "child"][getChildAgeGroup(person.age)] *
-                    0.17 *
-                    100
-                ) / 100,
+              amount: Math.round(data[type]["partner"] * 0.17 * 100) / 100,
             });
-          if (getChildAgeGroup((person as TChild).age) === "14-17")
-            additionals.push({
-              name: "Schwanger",
-              amount:
-                Math.round(
-                  data[type][getChildAgeGroup((person as TChild).age)] *
-                    0.17 *
-                    100
-                ) / 100,
-            });
+        }
+      } else {
+        // Check child pregnancy
+        if (getChildAgeGroup((person as TChild).age) === "18+") {
+          additionals.push({
+            name: "Schwanger",
+            amount: Math.round(data["child"]["18+"] * 0.17 * 100) / 100,
+          });
+        }
+        if (getChildAgeGroup((person as TChild).age) === "14-17") {
+          additionals.push({
+            name: "Schwanger",
+            amount: Math.round(data["child"]["14-17"] * 0.17 * 100) / 100,
+          });
         }
       }
     }

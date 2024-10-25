@@ -46,6 +46,7 @@ const defaultChild: TChild = {
     isPregnant: false,
     isSingleParent: false,
   },
+  income: [],
 };
 
 describe("calculateAdditionalNeeds", () => {
@@ -68,7 +69,7 @@ describe("calculateAdditionalNeeds", () => {
     ]);
   });
 
-  test("partner, is pregnant", () => {
+  test("partner is pregnant", () => {
     const adult = { ...defaultAdult, name: "Partner" };
 
     const context: TStepContext = {
@@ -83,6 +84,36 @@ describe("calculateAdditionalNeeds", () => {
         personId: adult.id,
         name: "Partner",
         additionals: [{ name: "Schwanger", amount: 86.02 }],
+      },
+    ]);
+  });
+
+  test("child is pregnant", () => {
+    const child = { ...defaultChild, name: "Kind 1" };
+    const adult = defaultAdult;
+
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [adult, { ...child, attributes: { isPregnant: true } }],
+    };
+
+    const res = calculateAdditionalNeeds(context);
+
+    expect(res).toStrictEqual([
+      {
+        personId: adult.id,
+        name: "Person",
+        additionals: [
+          {
+            amount: 67.56,
+            name: "1 Kind über 7 Jahre",
+          },
+        ],
+      },
+      {
+        personId: child.id,
+        name: "Kind 1",
+        additionals: [{ name: "Schwanger", amount: 76.67 }],
       },
     ]);
   });
@@ -125,7 +156,7 @@ describe("calculateAdditionalNeeds", () => {
         name: "Person",
         additionals: [
           { amount: 202.68, name: "1 Kind unter 7 Jahre" },
-          { amount: 112.6, name: "celiacDisease" },
+          { amount: 112.6, name: "Zöliakie" },
         ],
       },
     ]);
@@ -148,7 +179,7 @@ describe("calculateAdditionalNeeds", () => {
       {
         personId: adult.id,
         name: "Person",
-        additionals: [{ amount: 101.2, name: "celiacDisease" }],
+        additionals: [{ amount: 101.2, name: "Zöliakie" }],
       },
     ]);
   });
@@ -304,6 +335,7 @@ describe("calculateOverall", () => {
           ...defaultAdult,
           income: [
             {
+              id: generateId(),
               type: "EmploymentIncome",
               amount: calculateSalary({
                 gross: 1200,
@@ -335,6 +367,7 @@ describe("calculateOverall", () => {
           ...defaultAdult,
           income: [
             {
+              id: generateId(),
               type: "EmploymentIncome",
               amount: calculateSalary({
                 gross: 2100,
@@ -369,6 +402,7 @@ describe("calculateOverall", () => {
           ...defaultAdult,
           income: [
             {
+              id: generateId(),
               type: "EmploymentIncome",
               amount: calculateSalary({
                 gross: 2100,
@@ -382,6 +416,7 @@ describe("calculateOverall", () => {
           ...defaultAdult,
           income: [
             {
+              id: generateId(),
               type: "UnemploymentBenefits",
               amount: 1200,
             },
@@ -389,17 +424,13 @@ describe("calculateOverall", () => {
         },
         {
           ...defaultChild,
-          income: [
-            {
-              amount: 250,
-              type: "ChildAllowance",
-            },
-          ],
+          income: [{ id: generateId(), amount: 250, type: "ChildAllowance" }],
         },
         {
           ...defaultChild,
           income: [
             {
+              id: generateId(),
               amount: 250,
               type: "ChildAllowance",
             },
@@ -430,7 +461,9 @@ describe("calculateAllowance", () => {
       community: [
         {
           ...defaultAdult,
-          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+          income: [
+            { id: generateId(), type: "AdvanceMaintenancePayment", amount: 1 },
+          ],
         },
       ],
       spendings: {
@@ -453,12 +486,16 @@ describe("calculateAllowance", () => {
       community: [
         {
           ...defaultAdult,
-          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+          income: [
+            { id: generateId(), type: "AdvanceMaintenancePayment", amount: 1 },
+          ],
         },
         {
           ...defaultChild,
           age: 1,
-          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+          income: [
+            { id: generateId(), type: "AdvanceMaintenancePayment", amount: 1 },
+          ],
         },
       ],
       spendings: {
@@ -470,7 +507,7 @@ describe("calculateAllowance", () => {
     };
 
     const allowance = calculateAllowance(context);
-    const sum = allowance.reduce((acc, curr) => acc + curr.amount, 0);
+    const sum = allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
 
     expect(allowance.length).toEqual(1);
     expect(sum).toBe(30);
@@ -482,11 +519,15 @@ describe("calculateAllowance", () => {
       community: [
         {
           ...defaultAdult,
-          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+          income: [
+            { id: generateId(), type: "AdvanceMaintenancePayment", amount: 1 },
+          ],
         },
         {
           ...defaultChild,
-          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+          income: [
+            { id: generateId(), type: "AdvanceMaintenancePayment", amount: 1 },
+          ],
         },
       ],
       spendings: {
@@ -498,7 +539,7 @@ describe("calculateAllowance", () => {
     };
 
     const allowance = calculateAllowance(context);
-    const sum = allowance.reduce((acc, curr) => acc + curr.amount, 0);
+    const sum = allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
 
     expect(allowance.length).toEqual(2);
     expect(sum).toBe(60);
@@ -510,11 +551,13 @@ describe("calculateAllowance", () => {
       community: [
         {
           ...defaultAdult,
-          income: [{ type: "EmploymentIncome", amount: 1 }],
+          income: [{ id: generateId(), type: "EmploymentIncome", amount: 1 }],
         },
         {
           ...defaultChild,
-          income: [{ type: "AdvanceMaintenancePayment", amount: 1 }],
+          income: [
+            { id: generateId(), type: "AdvanceMaintenancePayment", amount: 1 },
+          ],
         },
       ],
       spendings: {
@@ -526,7 +569,7 @@ describe("calculateAllowance", () => {
     };
 
     const allowance = calculateAllowance(context);
-    const sum = allowance.reduce((acc, curr) => acc + curr.amount, 0);
+    const sum = allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
 
     expect(allowance.length).toEqual(1);
     expect(sum).toBe(30);

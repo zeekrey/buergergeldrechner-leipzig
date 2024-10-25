@@ -1,5 +1,14 @@
 # buergergeldrechner
 
+## 0.3.2
+
+### Patch Changes
+
+- Ein Fehler bei der Berechnung von Mehrbedarfen bei schwangeren Kindern wurde behoben.
+- Die Ergebnisseite hat nun einen Zurück-Button.
+- Auf der Seite zur Erfassung des Einkommens wird nun die Gesamtsumme angezeigt.
+- Neue Hilfetexte inklusive Formatierungsmöglichkeiten hinzugefügt.
+
 ## 0.3.1
 
 ### Patch Changes
