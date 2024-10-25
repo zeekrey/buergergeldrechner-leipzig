@@ -11,9 +11,13 @@ import {
   useCallback,
 } from "react";
 
+// FIXME:
+// @ts-ignore
 export const StateContext = createContext<TStepContext>(null);
 
+// FIXME:
 export const SetStateContext =
+  // @ts-ignore
   createContext<Dispatch<SetStateAction<TStepContext>>>(null);
 
 export function useStateContext() {
@@ -57,6 +61,8 @@ export function StateProvider({
 
   return (
     <StateContext.Provider value={state}>
+      {/* FIXME: */}
+      {/* @ts-ignore */}
       <SetStateContext.Provider value={setStateWithLocalStorageSync}>
         {children}
       </SetStateContext.Provider>

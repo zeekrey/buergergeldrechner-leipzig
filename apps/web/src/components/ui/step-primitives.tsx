@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { HelpCircleIcon } from "lucide-react";
+import { AlertCircleIcon, HelpCircleIcon } from "lucide-react";
 import { forwardRef } from "react";
 import {
   Dialog,
@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Markdown from "react-markdown";
+import { ScrollArea } from "./scroll-area";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -33,7 +34,7 @@ const StepRoot = forwardRef<HTMLDivElement, InputProps>(
 
 StepRoot.displayName = "StepRoot";
 
-const StepTitle = forwardRef<HTMLDivElement, InputProps>(
+const StepTitle = forwardRef<HTMLDivElement, InputProps & { title: string }>(
   ({ children, ...props }, ref) => {
     return (
       <div
@@ -41,7 +42,7 @@ const StepTitle = forwardRef<HTMLDivElement, InputProps>(
         ref={ref}
         {...props}
       >
-        <h2 className="font-semibold tracking-tight text-2xl">{children}</h2>
+        <h2 className="font-semibold tracking-tight text-2xl">{props.title}</h2>
         <div>
           <Dialog>
             <DialogTrigger asChild>
@@ -53,30 +54,9 @@ const StepTitle = forwardRef<HTMLDivElement, InputProps>(
               <DialogHeader>
                 <DialogTitle>Über diese Frage</DialogTitle>
               </DialogHeader>
-              <div className="prose prose-sm">
-                <h3>Warum wird diese Frage gestellt?</h3>
-                <p>
-                  Wie viel Bürgergeld Sie erhalten können, richtet sich
-                  maßgeblich nach den finanziellen Mitteln die eine
-                  Lebensgemeinschaft hat. Sind Sie partnerlos, wird sich nur
-                  Ihre eigenen finanziellen Mitteln angeschaut. Leben Sie jedoch
-                  in einer Partnerschaft, müssen auch die finanziellen Mittel
-                  Ihres Partners betrachtet werden.
-                </p>
-                <h3>Wo finde ich mehr Informationen dazu?</h3>
-                <p>Hier finden Sie mehr Informationen dazu:</p>
-                <ul>
-                  <li>
-                    <a href="http://">Link #1</a>
-                  </li>
-                  <li>
-                    <a href="http://">Link #1</a>
-                  </li>
-                  <li>
-                    <a href="http://">Link #1</a>
-                  </li>
-                </ul>
-              </div>
+              <ScrollArea className="h-[500px] prose prose-sm">
+                {children}
+              </ScrollArea>
             </DialogContent>
           </Dialog>
         </div>
@@ -123,4 +103,24 @@ const StepNavigation = forwardRef<HTMLDivElement, InputProps>(
 
 StepNavigation.displayName = "StepNavigation";
 
-export { StepContent, StepDescription, StepNavigation, StepRoot, StepTitle };
+const StepNote = forwardRef<HTMLDivElement, InputProps>(
+  ({ children, ...props }, ref) => {
+    return (
+      <div className="px-8 py-6" {...props}>
+        <div className="px-2 py-4 rounded-md bg-yellow-100 flex gap-2">
+          <AlertCircleIcon className="w-6 h-6 text-yellow-950" />
+          <p className="text-sm text-yellow-950">{children}</p>
+        </div>
+      </div>
+    );
+  }
+);
+
+export {
+  StepContent,
+  StepDescription,
+  StepNavigation,
+  StepRoot,
+  StepTitle,
+  StepNote,
+};

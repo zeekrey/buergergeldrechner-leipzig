@@ -85,7 +85,7 @@ export const stepsConfig: Record<number, TStep> = {
   `,
     id: "bedarfsgemeinschaft",
     next: (ctx) => {
-      if (ctx.community.some(({ attributes }) => attributes.hasDiseases))
+      if (ctx.community.some(({ attributes }) => attributes?.hasDiseases))
         return 6;
       else return 7;
     },

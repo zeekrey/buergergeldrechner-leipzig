@@ -18,6 +18,9 @@ import { useStateContext } from "@/components/context";
 import { produce } from "immer";
 import { Checkbox } from "@/components/ui/checkbox";
 import { diseases as DiseasesMap } from "@/lib/types";
+import HelpMarkdown from "@/config/steps/krankheiten.mdx";
+import { Diseases } from "@/lib/types";
+import { z } from "zod";
 
 const step = stepsConfig[6];
 
@@ -36,18 +39,21 @@ export default function StepDiseases() {
     push(`${stepsConfig[step.previous].id}`);
   }, [state]);
 
-  const handleChange = (personId, disease) => {
+  const handleChange = (
+    personId: string,
+    disease: z.infer<typeof Diseases>
+  ) => {
     const newState = produce(state, (draft) => {
       const personIndex = draft.community.findIndex(
         (_person) => _person.id === personId
       );
       if (personIndex !== -1) {
         const index =
-          draft.community[personIndex].attributes.diseases.indexOf(disease);
-        if (index > -1) {
-          draft.community[personIndex].attributes.diseases.splice(index, 1);
+          draft.community[personIndex].attributes?.diseases?.indexOf(disease);
+        if (index && index > -1) {
+          draft.community[personIndex].attributes?.diseases?.splice(index, 1);
         } else {
-          draft.community[personIndex].attributes.diseases.push(disease);
+          draft.community[personIndex].attributes?.diseases?.push(disease);
         }
       }
     });
@@ -57,7 +63,9 @@ export default function StepDiseases() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle>{step.title}</StepTitle>
+      <StepTitle title={step.title}>
+        <HelpMarkdown />
+      </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <form onSubmit={handleSubmit}>
         <StepContent>
@@ -84,7 +92,7 @@ export default function StepDiseases() {
                       >
                         <Checkbox
                           className="peer"
-                          checked={person.attributes.diseases?.includes(
+                          checked={person.attributes?.diseases?.includes(
                             disease
                           )}
                           onCheckedChange={() =>

@@ -3,48 +3,20 @@ import { twMerge } from "tailwind-merge";
 import { TPerson } from "./types";
 import { TIncome } from "./types";
 
+// @ts-ignore
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-export function groupBy<T>(array: T[], key: keyof T): { [key: string]: T[] } {
-  return array.reduce((acc, current) => {
-    (acc[current[key] as string] = acc[current[key] as string] || []).push(
-      current
-    );
-    return acc;
-  }, {});
-}
-
-interface GroupByCallback<T> {
-  (item: T): string;
-}
-
-export function groupByFunction<T>(
-  arr: T[],
-  func: GroupByCallback<T>
-): { [key: string]: T[] } {
-  return arr.reduce((memo, x) => {
-    const key = func(x);
-    if (!memo[key]) {
-      memo[key] = [];
-    }
-    memo[key].push(x);
-    return memo;
-  }, {});
-}
-
 export function flattenIncome(community: TPerson[]) {
-  const result: TIncome[] = [];
+  const result: (TIncome & { personId: string; name: string })[] = [];
 
   community.forEach((person) => {
     person.income?.forEach((income) => {
       result.push({
-        id: person.id,
-        // FIXME:
-        //@ts-ignore
-        name: person.name,
         ...income,
+        personId: person.id,
+        name: person.name,
       });
     });
   });
@@ -58,7 +30,9 @@ export function generateId(): string {
   return `${timestamp}${randomNum}`; // Combine them to create a unique ID
 }
 
-export function getChildAgeGroup(age: number): string {
+export function getChildAgeGroup(
+  age: number
+): "0-5" | "6-13" | "14-17" | "18+" {
   if (age < 0) {
     throw new Error("Age cannot be negative.");
   } else if (age <= 5) {
@@ -127,6 +101,7 @@ export const additionalChildNeedsCategory: AdditionalChildNeedsCategory[] = [
   },
 ];
 
+// @ts-ignore
 export const generateMember = (member?: Partial<TPerson>): TPerson => ({
   id: generateId(),
   type: "adult",

@@ -23,6 +23,7 @@ import {
 import { useRouter } from "next/navigation";
 import { generateId, generateMember } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
+import HelpMarkdown from "@/config/steps/partnerschaft.mdx";
 
 type RadioValue = "with-partner" | "without-partner";
 const step = stepsConfig[1];
@@ -83,7 +84,9 @@ export default function StepPartner() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle>{step.title}</StepTitle>
+      <StepTitle title={step.title}>
+        <HelpMarkdown />
+      </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <form onSubmit={handleSubmit}>
         <StepContent>

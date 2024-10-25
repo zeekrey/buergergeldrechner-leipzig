@@ -9,6 +9,7 @@ export const singleWithoutKids: TStepContext = {
       name: "Antragsteller",
       income: [
         {
+          id: generateId(),
           type: "UnemploymentBenefits",
           amount: 500,
         },
@@ -36,6 +37,7 @@ export const singleWithoutKidsNoNeed: TStepContext = {
       name: "Antragsteller",
       income: [
         {
+          id: generateId(),
           type: "UnemploymentBenefits",
           amount: 5000,
         },
@@ -63,6 +65,7 @@ export const coupleWithoutKids: TStepContext = {
       name: "Antragsteller",
       income: [
         {
+          id: generateId(),
           type: "EmploymentIncome",
           amount: 500,
         },
@@ -72,6 +75,7 @@ export const coupleWithoutKids: TStepContext = {
       id: generateId(),
       type: "adult",
       name: "Partner",
+      income: [],
     },
   ],
   isEmployable: true,
@@ -95,6 +99,7 @@ export const coupleWithKids: TStepContext = {
       name: "Antragsteller",
       income: [
         {
+          id: generateId(),
           allowance: 378,
           amount: 1322,
           type: "EmploymentIncome",
@@ -109,6 +114,7 @@ export const coupleWithKids: TStepContext = {
       name: "Partner",
       income: [
         {
+          id: generateId(),
           type: "UnemploymentBenefits",
           amount: 1200,
           gros: 0,
@@ -124,6 +130,7 @@ export const coupleWithKids: TStepContext = {
       age: 19,
       income: [
         {
+          id: generateId(),
           type: "ChildAllowance",
           amount: 250,
         },
@@ -136,6 +143,7 @@ export const coupleWithKids: TStepContext = {
       age: 4,
       income: [
         {
+          id: generateId(),
           type: "ChildAllowance",
           amount: 250,
         },

@@ -34,21 +34,19 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import HelpMarkdown from "@/config/steps/bedarfsgemeinschaft.mdx";
 
 const step = stepsConfig[5];
 
 function getExistingAttributes(obj: TPerson["attributes"]): string {
   const existingKeys: string[] = [];
 
-  if ("isPregnant" in obj && obj.isPregnant) {
+  if (obj && "isPregnant" in obj && obj.isPregnant) {
     existingKeys.push("Schwanger");
   }
-  if ("hasDiseases" in obj && obj.hasDiseases) {
+  if (obj && "hasDiseases" in obj && obj.hasDiseases) {
     existingKeys.push("Krankheit");
   }
 
@@ -127,7 +125,9 @@ export default function StepCommunity() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle>{step.title}</StepTitle>
+      <StepTitle title={step.title}>
+        <HelpMarkdown />
+      </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <form onSubmit={handleSubmit}>
         <StepContent>
@@ -180,13 +180,15 @@ export default function StepCommunity() {
                       </DropdownMenu>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        onClick={() => handleRemove(person)}
-                      >
-                        <XCircleIcon className="w-4 h-4" />
-                      </Button>
+                      {person.name !== "Antragsteller" && (
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          onClick={() => handleRemove(person)}
+                        >
+                          <XCircleIcon className="w-4 h-4" />
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

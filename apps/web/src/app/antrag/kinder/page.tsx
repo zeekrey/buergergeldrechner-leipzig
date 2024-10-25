@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { generateId, generateMember } from "@/lib/utils";
 import { incomeType } from "@/lib/types";
 import { useStateContext } from "@/components/context";
+import HelpMarkdown from "@/config/steps/kinder.mdx";
 
 type RadioValue = "with-children" | "without-children";
 const step = stepsConfig[2];
@@ -57,7 +58,7 @@ export default function StepChildren() {
                 {
                   id: generateId(),
                   type: "ChildAllowance",
-                  amount: incomeType.ChildAllowance.standardAmount,
+                  amount: incomeType.ChildAllowance.standardAmount ?? 0,
                 },
               ],
             })
@@ -88,7 +89,9 @@ export default function StepChildren() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle>{step.title}</StepTitle>
+      <StepTitle title={step.title}>
+        <HelpMarkdown />
+      </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <form onSubmit={handleSubmit}>
         <StepContent>

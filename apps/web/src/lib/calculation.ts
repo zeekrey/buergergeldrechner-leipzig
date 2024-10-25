@@ -11,7 +11,7 @@ export function calculateCommunityNeed(context: TStepContext) {
     context.community.filter((person) => person.type === "adult").length === 1;
 
   const community = context.community.map(({ name, type, ...rest }) => {
-    let amount: number;
+    let amount: number = 0;
 
     if (type === "adult") {
       amount = isSingle ? data[type]["single"] : data[type]["partner"];
@@ -36,7 +36,9 @@ export function calculateAdditionalNeeds(context: TStepContext) {
   const isSingle =
     context.community.filter((person) => person.type === "adult").length === 1;
 
-  const additionalNeeds = context.community.reduce((acc, person) => {
+  const additionalNeeds = context.community.reduce<
+    { personId: string; name: string; additionals: TAdditional[] }[]
+  >((acc, person) => {
     const { type } = person;
     let additionals: TAdditional[] = [];
     /** isSingle */
@@ -135,7 +137,8 @@ export function calculateAdditionalNeeds(context: TStepContext) {
       if (isSingle)
         additionals.push({
           name: "Schwanger",
-          amount: Math.round(data[type]["single"] * 0.17 * 100) / 100,
+          amount:
+            Math.round(data[type as "adult"]["single"] * 0.17 * 100) / 100,
         });
       else {
         if (type === "adult")
@@ -148,8 +151,11 @@ export function calculateAdditionalNeeds(context: TStepContext) {
             additionals.push({
               name: "Schwanger",
               amount:
-                Math.round(data[type][(person as TChild).age] * 0.17 * 100) /
-                100,
+                Math.round(
+                  data[type as "child"][getChildAgeGroup(person.age)] *
+                    0.17 *
+                    100
+                ) / 100,
             });
           if (getChildAgeGroup((person as TChild).age) === "14-17")
             additionals.push({
@@ -165,7 +171,7 @@ export function calculateAdditionalNeeds(context: TStepContext) {
       }
     }
     /** hasDeseases */
-    if (person.attributes.diseases?.length) {
+    if (person.attributes?.diseases?.length) {
       person.attributes.diseases.map((disease) => {
         if (disease === "celiacDisease") {
           if (type === "adult") {
@@ -310,7 +316,7 @@ export function calculateOverall(context: TStepContext) {
       need +
       additionalNeedsSum +
       context.spendings.sum +
-      allowance.reduce((acc, curr) => acc + curr.amount, 0) -
+      allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0) -
       incomeSum,
   };
 }

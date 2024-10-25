@@ -3,6 +3,13 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import BgImage from "../assets/bg-image.webp";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Bürgergeldrechner des Jobcenter Leipzig",
+  description:
+    "Berechnen Sie Ihr Bürgergeld einfach und unkompliziert mit dem Bürgergeldrechner des Jobcenters Leipzig. Erfahren Sie, welche Leistungen Ihnen zustehen und erhalten Sie individuelle Unterstützung bei Ihrer Antragstellung. Nutzen Sie unseren kostenlosen Online-Rechner für eine schnelle und präzise Berechnung.",
+};
 
 export default function StepPage() {
   return (

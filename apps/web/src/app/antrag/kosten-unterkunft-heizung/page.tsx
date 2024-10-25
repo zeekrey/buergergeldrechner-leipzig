@@ -38,6 +38,7 @@ import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/components/context";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import HelpMarkdown from "@/config/steps/kosten-unterkunft-heizung.mdx";
 
 const step = stepsConfig[7];
 
@@ -90,7 +91,9 @@ export default function StepSpending() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle>{step.title}</StepTitle>
+      <StepTitle title={step.title}>
+        <HelpMarkdown />
+      </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <form className="space-y-2" onSubmit={onSubmit}>
         <StepContent>

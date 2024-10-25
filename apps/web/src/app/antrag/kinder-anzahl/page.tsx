@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { generateId, generateMember } from "@/lib/utils";
 import { incomeType } from "@/lib/types";
 import { useStateContext } from "@/components/context";
+import HelpMarkdown from "@/config/steps/kinder-anzahl.mdx";
 
 const step = stepsConfig[3];
 
@@ -84,7 +85,7 @@ export default function StepChildrenCount() {
             {
               id: generateId(),
               type: "ChildAllowance",
-              amount: incomeType.ChildAllowance.standardAmount,
+              amount: incomeType.ChildAllowance.standardAmount ?? 0,
             },
           ],
         })
@@ -105,7 +106,9 @@ export default function StepChildrenCount() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle>{step.title}</StepTitle>
+      <StepTitle title={step.title}>
+        <HelpMarkdown />
+      </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <form onSubmit={handleSubmit}>
         <StepContent>

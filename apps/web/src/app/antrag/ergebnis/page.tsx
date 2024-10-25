@@ -9,18 +9,12 @@ import {
   TableCell,
   TableFooter,
   TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle2Icon } from "lucide-react";
-import {
-  StepRoot,
-  StepTitle,
-  StepDescription,
-} from "@/components/ui/step-primitives";
-import { stepsConfig } from "@/lib/machine";
+import { ArrowLeftCircleIcon, RotateCwIcon } from "lucide-react";
+import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
+import { initialStepsState, stepsConfig } from "@/lib/machine";
 import { useCallback } from "react";
-
 import {
   Card,
   CardContent,
@@ -30,9 +24,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const step = stepsConfig[9];
-
 import {
   calculateAdditionalNeeds,
   calculateAllowance,
@@ -43,6 +34,11 @@ import { useRouter } from "next/navigation";
 import { useStateContext } from "@/components/context";
 import { allowanceType, incomeType } from "@/lib/types";
 import { Result } from "./result";
+import { Button } from "@/components/ui/button";
+import HelpMarkdown from "@/config/steps/ergebnis.mdx";
+import Link from "next/link";
+
+const step = stepsConfig[9];
 
 const SectionCard = ({
   name,
@@ -71,7 +67,7 @@ const SectionCard = ({
 
 export default function StepSummary() {
   const { push } = useRouter();
-  const [state] = useStateContext();
+  const [state, setState] = useStateContext();
 
   const communitySize = useMemo(() => state.community.length, [state]);
   const need = useMemo(() => calculateCommunityNeed(state), [state]);
@@ -82,7 +78,7 @@ export default function StepSummary() {
   const result = useMemo(() => calculateOverall(state), [state]);
   const allowance = useMemo(() => calculateAllowance(state), [state]);
   const allowanceSum = useMemo(
-    () => result.allowance.reduce((acc, curr) => acc + curr.amount, 0),
+    () => result.allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0),
     [allowance]
   );
 
@@ -103,9 +99,16 @@ export default function StepSummary() {
     push(`${stepsConfig[step.previous].id}`);
   }, [state]);
 
+  const handleReset = useCallback(() => {
+    setState(initialStepsState.context);
+    localStorage.removeItem("state");
+  }, []);
+
   return (
     <StepRoot id={step.id}>
-      <StepTitle>{step.title}</StepTitle>
+      <StepTitle title={step.title}>
+        <HelpMarkdown />
+      </StepTitle>
       <StepContent>
         <Tabs defaultValue="result">
           <TabsList className="grid grid-cols-2">
@@ -234,6 +237,22 @@ export default function StepSummary() {
                             })}
                           </TableCell>
                         </TableRow>
+                        {/* Gesamtbedarf */}
+                        <TableRow className="bg-muted/50">
+                          <TableHead>
+                            Gesamtbedarf der Bedarfsgemeinschaft
+                          </TableHead>
+                          <TableHead className="text-right">
+                            {(
+                              need.need +
+                              state.spendings.sum +
+                              additionalNeedsSum
+                            ).toLocaleString("de-DE", {
+                              style: "currency",
+                              currency: "EUR",
+                            })}
+                          </TableHead>
+                        </TableRow>
                         {/* Einkommen */}
                         <TableRow>
                           <TableHead>Einkommen</TableHead>
@@ -275,10 +294,14 @@ export default function StepSummary() {
                         {allowance.map((allowance) => (
                           <TableRow className="border-none" key={allowance.id}>
                             <TableCell className="py-2 text-xs">
-                              {allowanceType[allowance.type]}
+                              {
+                                allowanceType[
+                                  allowance.type as "insurance" | "income"
+                                ]
+                              }
                             </TableCell>
                             <TableCell className="py-2 text-xs text-right">
-                              {allowance.amount.toLocaleString("de-DE", {
+                              {allowance.amount?.toLocaleString("de-DE", {
                                 style: "currency",
                                 currency: "EUR",
                               })}
@@ -310,6 +333,23 @@ export default function StepSummary() {
           </TabsContent>
         </Tabs>
       </StepContent>
+      <StepNavigation>
+        <Button
+          onClick={handleBack}
+          size="lg"
+          type="button"
+          variant="secondary"
+        >
+          <ArrowLeftCircleIcon className="w-4 h-4 mr-3" />
+          Zurück
+        </Button>
+        <Button variant="secondary" size="lg" asChild onClick={handleReset}>
+          <Link href="/antrag/erwerbsfaehig">
+            <RotateCwIcon className="w-4 h-4 mr-2" />
+            Neu starten
+          </Link>
+        </Button>
+      </StepNavigation>
     </StepRoot>
   );
 }

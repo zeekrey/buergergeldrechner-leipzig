@@ -89,6 +89,11 @@ export const IncomeDialog = ({
       form.unregister("amount", { keepDefaultValue: true, keepValue: true });
       form.register("gros");
       form.register("net");
+    }
+    if (selectedIncomeType === "SelfEmploymentIncome") {
+      form.unregister("amount", { keepDefaultValue: true, keepValue: true });
+      form.register("gros");
+      form.register("net");
     } else {
       form.register("amount");
       form.unregister("gros", { keepDefaultValue: true, keepValue: true });
@@ -97,7 +102,7 @@ export const IncomeDialog = ({
 
     /** Set default values for specific income types. */
     if (selectedIncomeType === "ChildAllowance")
-      form.setValue("amount", incomeType.ChildAllowance.standardAmount);
+      form.setValue("amount", incomeType.ChildAllowance.standardAmount ?? 0);
   }, [selectedIncomeType, form.register, form.unregister]);
 
   const onSubmit = (data: TFormData, event: FormEvent<HTMLFormElement>) => {
@@ -186,6 +191,7 @@ export const IncomeDialog = ({
         </DialogHeader>
         <Form {...form}>
           <form
+            // @ts-ignore
             onSubmit={form.handleSubmit(onSubmit)}
             id="dialog-form"
             className="space-y-2"
@@ -245,26 +251,8 @@ export const IncomeDialog = ({
                 </FormItem>
               )}
             />
-            {selectedIncomeType !== "EmploymentIncome" ? (
-              <FormField
-                control={form.control}
-                name="amount"
-                rules={{ min: 1 }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Betrag</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="0,00€"
-                        type="number"
-                        min={1}
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            ) : (
+            {selectedIncomeType === "EmploymentIncome" ? (
+              // Employment Income
               <div>
                 <div className="grid grid-cols-2 gap-6">
                   <FormField
@@ -335,6 +323,72 @@ export const IncomeDialog = ({
                   </FormDescription>
                 </div>
               </div>
+            ) : selectedIncomeType === "SelfEmploymentIncome" ? (
+              // Self Employment Income
+              <div>
+                <div className="grid grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="gros"
+                    rules={{ min: 1 }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Betriebseinnahmen</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="0,00€"
+                            type="number"
+                            min={1}
+                            {...field}
+                            onChange={(event) =>
+                              handleIncomeChange(event, field.onChange)
+                            }
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="net"
+                    rules={{ min: 1 }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Betriebsausgaben</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="0,00€"
+                            type="number"
+                            {...field}
+                            onChange={(event) =>
+                              handleIncomeChange(event, field.onChange)
+                            }
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            ) : (
+              <FormField
+                control={form.control}
+                name="amount"
+                rules={{ min: 1 }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Betrag</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="0,00€"
+                        type="number"
+                        min={1}
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
             )}
             <div className="flex justify-between pt-2">
               <Button

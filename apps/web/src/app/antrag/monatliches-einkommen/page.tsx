@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { Fragment, useCallback } from "react";
+import { Fragment, useCallback, useMemo } from "react";
 import { produce } from "immer";
 import { type TIncome, TPerson, incomeType } from "@/lib/types";
 import {
@@ -26,12 +26,16 @@ import {
 import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/components/context";
+import { calculateOverall } from "@/lib/calculation";
+import HelpMarkdown from "@/config/steps/monatliches-einkommen.mdx";
 
 const step = stepsConfig[8];
 
 export default function StepSalary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
+
+  const { income } = useMemo(() => calculateOverall(state), [state]);
 
   const handleRemove = useCallback(
     (person: TPerson, income: TIncome) => {
@@ -64,14 +68,13 @@ export default function StepSalary() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle>{step.title}</StepTitle>
+      <StepTitle title={step.title}>
+        <HelpMarkdown />
+      </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <StepContent>
         <ScrollArea className="sm:h-[380px]">
           <Table>
-            {/* <TableCaption>
-              Monatliches Einkommen Ihrer Bedarfsgemeinschaft
-            </TableCaption> */}
             <TableHeader>
               <TableRow>
                 <TableHead>Person</TableHead>
@@ -96,7 +99,7 @@ export default function StepSalary() {
                           <>
                             {" "}
                             (
-                            {income.allowance.toLocaleString("de-DE", {
+                            {income.allowance?.toLocaleString("de-DE", {
                               style: "currency",
                               currency: "EUR",
                             })}
@@ -143,12 +146,12 @@ export default function StepSalary() {
                 <TableCell colSpan={3} className="font-bold">
                   Gesamteinkommen
                 </TableCell>
-                {/* <TableCell className="text-right" colSpan={2}>
-                  {incomeSum.toLocaleString("de-DE", {
+                <TableCell className="text-right" colSpan={2}>
+                  {income.toLocaleString("de-DE", {
                     style: "currency",
                     currency: "EUR",
                   })}
-                </TableCell> */}
+                </TableCell>
               </TableRow>
             </TableFooter>
           </Table>

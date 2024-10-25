@@ -3,7 +3,11 @@
 import type { FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import {
+  StepContent,
+  StepNavigation,
+  StepNote,
+} from "@/components/ui/step-primitives";
 import { ArrowRightCircleIcon } from "lucide-react";
 import { useCallback } from "react";
 import { Checkbox } from "../../../components/ui/checkbox";
@@ -17,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { produce } from "immer";
 import { generateId, generateMember } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
+import HelpMarkdown from "@/config/steps/erwerbsfaehig.mdx";
 
 const step = stepsConfig[0];
 
@@ -59,7 +64,9 @@ export default function StepEmployable() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle>{step.title}</StepTitle>
+      <StepTitle title={step.title}>
+        <HelpMarkdown />
+      </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <form onSubmit={handleSubmit}>
         <StepContent>
@@ -90,6 +97,11 @@ export default function StepEmployable() {
           </Button>
         </StepNavigation>
       </form>
+      <StepNote>
+        Sind Sie nicht erwerbsfähig, so stehen Ihnen unter Umständen andere
+        Sozialleistungen zu. Hier finden Sie eine Übersicht über möglich
+        Alternativen. <a href="http://">→ Jobcenter</a>
+      </StepNote>
     </StepRoot>
   );
 }
