@@ -294,11 +294,7 @@ export default function StepSummary() {
                         {allowance.map((allowance) => (
                           <TableRow className="border-none" key={allowance.id}>
                             <TableCell className="py-2 text-xs">
-                              {
-                                allowanceType[
-                                  allowance.type as "insurance" | "income"
-                                ]
-                              }
+                              {incomeType[allowance.type].label}
                             </TableCell>
                             <TableCell className="py-2 text-xs text-right">
                               {allowance.amount?.toLocaleString("de-DE", {

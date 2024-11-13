@@ -16,6 +16,8 @@ import {
 import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
+  ChevronDownIcon,
+  PlusCircle,
   XCircleIcon,
 } from "lucide-react";
 import {
@@ -36,7 +38,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import HelpMarkdown from "@/config/steps/bedarfsgemeinschaft.mdx";
+import HelpMarkdown from "../../../config/steps/bedarfsgemeinschaft.mdx";
 
 const step = stepsConfig[5];
 
@@ -52,7 +54,7 @@ function getExistingAttributes(obj: TPerson["attributes"]): string {
 
   return existingKeys.length > 0
     ? existingKeys.join(", ")
-    : "Keine Mehrbedarfe";
+    : "Mehrbedarfe auswählen";
 }
 
 export default function StepCommunity() {
@@ -155,6 +157,7 @@ export default function StepCommunity() {
                       <DropdownMenu>
                         <DropdownMenuTrigger>
                           {getExistingAttributes(person.attributes)}
+                          <PlusCircle className="w-3 h-3 ml-2 inline" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                           {(person.type === "adult" ||

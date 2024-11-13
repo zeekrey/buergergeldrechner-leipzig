@@ -81,7 +81,7 @@ export const stepsConfig: Record<number, TStep> = {
   },
   5: {
     description: `
-  Sieht so Ihre Bedarfsgemeinschaft aus? Wenn nicht, gehen Sie bitte Schritte zurück um sie anzupassen. Sie haben ausßerdem die Möglchkeit **Mehrbedarfe** zu erfassen.
+  Sieht so Ihre Bedarfsgemeinschaft aus? Wenn nicht, gehen Sie bitte Schritte zurück um sie anzupassen. Sie haben außerdem die Möglichkeit **Mehrbedarfe** zu erfassen.
   `,
     id: "bedarfsgemeinschaft",
     next: (ctx) => {
@@ -103,7 +103,7 @@ export const stepsConfig: Record<number, TStep> = {
   },
   7: {
     description:
-      "Tragen Sie hier bitte Ihre aktuelle Kaltmiete (oder Schuldzins bei Wohneigentum), Heiz- und Betriebskosten ein.",
+      "Tragen Sie hier bitte Ihre aktuelle Kaltmiete (oder Schuldzins bei Wohneigentum), Neben- und Heizkosten ein.",
     id: "kosten-unterkunft-heizung",
     next: () => 8,
     previous: 6,

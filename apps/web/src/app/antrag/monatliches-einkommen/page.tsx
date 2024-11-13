@@ -95,7 +95,9 @@ export default function StepSalary() {
                           style: "currency",
                           currency: "EUR",
                         })}
-                        {income.type === "EmploymentIncome" && (
+                        {["EmploymentIncome", "SelfEmploymentIncome"].includes(
+                          income.type
+                        ) && (
                           <>
                             {" "}
                             (
@@ -109,8 +111,6 @@ export default function StepSalary() {
                       </TableCell>
                       <TableCell className="flex text-center">
                         <IncomeDialog
-                          state={state}
-                          setState={setState}
                           selectedPerson={person}
                           selectedIncome={income}
                         >
@@ -132,7 +132,7 @@ export default function StepSalary() {
               ))}
               <TableRow>
                 <TableCell className="text-center" colSpan={5}>
-                  <IncomeDialog state={state} setState={setState}>
+                  <IncomeDialog>
                     <Button variant="secondary" type="button">
                       <PlusCircleIcon className="w-4 h-4 mr-2" />
                       Einkommen hinzufügen

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "vitest --config vitest.config.ts"
   },
   "dependencies": {
@@ -47,17 +47,25 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.14.0",
     "@ladle/react": "^4.1.1",
     "@playwright/test": "^1.47.0",
     "@tailwindcss/typography": "^0.5.15",
+    "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.5.1",
     "@types/react": "18.3.4",
     "autoprefixer": "^10.4.19",
-    "eslint": "^9.9.1",
     "eslint-config-next": "14.2.7",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-perfectionist": "^3.3.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
+    "typescript-eslint": "^8.13.0",
     "vitest": "^2.0.5"
+  },
+  "overrides": {
+    "eslint": "$eslint"
   }
 }

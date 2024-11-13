@@ -1,10 +1,16 @@
-import { TStepContext, TChild, diseases as DiseaseMap } from "./types";
+import {
+  TStepContext,
+  TChild,
+  diseases as DiseaseMap,
+  IncomeTypEnum,
+} from "./types";
 import data from "../config/data.json";
 import {
   additionalChildNeedsCategory,
   flattenIncome,
   getChildAgeGroup,
 } from "./utils";
+import { z } from "zod";
 
 export function calculateCommunityNeed(context: TStepContext) {
   const isSingle =
@@ -332,12 +338,20 @@ export function calculateAllowance(context: TStepContext) {
   const incomeAllowance = context.community.flatMap((group) =>
     group.income
       .filter((income) => income.allowance)
-      .map((person) => ({
-        id: person.id,
-        amount: person.allowance,
-        type: "income",
+      .map((income) => ({
+        id: income.id,
+        amount: income.allowance,
+        type: income.type,
       }))
   );
+
+  /** Basic deduction amount, only once */
+  // FIXME:
+  // const schema = z.array(IncomeTypEnum);
+  // const legitimateIncomeTypes: z.infer<typeof schema> = [];
+  // const yes = context.community.flatMap((group) =>
+  //   group.income.some((item) => legitimateIncomeTypes.includes(item.type))
+  // );
 
   return [
     ...legitimate.map((person) => ({

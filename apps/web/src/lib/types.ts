@@ -12,7 +12,7 @@ export type TStep = {
   title: string;
 };
 
-const IncomeTyp = z.enum([
+export const IncomeTypEnum = z.enum([
   "EmploymentIncome",
   "SelfEmploymentIncome",
   "ChildAllowance",
@@ -60,19 +60,101 @@ const [firstKey, ...otherKeys] = Object.keys(
 
 export const Diseases = z.enum([firstKey, ...otherKeys]);
 
+const IncomeBaseSchema = z.object({
+  id: z.string(),
+  type: IncomeTypEnum,
+  amount: z.number(),
+  allowance: z.number(),
+});
+
+export const EmploymentIncomeSchema = IncomeBaseSchema.extend({
+  type: z.literal("EmploymentIncome"),
+  gros: z.number(),
+  net: z.number(),
+});
+export const SelfEmploymentIncomeSchema = IncomeBaseSchema.extend({
+  type: z.literal("SelfEmploymentIncome"),
+  gros: z.number(),
+  net: z.number(),
+});
+export const ChildAllowanceSchema = IncomeBaseSchema.extend({
+  type: z.literal("ChildAllowance"),
+});
+export const AdvanceMaintenancePaymentSchema = IncomeBaseSchema.extend({
+  type: z.literal("AdvanceMaintenancePayment"),
+});
+export const MaintenanceSchema = IncomeBaseSchema.extend({
+  type: z.literal("Maintenance"),
+});
+export const UnemploymentBenefitsSchema = IncomeBaseSchema.extend({
+  type: z.literal("UnemploymentBenefits"),
+});
+export const SicknessBenefitsSchema = IncomeBaseSchema.extend({
+  type: z.literal("SicknessBenefits"),
+});
+export const HousingAllowanceSchema = IncomeBaseSchema.extend({
+  type: z.literal("HousingAllowance"),
+});
+export const ChildSupplementSchema = IncomeBaseSchema.extend({
+  type: z.literal("ChildSupplement"),
+});
+export const BAfOGSchema = IncomeBaseSchema.extend({
+  type: z.literal("BAfOG"),
+});
+export const ParentalAllowanceSchema = IncomeBaseSchema.extend({
+  type: z.literal("ParentalAllowance"),
+  parentalAllowanceType: z.enum(["normal", "plus"]),
+  claim: z.number(),
+  officialAllowance: z.number(),
+});
+export const PensionSchema = IncomeBaseSchema.extend({
+  type: z.literal("Pension"),
+});
+export const MaintenanceContributionFromMasterCraftsmenSchema =
+  IncomeBaseSchema.extend({
+    type: z.literal("MaintenanceContributionFromMasterCraftsmen"),
+  });
+export const ShortTimeWorkAllowanceSchema = IncomeBaseSchema.extend({
+  type: z.literal("ShortTimeWorkAllowance"),
+});
+export const VocationalTrainingAllowanceSchema = IncomeBaseSchema.extend({
+  type: z.literal("VocationalTrainingAllowance"),
+});
+export const TaxFreeSideJobSchema = IncomeBaseSchema.extend({
+  type: z.literal("TaxFreeSideJob"),
+});
+export const VoluntarySocialYearSchema = IncomeBaseSchema.extend({
+  type: z.literal("VoluntarySocialYear"),
+});
+export const OtherIncomeSchema = IncomeBaseSchema.extend({
+  type: z.literal("OtherIncome"),
+});
+
+export const ExtendedIncomeSchema = z.union([
+  EmploymentIncomeSchema,
+  SelfEmploymentIncomeSchema,
+  ChildAllowanceSchema,
+  AdvanceMaintenancePaymentSchema,
+  MaintenanceSchema,
+  UnemploymentBenefitsSchema,
+  SicknessBenefitsSchema,
+  HousingAllowanceSchema,
+  ChildSupplementSchema,
+  BAfOGSchema,
+  ParentalAllowanceSchema,
+  PensionSchema,
+  MaintenanceContributionFromMasterCraftsmenSchema,
+  ShortTimeWorkAllowanceSchema,
+  VocationalTrainingAllowanceSchema,
+  TaxFreeSideJobSchema,
+  VoluntarySocialYearSchema,
+  OtherIncomeSchema,
+]);
+
 const PersonCommon = z.object({
   id: z.string(),
   name: z.string(),
-  income: z.array(
-    z.object({
-      id: z.string(),
-      type: IncomeTyp,
-      amount: z.number(),
-      allowance: z.optional(z.number()),
-      net: z.optional(z.number()),
-      gros: z.optional(z.number()),
-    })
-  ),
+  income: z.array(ExtendedIncomeSchema),
   attributes: z.optional(
     z.object({
       isPregnant: z.optional(z.boolean()),
