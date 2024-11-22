@@ -59,6 +59,7 @@ export default function StepChildren() {
                   id: generateId(),
                   type: "ChildAllowance",
                   amount: incomeType.ChildAllowance.standardAmount ?? 0,
+                  allowance: 0,
                 },
               ],
             })

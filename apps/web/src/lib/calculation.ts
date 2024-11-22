@@ -258,11 +258,14 @@ export function calculateSalary({
   gross,
   net,
   hasMinorChild,
+  isYoung,
 }: {
   gross: number;
   net: number;
   hasMinorChild: boolean;
+  isYoung?: boolean;
 }) {
+  // FIXME: add calculation for isYoung. See https://github.com/zeekrey/buergergeldrechner-leipzig/issues/7
   if (gross < 1 || net < 1 || net > gross)
     return {
       allowance: 0,
@@ -347,13 +350,32 @@ export function calculateAllowance(context: TStepContext) {
 
   /** Basic deduction amount, only once */
   // FIXME:
-  // const schema = z.array(IncomeTypEnum);
-  // const legitimateIncomeTypes: z.infer<typeof schema> = [];
-  // const yes = context.community.flatMap((group) =>
+  const schema = z.array(IncomeTypEnum);
+  const legitimateIncomeTypes: z.infer<typeof schema> = [
+    "BAfOG",
+    "VocationalTrainingAllowance",
+    "MaintenanceContributionFromMasterCraftsmen",
+  ];
+  // const [hasBasicDeduction] = context.community.flatMap((group) =>
   //   group.income.some((item) => legitimateIncomeTypes.includes(item.type))
   // );
 
+  const baseDeduction = context.community.reduce<
+    { id: string; type: "baseDeduction"; amount: number }[]
+  >((acc, curr) => {
+    const hasBasicDeduction = curr.income.some((item) =>
+      legitimateIncomeTypes.includes(item.type)
+    );
+
+    if (hasBasicDeduction) {
+      acc.push({ id: curr.id, type: "baseDeduction", amount: 100 });
+    }
+
+    return acc; // Ensure to return the accumulator in every iteration
+  }, []);
+
   return [
+    ...baseDeduction,
     ...legitimate.map((person) => ({
       id: person.id,
       type: "insurance",

@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { SelfEmploymentIncomeSchema, TStepContext } from "@/lib/types";
+import { WandSparklesIcon } from "lucide-react";
+import {
+  EmploymentIncomeSchema,
+  ShortTimeWorkAllowanceSchema,
+  TStepContext,
+} from "@/lib/types";
 import {
   Form,
   FormControl,
@@ -16,18 +21,21 @@ import { generateId } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";
 import { z } from "zod";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type TFormData = {
-  net: number;
+  isYoung: boolean;
   gros: number;
+  net: number;
 };
 
-export const SelfEmploymentIncome = ({
+export const ShortTimeWorkIncome = ({
   person,
   income,
   setOpen,
+  incomeType,
 }: IncomeComponentProps & {
-  income: z.infer<typeof SelfEmploymentIncomeSchema>;
+  income: z.infer<typeof ShortTimeWorkAllowanceSchema>;
 }) => {
   const [state, setState] = useStateContext();
 
@@ -46,6 +54,8 @@ export const SelfEmploymentIncome = ({
     );
 
     if (selectedPersonIndex !== -1) {
+      // TODO: calculateSalary needs to be extended by isYoung boolean.
+
       const { allowance, income: _income } = calculateSalary({
         gross: Number(data.gros),
         net: Number(data.net),
@@ -57,35 +67,28 @@ export const SelfEmploymentIncome = ({
       let newState: TStepContext;
 
       if (income) {
-        console.log("Existing income will be edited...", income.id);
         /** Inplace update income if it is an existing one. */
         const selectedIncomeIndex = state.community[
           selectedPersonIndex
-        ].income.findIndex((_income) => {
-          console.log(income.id, _income.id);
-          return income.id === _income.id;
-        });
-
-        console.log("Updating income at index", selectedIncomeIndex);
+        ].income.findIndex((income) => income.id === income.id);
 
         newState = produce(state, (draft) => {
           draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
             ...income,
             allowance,
             amount: Number(_income),
-            type: "SelfEmploymentIncome",
+            type: "ShortTimeWorkAllowance",
             gros: Number(data.gros),
             net: Number(data.net),
           };
         });
       } else {
-        console.log("New income will be addded...");
         /** Create income if no income to be edited was provided. */
         newState = produce(state, (draft) => {
           draft.community[selectedPersonIndex].income.push({
             allowance,
             amount: Number(_income),
-            type: "SelfEmploymentIncome",
+            type: "ShortTimeWorkAllowance",
             id: generateId(),
             gros: Number(data.gros),
             net: Number(data.net),
@@ -98,18 +101,19 @@ export const SelfEmploymentIncome = ({
 
     setOpen(false);
   };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6 pb-4">
             <FormField
               control={form.control}
               name="gros"
               rules={{ min: 1 }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Betriebseinnahmen</FormLabel>
+                  <FormLabel>Brutto</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="0,00€"
@@ -127,7 +131,7 @@ export const SelfEmploymentIncome = ({
               rules={{ min: 1 }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Betriebsausgaben</FormLabel>
+                  <FormLabel>Netto</FormLabel>
                   <FormControl>
                     <Input placeholder="0,00€" type="number" {...field} />
                   </FormControl>
@@ -135,6 +139,15 @@ export const SelfEmploymentIncome = ({
               )}
             />
           </div>
+          {/* <div className="flex pt-4 gap-2">
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+              <WandSparklesIcon className="h-4 w-4 text-green-600" />
+            </div>
+            <FormDescription>
+              Bei einem Einkommen aus Erwerbstätigkeit wird Ihnen ein Freibetrag
+              gewährt.
+            </FormDescription>
+          </div> */}
         </div>
         <div className="flex justify-between pt-2">
           <Button

@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { IncomeTypEnum, TPerson } from "@/lib/types";
 import { type TIncome, incomeType } from "@/lib/types";
 import { EmploymentIncome } from "./income-dialogs/employment-income";
@@ -22,6 +22,8 @@ import { SelfEmploymentIncome } from "./income-dialogs/self-employment-income";
 import { DefaultIncome } from "./income-dialogs/default-income";
 import { ParentalAllowance } from "./income-dialogs/parental-allowance";
 import { z } from "zod";
+import { VoluntarySocialYear } from "./income-dialogs/voluntary-social-year";
+import { ShortTimeWorkIncome } from "./income-dialogs/short-time-work-income";
 
 const incomeTypeList = Object.entries(incomeType).map((type) => type);
 
@@ -29,7 +31,7 @@ export type IncomeComponentProps = {
   person: TPerson;
   income?: TIncome;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  incomeType: z.infer<typeof IncomeTypEnum>;
+  incomeType?: z.infer<typeof IncomeTypEnum>;
 };
 
 export const incomeComponentMap: {
@@ -50,10 +52,10 @@ export const incomeComponentMap: {
   ParentalAllowance: ParentalAllowance,
   Pension: DefaultIncome,
   MaintenanceContributionFromMasterCraftsmen: DefaultIncome,
-  ShortTimeWorkAllowance: DefaultIncome,
+  ShortTimeWorkAllowance: ShortTimeWorkIncome,
   VocationalTrainingAllowance: DefaultIncome,
   TaxFreeSideJob: DefaultIncome,
-  VoluntarySocialYear: DefaultIncome,
+  VoluntarySocialYear: VoluntarySocialYear,
   OtherIncome: DefaultIncome,
 };
 
@@ -66,12 +68,18 @@ export const IncomeDialog = ({
   selectedPerson?: TPerson;
   selectedIncome?: TIncome;
 }) => {
+  console.log(selectedIncome);
   const [open, setOpen] = useState(false);
   const [state, setState] = useStateContext();
   const [person, setPerson] = useState(selectedPerson);
   const [incomeType, setIncomeType] = useState(
     selectedIncome?.type ?? ("EmploymentIncome" as TIncome["type"])
   );
+
+  /** Needed, otherwise the local person state, won't be updated. */
+  useEffect(() => {
+    setPerson(selectedPerson);
+  }, [state.community]);
 
   const IncomeComponent = incomeComponentMap[incomeType];
 
@@ -97,9 +105,9 @@ export const IncomeDialog = ({
         </DialogHeader>
         <Select
           onValueChange={handlePersonChange}
-          defaultValue={state.community.at(0)?.id}
+          defaultValue={person?.id ?? state.community.at(0)?.id}
         >
-          <SelectTrigger>
+          <SelectTrigger disabled={Boolean(selectedPerson)}>
             <SelectValue placeholder="Person auswählen" />
           </SelectTrigger>
           <SelectContent>

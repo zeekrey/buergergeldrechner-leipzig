@@ -17,8 +17,10 @@ import { generateId } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";
 import { z } from "zod";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type TFormData = {
+  isYoung: boolean;
   gros: number;
   net: number;
 };
@@ -35,6 +37,10 @@ export const EmploymentIncome = ({
 
   const form = useForm<TFormData>({
     defaultValues: {
+      isYoung:
+        (person?.type === "child" && person?.age < 26) ??
+        person?.age < 26 ??
+        false,
       gros: income?.gros ?? 0,
       net: income?.net ?? 0,
     },
@@ -48,6 +54,8 @@ export const EmploymentIncome = ({
     );
 
     if (selectedPersonIndex !== -1) {
+      // TODO: calculateSalary needs to be extended by isYoung boolean.
+
       const { allowance, income: _income } = calculateSalary({
         gross: Number(data.gros),
         net: Number(data.net),
@@ -98,7 +106,7 @@ export const EmploymentIncome = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6 pb-4">
             <FormField
               control={form.control}
               name="gros"
@@ -131,7 +139,26 @@ export const EmploymentIncome = ({
               )}
             />
           </div>
-          <div className="flex pt-4 gap-2">
+          <FormField
+            control={form.control}
+            name="isYoung"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>
+                    Person ist Student, Azubi oder Schüler und jünger als 26.
+                  </FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+          {/* <div className="flex pt-4 gap-2">
             <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
               <WandSparklesIcon className="h-4 w-4 text-green-600" />
             </div>
@@ -139,7 +166,7 @@ export const EmploymentIncome = ({
               Bei einem Einkommen aus Erwerbstätigkeit wird Ihnen ein Freibetrag
               gewährt.
             </FormDescription>
-          </div>
+          </div> */}
         </div>
         <div className="flex justify-between pt-2">
           <Button

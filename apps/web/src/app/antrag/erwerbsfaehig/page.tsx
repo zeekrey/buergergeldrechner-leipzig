@@ -100,7 +100,10 @@ export default function StepEmployable() {
       <StepNote>
         Sind Sie nicht erwerbsfähig, so stehen Ihnen unter Umständen andere
         Sozialleistungen zu. Hier finden Sie eine Übersicht über möglich
-        Alternativen. <a href="http://">→ Jobcenter</a>
+        Alternativen.{" "}
+        <a href="https://www.leipzig.de/buergerservice-und-verwaltung/aemter-und-behoerdengaenge/behoerden-und-dienstleistungen/dienstleistung/sozialhilfe-beantragen-5b5842148421a/">
+          → Sozialhilfe
+        </a>
       </StepNote>
     </StepRoot>
   );

@@ -104,6 +104,8 @@ export default function StepSummary() {
     localStorage.removeItem("state");
   }, []);
 
+  console.log(allowance);
+
   return (
     <StepRoot id={step.id}>
       <StepTitle title={step.title}>
@@ -294,7 +296,15 @@ export default function StepSummary() {
                         {allowance.map((allowance) => (
                           <TableRow className="border-none" key={allowance.id}>
                             <TableCell className="py-2 text-xs">
-                              {incomeType[allowance.type].label}
+                              {
+                                {
+                                  ...incomeType,
+                                  insurance: { label: "Versicherung" },
+                                  baseDeduction: {
+                                    label: "Grundabsetzungsbetrag",
+                                  },
+                                }[allowance.type].label
+                              }
                             </TableCell>
                             <TableCell className="py-2 text-xs text-right">
                               {allowance.amount?.toLocaleString("de-DE", {

@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ChildAllowanceSchema, IncomeTypEnum, TStepContext } from "@/lib/types";
+import {
+  ChildAllowanceSchema,
+  IncomeBaseSchema,
+  IncomeTypEnum,
+  TStepContext,
+} from "@/lib/types";
 import {
   Form,
   FormControl,
@@ -26,8 +31,8 @@ export const DefaultIncome = ({
   setOpen,
   incomeType,
 }: IncomeComponentProps & {
-  income: z.infer<typeof ChildAllowanceSchema>;
-  incomeType: z.infer<typeof IncomeTypEnum>;
+  income: z.infer<typeof IncomeBaseSchema>;
+  incomeType: "OtherIncome";
 }) => {
   const [state, setState] = useStateContext();
 
@@ -64,7 +69,6 @@ export const DefaultIncome = ({
             ...income,
             allowance,
             amount: Number(_income),
-            type: incomeType,
           };
         });
       } else {

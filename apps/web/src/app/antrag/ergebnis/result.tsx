@@ -74,14 +74,14 @@ export function Result({
             Auch wenn kein Anspruch auf Bürgergeld bestehen sollte, können Sie
             sich hier über{" "}
             <a
-              href="http://"
+              href="https://www.wohngeldrechner24.de/"
               className="font-bold underline underline-offset-2"
             >
               Wohngeld
             </a>{" "}
             und{" "}
             <a
-              href="http://"
+              href="https://www.arbeitsagentur.de/familie-und-kinder/kinderzuschlag-verstehen"
               className="font-bold underline underline-offset-2"
             >
               Kinderzuschlag

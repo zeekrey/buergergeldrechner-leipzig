@@ -34,6 +34,7 @@ const step = stepsConfig[8];
 export default function StepSalary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
+  console.log(state);
 
   const { income } = useMemo(() => calculateOverall(state), [state]);
 
@@ -94,20 +95,13 @@ export default function StepSalary() {
                         {income.amount.toLocaleString("de-DE", {
                           style: "currency",
                           currency: "EUR",
+                        })}{" "}
+                        (
+                        {income.allowance?.toLocaleString("de-DE", {
+                          style: "currency",
+                          currency: "EUR",
                         })}
-                        {["EmploymentIncome", "SelfEmploymentIncome"].includes(
-                          income.type
-                        ) && (
-                          <>
-                            {" "}
-                            (
-                            {income.allowance?.toLocaleString("de-DE", {
-                              style: "currency",
-                              currency: "EUR",
-                            })}
-                            )
-                          </>
-                        )}
+                        )
                       </TableCell>
                       <TableCell className="flex text-center">
                         <IncomeDialog

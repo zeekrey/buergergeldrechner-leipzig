@@ -149,7 +149,7 @@ export default function StepCommunity() {
                       {person.name}
                       {person.type === "child" && (
                         <span className="ml-1 text-muted-foreground">
-                          ({person.age})
+                          ({person.age} {person.age < 2 ? "Jahr" : "Jahre"})
                         </span>
                       )}
                     </TableCell>

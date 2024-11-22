@@ -86,6 +86,7 @@ export default function StepChildrenCount() {
               id: generateId(),
               type: "ChildAllowance",
               amount: incomeType.ChildAllowance.standardAmount ?? 0,
+              allowance: 0,
             },
           ],
         })
@@ -134,7 +135,7 @@ export default function StepChildrenCount() {
                           key={value.toString()}
                           value={value.toString()}
                         >
-                          {value}
+                          {value} {value < 2 ? "Jahr" : "Jahre"}
                         </SelectItem>
                       )
                     )}

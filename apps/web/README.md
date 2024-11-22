@@ -104,4 +104,19 @@ Resteinkommen       52
 
 Resteinkommen ist das "zu berücksichtigendes Einkommen". Der Bürgergeldbedarf wird um diesen Betrag verringert.
 
-## Wizard
+## Einkommensarten und deren Freibeträge
+
+Unterschiedliche Einkommensarten haben unterschiedliche Freibeträge. Hinzukommt, dass manche Einkommensarten Freibeträge haben dir nur einmalig angewendet werden können.
+
+| Einkommensart                                              | Freibetrag                                                                                                                               | Einmalig anwendbar        |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| Jede Einkommensart                                         | Nur volljährige Mitlgieder (auch Kindergeld). Bei Einkommen aus Erwebstätigkeit und Selbständigkeit ist dieser Betrag bereits inkludiert | Nein                      |
+| Einkommen aus Erwerbstätigkeit                             | Nur Personen die mind. 15 Jahre (erwebsfähig) sind. Tbd: Regelwerk verlink.                                                              | Nein                      |
+| \*Einkommen aus Erwerbstätigkeit (Azubi, Student, Schüler) | Nur Personen die max. 25 Jahre sind. Tbd: Regelwerk verlink.                                                                             | Nein                      |
+| Einkommen aus Selbstständigkeit                            | Nur Personen die mind. 15 Jahre (erwebsfähig sind). Tbd: Regelwerk verlink.                                                              | Nein                      |
+| Elterngeld                                                 | Wird durch Elterngeldstelle festgelegt, Maximum: Elterngeld: 300,00€, Elterngeld Plus: 150,00€                                           | Nein                      |
+| BAföG                                                      | 100,00€ Grundabsetzungsbetrag                                                                                                            | Ja, Grundabsetzungsbetrag |
+| BAB                                                        | 100,00€ Grundabsetzungsbetrag                                                                                                            | Ja, Grundabsetzungsbetrag |
+| Freiwilligendienst, sozialem/ökologischen Jahr             | 538,00€, Person darf maximal 25Jahre alt sein.                                                                                           | Nein                      |
+| Unterhaltsbeitrag aus Meisterbafög                         | 100,00€ Grundabsetzungsbetrag                                                                                                            | Ja, Grundabsetzungsbetrag |
+| Kurzarbeitergeld                                           | Vgl. Einkommen aus Erwerbstätigkeit. Nur Personen die mind. 15 Jahre (erwebsfähig) sind. Tbd: Regelwerk verlink.                         | Nein                      |

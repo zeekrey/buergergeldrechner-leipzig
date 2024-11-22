@@ -105,7 +105,6 @@ export const ParentalAllowance = ({
   person,
   income,
   setOpen,
-  incomeType,
 }: IncomeComponentProps & {
   income: z.infer<typeof ParentalAllowanceSchema>;
 }) => {
@@ -164,6 +163,7 @@ export const ParentalAllowance = ({
       }
 
       setState(newState);
+      console.log("Setting new state", newState);
     }
 
     setOpen(false);
@@ -232,7 +232,7 @@ export const ParentalAllowance = ({
                   <Input
                     placeholder="0,00€"
                     type="number"
-                    max={300}
+                    max={form.getValues("type") === "normal" ? 300 : 150}
                     {...field}
                   />
                 </FormControl>

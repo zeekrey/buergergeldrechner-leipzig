@@ -60,7 +60,7 @@ const [firstKey, ...otherKeys] = Object.keys(
 
 export const Diseases = z.enum([firstKey, ...otherKeys]);
 
-const IncomeBaseSchema = z.object({
+export const IncomeBaseSchema = z.object({
   id: z.string(),
   type: IncomeTypEnum,
   amount: z.number(),
@@ -116,6 +116,8 @@ export const MaintenanceContributionFromMasterCraftsmenSchema =
   });
 export const ShortTimeWorkAllowanceSchema = IncomeBaseSchema.extend({
   type: z.literal("ShortTimeWorkAllowance"),
+  gros: z.number(),
+  net: z.number(),
 });
 export const VocationalTrainingAllowanceSchema = IncomeBaseSchema.extend({
   type: z.literal("VocationalTrainingAllowance"),
@@ -155,6 +157,7 @@ const PersonCommon = z.object({
   id: z.string(),
   name: z.string(),
   income: z.array(ExtendedIncomeSchema),
+  age: z.optional(z.number()),
   attributes: z.optional(
     z.object({
       isPregnant: z.optional(z.boolean()),
@@ -249,7 +252,7 @@ export const incomeType: {
   SicknessBenefits: { label: "Krankengeld" },
   HousingAllowance: { label: "Wohngeld" },
   ChildSupplement: { label: "Kinderzuschlag" },
-  BAfOG: { label: "BAfÖG" },
+  BAfOG: { label: "BAföG" },
   ParentalAllowance: { label: "Elterngeld" },
   Pension: { label: "Rente" },
   MaintenanceContributionFromMasterCraftsmen: {
@@ -257,7 +260,9 @@ export const incomeType: {
   },
   ShortTimeWorkAllowance: { label: "Kurzarbeitergeld" },
   VocationalTrainingAllowance: { label: "Berufsausbildungsbeihilfe (BAB)" },
-  TaxFreeSideJob: { label: "Steuerfreie nebenberufliche Tätigkeit" },
+  TaxFreeSideJob: {
+    label: "Steuerfreie nebenberufliche ehrenamtliche Tätigkeit",
+  },
   VoluntarySocialYear: {
     label: "Freiwilligendienst, Soziales/Ökologisches Jahr",
   },
