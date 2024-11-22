@@ -104,8 +104,6 @@ export default function StepSummary() {
     localStorage.removeItem("state");
   }, []);
 
-  console.log(allowance);
-
   return (
     <StepRoot id={step.id}>
       <StepTitle title={step.title}>
@@ -126,7 +124,7 @@ export default function StepSummary() {
               overall={result.overall}
             />
           </TabsContent>
-          <TabsContent value="calculation">
+          <TabsContent value="calculation" data-testid="result-calculation">
             <div className="pb-8">
               <ScrollArea className="sm:h-[380px]">
                 <Card className="overflow-hidden">

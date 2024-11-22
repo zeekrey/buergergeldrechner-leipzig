@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 export const metadata = {
   description:
     "Der Bürgergeldrechner der Stadt Leipzig hilft Ihnen, schnell und einfach zu berechnen, ob Sie Anspruch auf Bürgergeld haben. Nutzen Sie unser benutzerfreundliches Tool, um Ihre finanzielle Unterstützung zu prüfen und wichtige Informationen zur Antragstellung zu erhalten.",
-  title: "Bürgergeldrechner der Stadt Leipzig",
+  title: "Bürgergeldrechner des Jobcenter Leipzig",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

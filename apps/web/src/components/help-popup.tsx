@@ -5,6 +5,8 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "./ui/sheet";
 import LogoImage from "../assets/logo.webp";
+import SmartCityImage from "../assets/smart-city-challenge.webp";
+import StadtImage from "../assets/stadt-leipzig.webp";
 import { InfoIcon } from "lucide-react";
 import Image from "next/image";
 
@@ -17,7 +19,7 @@ export function HelpPopup() {
           <span className="sr-only">Hilfe anzeigen</span>
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[400px] sm:w-[540px]">
+      <SheetContent className="w-[400px] sm:w-[540px] flex flex-col">
         <SheetHeader>
           <div className="text-center">
             <h2 className="text-muted-foreground text-sm mt-6">
@@ -31,6 +33,28 @@ export function HelpPopup() {
             />
           </div>
         </SheetHeader>
+        <div className="flex-grow"></div>
+        <div>
+          <div className="flex justify-center gap-2">
+            <Image
+              src={StadtImage}
+              alt="jobcenter-leipzig-logo"
+              width={100}
+              className=""
+            />
+            <Image
+              src={SmartCityImage}
+              alt="jobcenter-leipzig-logo"
+              width={200}
+              className=""
+            />
+          </div>
+          <p className="text-muted-foreground text-sm mt-6">
+            Der Bürgergeldrechner wurde im Rahmen des Innovationswettbewerbs
+            <strong>"Smart City Challenge Leipzig"</strong>durch das Referat
+            Digitale Stadt Leipzig gefördert.
+          </p>
+        </div>
       </SheetContent>
     </Sheet>
   );

@@ -9,7 +9,7 @@ test("Case #1 - single with standard income", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/partnerschaft");
-  await expect(page.getByRole("strong")).toContainText("563 €");
+  await expect(page.getByRole("strong")).toContainText("563,00 €");
 
   await page.getByText("Alleinstehend").click();
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -20,7 +20,7 @@ test("Case #1 - single with standard income", async ({ page }) => {
   await page.waitForURL("**/bedarfsgemeinschaft");
   await page.getByRole("button", { name: "Weiter" }).click();
 
-  await page.waitForURL("**/monatliche-ausgaben");
+  await page.waitForURL("**/kosten-unterkunft-heizung");
   await page
     .getByRole("row", { name: "Kaltmiete" })
     .getByPlaceholder("€")
@@ -41,7 +41,7 @@ test("Case #1 - single with standard income", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/monatliches-einkommen");
-  await expect(page.getByRole("strong")).toContainText("1079 €");
+  await expect(page.getByRole("strong")).toContainText("1.079,00 €");
 
   await page.getByRole("button", { name: "Einkommen hinzufügen" }).click();
   await page.getByLabel("Brutto").fill("1200");
@@ -52,6 +52,8 @@ test("Case #1 - single with standard income", async ({ page }) => {
 
   await page.waitForURL("**/ergebnis");
   await expect(page.getByTestId("result")).toContainText("477");
+
+  await page.getByRole("tab", { name: "Berechnung" }).click();
 });
 
 test("Case #2 - Couple without kids", async ({ page }) => {
@@ -65,7 +67,7 @@ test("Case #2 - Couple without kids", async ({ page }) => {
 
   await page.getByText("Partnerschaft", { exact: true }).click();
 
-  await expect(page.getByRole("strong")).toContainText("1012 €");
+  await expect(page.getByRole("strong")).toContainText("1.012,00 €");
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.getByText("Keine Kinder").click();
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -73,7 +75,7 @@ test("Case #2 - Couple without kids", async ({ page }) => {
   await page.waitForURL("**/bedarfsgemeinschaft");
   await page.getByRole("button", { name: "Weiter" }).click();
 
-  await page.waitForURL("**/monatliche-ausgaben");
+  await page.waitForURL("**/kosten-unterkunft-heizung");
   await page
     .getByRole("row", { name: "Kaltmiete" })
     .getByPlaceholder("€")
@@ -93,7 +95,7 @@ test("Case #2 - Couple without kids", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/monatliches-einkommen");
-  await expect(page.getByRole("strong")).toContainText("1528 €");
+  await expect(page.getByRole("strong")).toContainText("1.528,00 €");
   await page.getByRole("button", { name: "Einkommen hinzufügen" }).click();
   await page.getByLabel("Brutto").fill("2100");
   await page.getByLabel("Netto").fill("1700");
@@ -103,6 +105,8 @@ test("Case #2 - Couple without kids", async ({ page }) => {
   await page.waitForURL("**/ergebnis");
 
   await expect(page.getByTestId("result")).toContainText("176");
+
+  await page.getByRole("tab", { name: "Berechnung" }).click();
 });
 
 test("Case #3 - Couple with 1 kid", async ({ page }) => {
@@ -127,17 +131,17 @@ test("Case #3 - Couple with 1 kid", async ({ page }) => {
   await page.waitForURL("**/bedarfsgemeinschaft");
   await page.getByRole("button", { name: "Weiter" }).click();
 
-  await page.waitForURL("**/monatliche-ausgaben");
+  await page.waitForURL("**/kosten-unterkunft-heizung");
   await page
-    .getByRole("row", { name: "Kaltmiete €" })
+    .getByRole("row", { name: "Kaltmiete (Schuldzins bei Wohneigentum)" })
     .getByPlaceholder("€")
     .fill("550");
   await page
-    .getByRole("row", { name: "Nebenkosten €" })
+    .getByRole("row", { name: "Nebenkosten" })
     .getByPlaceholder("€")
     .fill("100");
   await page
-    .getByRole("row", { name: "Heizkosten €" })
+    .getByRole("row", { name: "Heizkosten" })
     .getByPlaceholder("€")
     .fill("150");
 
@@ -152,6 +156,8 @@ test("Case #3 - Couple with 1 kid", async ({ page }) => {
 
   await page.waitForURL("**/ergebnis");
   await expect(page.getByTestId("result")).toContainText("597");
+
+  await page.getByRole("tab", { name: "Berechnung" }).click();
 });
 
 test("Case #4 - Couple with 2 kids", async ({ page }) => {
@@ -171,31 +177,25 @@ test("Case #4 - Couple with 2 kids", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/kinder-anzahl");
+  await page.getByRole("combobox").click();
+  await page.getByLabel("19 Jahre").click();
   await page.getByRole("button", { name: "Kind hinzufügen" }).click();
-  await page
-    .locator("div")
-    .filter({
-      hasText: /^Kind 20-5 Jahre0-5 Jahre6-13 Jahre14-17 Jahre18\+ Jahre$/,
-    })
-    .getByRole("combobox")
-    .click();
-  await page.getByLabel("+ Jahre").getByText("+ Jahre").click();
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/bedarfsgemeinschaft");
   await page.getByRole("button", { name: "Weiter" }).click();
 
-  await page.waitForURL("**/monatliche-ausgaben");
+  await page.waitForURL("**/kosten-unterkunft-heizung");
   await page
-    .getByRole("row", { name: "Kaltmiete €" })
+    .getByRole("row", { name: "Kaltmiete (Schuldzins bei Wohneigentum)" })
     .getByPlaceholder("€")
     .fill("650");
   await page
-    .getByRole("row", { name: "Nebenkosten €" })
+    .getByRole("row", { name: "Nebenkosten" })
     .getByPlaceholder("€")
     .fill("100");
   await page
-    .getByRole("row", { name: "Heizkosten €" })
+    .getByRole("row", { name: "Heizkosten" })
     .getByPlaceholder("€")
     .fill("150");
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -206,18 +206,29 @@ test("Case #4 - Couple with 2 kids", async ({ page }) => {
   await page.getByLabel("Netto").fill("1700");
   await page.getByRole("button", { name: "Hinzufügen" }).click();
   await page.getByRole("button", { name: "Einkommen hinzufügen" }).click();
-  await page.getByLabel("Person").click();
+  await page.getByRole("combobox").filter({ hasText: "Antragsteller" }).click();
   await page.getByLabel("Partner").click();
-  await page.getByLabel("Einkommensart").click();
+  await page
+    .getByRole("combobox")
+    .filter({ hasText: "Einkommen aus Erwerbstätigkeit" })
+    .click();
   await page
     .getByLabel("Arbeitslosengeld")
     .getByText("Arbeitslosengeld")
     .click();
-  await page.getByPlaceholder("€").fill("1200");
+  // FIXME: .fill is not working here.
+  await page.getByPlaceholder("€").type("1200");
   await page.getByRole("button", { name: "Hinzufügen" }).click();
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/ergebnis");
   await expect(page.getByTestId("result")).toContainText("Kein Anspruch");
-  await expect(page.getByRole("strong")).toContainText("-242 €");
+  await expect(page.getByRole("strong")).toContainText("-242,00 €");
+
+  await page.getByRole("tab", { name: "Berechnung" }).click();
+
+  const result = page.getByTestId("result-calculation");
+
+  await expect(result).toBeVisible();
+  await result.screenshot();
 });
