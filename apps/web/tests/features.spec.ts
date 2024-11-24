@@ -23,20 +23,18 @@ test("Case #1 - single with standard income", async ({ page }) => {
   await page.waitForURL("**/kosten-unterkunft-heizung");
   await page
     .getByRole("row", { name: "Kaltmiete" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Kaltmiete")
     .fill("350");
   await page
     .getByRole("row", { name: "Nebenkosten" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Nebenkosten")
     .fill("66");
   await page
     .getByRole("row", { name: "Heizkosten" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Heizkosten")
     .fill("100");
 
-  await expect(
-    page.getByRole("row", { name: "Summe" }).getByRole("textbox")
-  ).toHaveValue("516");
+  await expect(page.getByText("516,00 €")).toBeVisible();
 
   await page.getByRole("button", { name: "Weiter" }).click();
 
@@ -78,19 +76,17 @@ test("Case #2 - Couple without kids", async ({ page }) => {
   await page.waitForURL("**/kosten-unterkunft-heizung");
   await page
     .getByRole("row", { name: "Kaltmiete" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Kaltmiete")
     .fill("350");
   await page
     .getByRole("row", { name: "Nebenkosten" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Nebenkosten")
     .fill("66");
   await page
     .getByRole("row", { name: "Heizkosten" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Heizkosten")
     .fill("100");
-  await expect(
-    page.getByRole("row", { name: "Summe" }).getByRole("textbox")
-  ).toHaveValue("516");
+  await expect(page.getByText("516,00 €")).toBeVisible();
 
   await page.getByRole("button", { name: "Weiter" }).click();
 
@@ -134,15 +130,15 @@ test("Case #3 - Couple with 1 kid", async ({ page }) => {
   await page.waitForURL("**/kosten-unterkunft-heizung");
   await page
     .getByRole("row", { name: "Kaltmiete (Schuldzins bei Wohneigentum)" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Kaltmiete")
     .fill("550");
   await page
     .getByRole("row", { name: "Nebenkosten" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Nebenkosten")
     .fill("100");
   await page
     .getByRole("row", { name: "Heizkosten" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Heizkosten")
     .fill("150");
 
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -188,15 +184,15 @@ test("Case #4 - Couple with 2 kids", async ({ page }) => {
   await page.waitForURL("**/kosten-unterkunft-heizung");
   await page
     .getByRole("row", { name: "Kaltmiete (Schuldzins bei Wohneigentum)" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Kaltmiete")
     .fill("650");
   await page
     .getByRole("row", { name: "Nebenkosten" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Nebenkosten")
     .fill("100");
   await page
     .getByRole("row", { name: "Heizkosten" })
-    .getByPlaceholder("€")
+    .getByPlaceholder("Heizkosten")
     .fill("150");
   await page.getByRole("button", { name: "Weiter" }).click();
 
