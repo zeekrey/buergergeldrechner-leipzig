@@ -163,7 +163,6 @@ export const ParentalAllowance = ({
       }
 
       setState(newState);
-      console.log("Setting new state", newState);
     }
 
     setOpen(false);

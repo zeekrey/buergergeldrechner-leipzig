@@ -57,16 +57,12 @@ export const SelfEmploymentIncome = ({
       let newState: TStepContext;
 
       if (income) {
-        console.log("Existing income will be edited...", income.id);
         /** Inplace update income if it is an existing one. */
         const selectedIncomeIndex = state.community[
           selectedPersonIndex
         ].income.findIndex((_income) => {
-          console.log(income.id, _income.id);
           return income.id === _income.id;
         });
-
-        console.log("Updating income at index", selectedIncomeIndex);
 
         newState = produce(state, (draft) => {
           draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
@@ -79,7 +75,6 @@ export const SelfEmploymentIncome = ({
           };
         });
       } else {
-        console.log("New income will be addded...");
         /** Create income if no income to be edited was provided. */
         newState = produce(state, (draft) => {
           draft.community[selectedPersonIndex].income.push({

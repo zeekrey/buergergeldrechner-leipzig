@@ -318,6 +318,10 @@ export function calculateOverall(context: TStepContext) {
   const flattenedIncome = flattenIncome(context.community);
   const incomeSum = flattenedIncome.reduce((acc, curr) => acc + curr.amount, 0);
   const allowance = calculateAllowance(context);
+  const childBenefitTransferSum = calculateChildBenefitTransfer(context).reduce(
+    (acc, curr) => acc + curr.amount,
+    0
+  );
 
   const additionalNeedsSum = additionalNeeds.reduce((totalSum, item) => {
     // Sum the values of additionals for the current item
@@ -338,8 +342,35 @@ export function calculateOverall(context: TStepContext) {
       additionalNeedsSum +
       context.spendings.sum +
       allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0) -
-      incomeSum,
+      incomeSum -
+      childBenefitTransferSum,
   };
+}
+
+export function calculateChildBenefitTransfer(context: TStepContext) {
+  /** Child benefit transfer (Kindergeldübertrag) */
+  const rentPerPerson =
+    Math.round((context.spendings.sum / context.community.length) * 100) / 100;
+
+  const childBenefitTransfer = context.community
+    .filter((pers) => pers.type === "child")
+    .reduce<{ name: string; amount: number }[]>((acc, child) => {
+      const baseAmount = data.child[getChildAgeGroup(child.age)];
+
+      const incomeSum = child.income.reduce((_acc, curr) => {
+        return _acc + curr.amount;
+      }, 0);
+
+      if (incomeSum > baseAmount + rentPerPerson)
+        acc.push({
+          name: child.name,
+          amount: incomeSum - (baseAmount + rentPerPerson),
+        });
+
+      return acc;
+    }, []);
+
+  return childBenefitTransfer;
 }
 
 export function calculateAllowance(context: TStepContext) {

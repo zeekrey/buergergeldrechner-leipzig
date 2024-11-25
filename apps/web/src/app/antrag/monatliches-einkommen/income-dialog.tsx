@@ -68,7 +68,6 @@ export const IncomeDialog = ({
   selectedPerson?: TPerson;
   selectedIncome?: TIncome;
 }) => {
-  console.log(selectedIncome);
   const [open, setOpen] = useState(false);
   const [state, setState] = useStateContext();
   const [person, setPerson] = useState(selectedPerson);

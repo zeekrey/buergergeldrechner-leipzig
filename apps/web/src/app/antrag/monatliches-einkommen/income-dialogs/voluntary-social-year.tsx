@@ -56,7 +56,7 @@ if (import.meta.vitest) {
       })
     ).toEqual({
       allowance: 100,
-      amount: 100,
+      income: 100,
     });
   });
 
@@ -68,7 +68,7 @@ if (import.meta.vitest) {
       })
     ).toEqual({
       allowance: 538,
-      amount: 600,
+      income: 600,
     });
   });
 
@@ -80,7 +80,7 @@ if (import.meta.vitest) {
       })
     ).toEqual({
       allowance: 0,
-      amount: 100,
+      income: 100,
     });
   });
 }

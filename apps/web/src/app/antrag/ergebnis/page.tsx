@@ -27,6 +27,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   calculateAdditionalNeeds,
   calculateAllowance,
+  calculateChildBenefitTransfer,
   calculateCommunityNeed,
   calculateOverall,
 } from "@/lib/calculation";
@@ -80,6 +81,16 @@ export default function StepSummary() {
   const allowanceSum = useMemo(
     () => result.allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0),
     [allowance]
+  );
+
+  const childBenefitTransfer = useMemo(
+    () => calculateChildBenefitTransfer(state),
+    [state]
+  );
+
+  const childBenefitTransferSum = useMemo(
+    () => childBenefitTransfer.reduce((acc, curr) => acc + curr.amount, 0),
+    [state]
   );
 
   const additionalNeedsSum = useMemo(
@@ -176,7 +187,7 @@ export default function StepSummary() {
                           </TableHead>
                         </TableRow>
                         {additionalNeeds.map((need) => (
-                          <Fragment key={need.personId}>
+                          <Fragment key={need.additionals + need.personId}>
                             {need.additionals.map((additional) => (
                               <TableRow className="border-none">
                                 <TableCell className="py-2 text-xs">
@@ -280,6 +291,30 @@ export default function StepSummary() {
                               </TableRow>
                             ))}
                           </Fragment>
+                        ))}
+                        {/* Kindergeldübertrag */}
+                        {}
+                        <TableRow>
+                          <TableHead>Kindergeldübertrag</TableHead>
+                          <TableHead className="text-right">
+                            {childBenefitTransferSum.toLocaleString("de-DE", {
+                              style: "currency",
+                              currency: "EUR",
+                            })}
+                          </TableHead>
+                        </TableRow>
+                        {childBenefitTransfer.map((transfer) => (
+                          <TableRow className="border-none" key={transfer.name}>
+                            <TableCell className="py-2 text-xs">
+                              Kindergeldübertrag ({transfer.name})
+                            </TableCell>
+                            <TableCell className="py-2 text-xs text-right">
+                              {transfer.amount?.toLocaleString("de-DE", {
+                                style: "currency",
+                                currency: "EUR",
+                              })}
+                            </TableCell>
+                          </TableRow>
                         ))}
                         {/* Freibeträge */}
                         <TableRow>

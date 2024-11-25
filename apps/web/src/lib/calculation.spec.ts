@@ -2,6 +2,7 @@ import { test, expect, describe } from "vitest";
 import {
   calculateAdditionalNeeds,
   calculateAllowance,
+  calculateChildBenefitTransfer,
   calculateCommunityNeed,
   calculateOverall,
   calculateSalary,
@@ -17,10 +18,10 @@ const defaultContext: TStepContext = {
   },
   isEmployable: true,
   spendings: {
-    heating: 0,
-    rent: 0,
-    sum: 0,
-    utilities: 0,
+    heating: 150,
+    rent: 500,
+    sum: 750,
+    utilities: 100,
   },
 };
 
@@ -31,6 +32,7 @@ const defaultAdult: TAdult = {
   income: [],
   attributes: {
     diseases: [],
+    hasDiseases: false,
     isPregnant: false,
     isSingleParent: false,
   },
@@ -43,6 +45,7 @@ const defaultChild: TChild = {
   age: 18,
   attributes: {
     diseases: [],
+    hasDiseases: false,
     isPregnant: false,
     isSingleParent: false,
   },
@@ -55,7 +58,9 @@ describe("calculateAdditionalNeeds", () => {
 
     const context: TStepContext = {
       ...defaultContext,
-      community: [{ ...adult, attributes: { isPregnant: true } }],
+      community: [
+        { ...adult, attributes: { ...adult.attributes, isPregnant: true } },
+      ],
     };
 
     const res = calculateAdditionalNeeds(context);
@@ -74,7 +79,10 @@ describe("calculateAdditionalNeeds", () => {
 
     const context: TStepContext = {
       ...defaultContext,
-      community: [defaultAdult, { ...adult, attributes: { isPregnant: true } }],
+      community: [
+        defaultAdult,
+        { ...adult, attributes: { ...adult.attributes, isPregnant: true } },
+      ],
     };
 
     const res = calculateAdditionalNeeds(context);
@@ -94,7 +102,10 @@ describe("calculateAdditionalNeeds", () => {
 
     const context: TStepContext = {
       ...defaultContext,
-      community: [adult, { ...child, attributes: { isPregnant: true } }],
+      community: [
+        adult,
+        { ...child, attributes: { ...child.attributes, isPregnant: true } },
+      ],
     };
 
     const res = calculateAdditionalNeeds(context);
@@ -143,7 +154,10 @@ describe("calculateAdditionalNeeds", () => {
     const context: TStepContext = {
       ...defaultContext,
       community: [
-        { ...adult, attributes: { diseases: ["celiacDisease"] } },
+        {
+          ...adult,
+          attributes: { ...adult.attributes, diseases: ["celiacDisease"] },
+        },
         { ...defaultChild, age: 1 },
       ],
     };
@@ -169,7 +183,10 @@ describe("calculateAdditionalNeeds", () => {
       ...defaultContext,
       community: [
         { ...defaultAdult },
-        { ...adult, attributes: { diseases: ["celiacDisease"] } },
+        {
+          ...adult,
+          attributes: { ...adult.attributes, diseases: ["celiacDisease"] },
+        },
       ],
     };
 
@@ -573,5 +590,64 @@ describe("calculateAllowance", () => {
 
     expect(allowance.length).toEqual(1);
     expect(sum).toBe(30);
+  });
+});
+
+describe("calculate child benefit transfert", () => {
+  test("should calculate child benefit transfert", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+        },
+        {
+          ...defaultChild,
+          income: [
+            { id: generateId(), type: "AdvanceMaintenancePayment", amount: 1 },
+          ],
+        },
+      ],
+    };
+
+    const res = calculateChildBenefitTransfer(context);
+
+    expect(res).toStrictEqual([]);
+  });
+
+  test("should calculate child benefit transfert", () => {
+    const child = defaultChild;
+
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+        },
+        {
+          ...defaultChild,
+        },
+        {
+          ...defaultChild,
+        },
+        {
+          ...child,
+          age: 7,
+          income: [
+            { id: generateId(), type: "ChildAllowance", amount: 250 },
+            { id: generateId(), type: "Maintenance", amount: 500 },
+          ],
+        },
+      ],
+    };
+
+    const res = calculateChildBenefitTransfer(context);
+
+    expect(res).toStrictEqual([
+      {
+        name: child.name,
+        amount: 172.5,
+      },
+    ]);
   });
 });
