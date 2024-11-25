@@ -1,5 +1,16 @@
 # buergergeldrechner
 
+## 0.4.0
+
+### Minor Changes
+
+- 1d27914: Die Berechnungslogik verschiedener Einkommensarten wurde erweitert und verbessert.
+- Einige Fehler bei der Eingabe von Euro-Werten wurden behoben.
+
+### Patch Changes
+
+- Ein Fehler wurde behoben, der dazu führte, dass man eine Krankheit mehrmals selektieren konnte.
+
 ## 0.3.2
 
 ### Patch Changes
