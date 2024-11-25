@@ -107,6 +107,11 @@ export const generateMember = (member?: Partial<TPerson>): TPerson => ({
   type: "adult",
   name: "Antragsteller",
   income: [],
-  attributes: {},
+  attributes: {
+    hasDiseases: false,
+    isPregnant: false,
+    isSingleParent: false,
+    diseases: [],
+  },
   ...member,
 });

@@ -178,7 +178,9 @@ export function calculateAdditionalNeeds(context: TStepContext) {
         if (disease === "celiacDisease") {
           if (type === "adult") {
             return additionals.push({
-              name: DiseaseMap[disease].label,
+              name:
+                DiseaseMap.find((el) => el.id === disease)?.label ??
+                "unknown disease",
               amount: isSingle
                 ? Math.round(data[type]["single"] * 0.2 * 100) / 100
                 : Math.round(data[type]["partner"] * 0.2 * 100) / 100,
@@ -186,7 +188,9 @@ export function calculateAdditionalNeeds(context: TStepContext) {
           } else {
             const ageGroup = getChildAgeGroup((person as TChild).age);
             return additionals.push({
-              name: DiseaseMap[disease].label,
+              name:
+                DiseaseMap.find((el) => el.id === disease)?.label ??
+                "unknown disease",
               amount: Math.round(data[type][ageGroup] * 0.2 * 100) / 100,
             });
           }
@@ -195,7 +199,9 @@ export function calculateAdditionalNeeds(context: TStepContext) {
         if (disease === "cysticFibrosis") {
           if (type === "adult") {
             return additionals.push({
-              name: DiseaseMap[disease].label,
+              name:
+                DiseaseMap.find((el) => el.id === disease)?.label ??
+                "unknown disease",
               amount: isSingle
                 ? Math.round(data[type]["single"] * 0.3 * 100) / 100
                 : Math.round(data[type]["partner"] * 0.3 * 100) / 100,
@@ -203,7 +209,9 @@ export function calculateAdditionalNeeds(context: TStepContext) {
           } else {
             const ageGroup = getChildAgeGroup((person as TChild).age);
             return additionals.push({
-              name: DiseaseMap[disease].label,
+              name:
+                DiseaseMap.find((el) => el.id === disease)?.label ??
+                "unknown disease",
               amount: Math.round(data[type][ageGroup] * 0.3 * 100) / 100,
             });
           }
@@ -212,7 +220,9 @@ export function calculateAdditionalNeeds(context: TStepContext) {
         if (disease === "liverDiseases") {
           if (type === "adult") {
             return additionals.push({
-              name: DiseaseMap[disease].label,
+              name:
+                DiseaseMap.find((el) => el.id === disease)?.label ??
+                "unknown disease",
               amount: isSingle
                 ? Math.round(data[type]["single"] * 0.05 * 100) / 100
                 : Math.round(data[type]["partner"] * 0.05 * 100) / 100,
@@ -220,7 +230,9 @@ export function calculateAdditionalNeeds(context: TStepContext) {
           } else {
             const ageGroup = getChildAgeGroup((person as TChild).age);
             return additionals.push({
-              name: DiseaseMap[disease].label,
+              name:
+                DiseaseMap.find((el) => el.id === disease)?.label ??
+                "unknown disease",
               amount: Math.round(data[type][ageGroup] * 0.05 * 100) / 100,
             });
           }
@@ -229,7 +241,9 @@ export function calculateAdditionalNeeds(context: TStepContext) {
         if (disease === "renalInsufficiency") {
           if (type === "adult") {
             return additionals.push({
-              name: DiseaseMap[disease].label,
+              name:
+                DiseaseMap.find((el) => el.id === disease)?.label ??
+                "unknown disease",
               amount: isSingle
                 ? Math.round(data[type]["single"] * 0.1 * 100) / 100
                 : Math.round(data[type]["partner"] * 0.1 * 100) / 100,
@@ -237,7 +251,9 @@ export function calculateAdditionalNeeds(context: TStepContext) {
           } else {
             const ageGroup = getChildAgeGroup((person as TChild).age);
             return additionals.push({
-              name: DiseaseMap[disease].label,
+              name:
+                DiseaseMap.find((el) => el.id === disease)?.label ??
+                "unknown disease",
               amount: Math.round(data[type][ageGroup] * 0.1 * 100) / 100,
             });
           }

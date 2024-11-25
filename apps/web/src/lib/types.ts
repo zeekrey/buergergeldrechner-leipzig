@@ -33,32 +33,42 @@ export const IncomeTypEnum = z.enum([
   "OtherIncome",
 ]);
 
-export const diseases = {
-  renalInsufficiency: {
+export const diseases = [
+  {
+    id: "renalInsufficiency",
     label: "Chronisch obstruktive Erkrankung",
     description:
       "Häufig bei chronisch obstruktiven Lungenerkrankungen (COPD), Tumorerkrankungen, CED (Morbus Crohn, Collitis Ulcerosa), Neurologischen Erkrankungen (auch Schluckstörungen*), terminaler Niereninsuffizienz, insb. bei Dialyse* und präterminale Niereninsuffizienz, insb. bei Dialyse, Wundheilungsstörungen, Lebererkrankungen (z. B. alkoholische Steatohepatitis, Leberzirrhose)",
   },
-  liverDiseases: {
+  {
+    id: "liverDiseases",
     label: "Niereninsuffizienz",
     description: "Terminale Niereninsuffizienz mit Dialysetherapie.",
   },
-  celiacDisease: {
+  {
+    id: "celiacDisease",
     label: "Zöliakie",
     description: "",
   },
-  cysticFibrosis: {
+  {
+    id: "cysticFibrosis",
     label: "Mukoviszidose/zystische Fibrose",
     description: "",
   },
-} as const;
+] as const;
+
+export const diseasesSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  description: z.string(),
+});
 
 /* FIXME: Feels weird. */
-const [firstKey, ...otherKeys] = Object.keys(
-  diseases
-) as (keyof typeof diseases)[];
+// const [firstKey, ...otherKeys] = Object.keys(
+//   diseases
+// ) as (keyof typeof diseases)[];
 
-export const Diseases = z.enum([firstKey, ...otherKeys]);
+// export const Diseases = z.enum([firstKey, ...otherKeys]);
 
 export const IncomeBaseSchema = z.object({
   id: z.string(),
@@ -158,14 +168,12 @@ const PersonCommon = z.object({
   name: z.string(),
   income: z.array(ExtendedIncomeSchema),
   age: z.optional(z.number()),
-  attributes: z.optional(
-    z.object({
-      isPregnant: z.optional(z.boolean()),
-      isSingleParent: z.optional(z.boolean()),
-      hasDiseases: z.optional(z.boolean()),
-      diseases: z.optional(z.array(Diseases)),
-    })
-  ),
+  attributes: z.object({
+    isPregnant: z.boolean(),
+    isSingleParent: z.boolean(),
+    hasDiseases: z.boolean(),
+    diseases: z.array(z.string()),
+  }),
 });
 
 const Adult = PersonCommon.merge(z.object({ type: z.literal("adult") }));

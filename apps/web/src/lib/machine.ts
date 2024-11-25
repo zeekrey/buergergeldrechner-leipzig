@@ -103,7 +103,7 @@ export const stepsConfig: Record<number, TStep> = {
   },
   7: {
     description:
-      "Tragen Sie hier bitte Ihre aktuelle Kaltmiete (oder Schuldzins bei Wohneigentum), Neben- und Heizkosten ein.",
+      "Tragen Sie hier bitte Ihre aktuelle monatliche Kaltmiete (oder Schuldzins bei Wohneigentum), monatlichen Neben- und monatlichen Heizkosten ein.",
     id: "kosten-unterkunft-heizung",
     next: () => 8,
     previous: 6,

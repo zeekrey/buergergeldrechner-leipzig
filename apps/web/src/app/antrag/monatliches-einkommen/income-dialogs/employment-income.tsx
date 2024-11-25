@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { WandSparklesIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { EmploymentIncomeSchema, TStepContext } from "@/lib/types";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,24 +16,25 @@ import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type TFormData = {
-  isYoung: boolean;
-  gros: number;
-  net: number;
-};
+const formSchema = z.object({
+  gros: z.coerce.number(),
+  net: z.coerce.number(),
+  isYoung: z.boolean().optional(),
+});
 
 export const EmploymentIncome = ({
   person,
   income,
   setOpen,
-  incomeType,
 }: IncomeComponentProps & {
   income: z.infer<typeof EmploymentIncomeSchema>;
 }) => {
   const [state, setState] = useStateContext();
 
-  const form = useForm<TFormData>({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       isYoung:
         (person?.type === "child" && person?.age < 26) ??
@@ -46,9 +45,7 @@ export const EmploymentIncome = ({
     },
   });
 
-  const onSubmit: SubmitHandler<TFormData> = (data, event) => {
-    // event.preventDefault();
-
+  function onSubmit(data: z.infer<typeof formSchema>) {
     const selectedPersonIndex = state.community.findIndex(
       (per) => per.id === person.id
     );
@@ -70,7 +67,7 @@ export const EmploymentIncome = ({
         /** Inplace update income if it is an existing one. */
         const selectedIncomeIndex = state.community[
           selectedPersonIndex
-        ].income.findIndex((income) => income.id === income.id);
+        ].income.findIndex((inc) => inc.id === income.id);
 
         newState = produce(state, (draft) => {
           draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
@@ -100,7 +97,7 @@ export const EmploymentIncome = ({
     }
 
     setOpen(false);
-  };
+  }
 
   return (
     <Form {...form}>
@@ -110,17 +107,11 @@ export const EmploymentIncome = ({
             <FormField
               control={form.control}
               name="gros"
-              rules={{ min: 1 }}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Brutto</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="0,00€"
-                      type="number"
-                      min={1}
-                      {...field}
-                    />
+                    <Input placeholder="0,00€" type="number" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -128,7 +119,6 @@ export const EmploymentIncome = ({
             <FormField
               control={form.control}
               name="net"
-              rules={{ min: 1 }}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Netto</FormLabel>
@@ -158,15 +148,6 @@ export const EmploymentIncome = ({
               </FormItem>
             )}
           />
-          {/* <div className="flex pt-4 gap-2">
-            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-              <WandSparklesIcon className="h-4 w-4 text-green-600" />
-            </div>
-            <FormDescription>
-              Bei einem Einkommen aus Erwerbstätigkeit wird Ihnen ein Freibetrag
-              gewährt.
-            </FormDescription>
-          </div> */}
         </div>
         <div className="flex justify-between pt-2">
           <Button
@@ -176,12 +157,7 @@ export const EmploymentIncome = ({
           >
             Abrechen
           </Button>
-          <Button
-            type="submit"
-            disabled={!form.formState.isDirty || !form.formState.isValid}
-          >
-            {income ? "Bearbeiten" : "Hinzufügen"}
-          </Button>
+          <Button type="submit">{income ? "Bearbeiten" : "Hinzufügen"}</Button>
         </div>
       </form>
     </Form>
