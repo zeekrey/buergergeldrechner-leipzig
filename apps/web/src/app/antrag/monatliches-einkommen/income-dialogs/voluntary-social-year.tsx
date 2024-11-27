@@ -30,7 +30,7 @@ type TFormData = {
 export const voluntarySocialYearCalculation = ({ age, amount }: TFormData) => {
   let allowance = 0;
 
-  if (age && age < 26) {
+  if (age && age < 25) {
     allowance = 538;
   }
 

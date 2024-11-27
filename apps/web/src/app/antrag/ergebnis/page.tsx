@@ -33,7 +33,7 @@ import {
 } from "@/lib/calculation";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/components/context";
-import { allowanceType, incomeType } from "@/lib/types";
+import { incomeType } from "@/lib/types";
 import { Result } from "./result";
 import { Button } from "@/components/ui/button";
 import HelpMarkdown from "@/config/steps/ergebnis.mdx";
@@ -336,7 +336,7 @@ export default function StepSummary() {
                                   baseDeduction: {
                                     label: "Grundabsetzungsbetrag",
                                   },
-                                }[allowance.type].label
+                                }[allowance.type]?.label
                               }
                             </TableCell>
                             <TableCell className="py-2 text-xs text-right">

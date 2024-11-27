@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const formSchema = z.object({
   gros: z.coerce.number(),
   net: z.coerce.number(),
-  isYoung: z.boolean().optional(),
+  isYoung: z.boolean(),
 });
 
 export const EmploymentIncome = ({
@@ -37,9 +37,7 @@ export const EmploymentIncome = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       isYoung:
-        (person?.type === "child" && person?.age < 26) ??
-        person?.age < 26 ??
-        false,
+        typeof person?.age !== "undefined" && person.age < 25 ? true : false,
       gros: income?.gros ?? 0,
       net: income?.net ?? 0,
     },
@@ -51,14 +49,13 @@ export const EmploymentIncome = ({
     );
 
     if (selectedPersonIndex !== -1) {
-      // TODO: calculateSalary needs to be extended by isYoung boolean.
-
       const { allowance, income: _income } = calculateSalary({
         gross: Number(data.gros),
         net: Number(data.net),
         hasMinorChild: state.community.some(
           (person) => person.type === "child" && person.age < 18
         ),
+        isYoung: data.isYoung,
       });
 
       let newState: TStepContext;
@@ -70,6 +67,13 @@ export const EmploymentIncome = ({
         ].income.findIndex((inc) => inc.id === income.id);
 
         newState = produce(state, (draft) => {
+          if (
+            data.isYoung &&
+            typeof draft.community[selectedPersonIndex].age === "undefined"
+          ) {
+            draft.community[selectedPersonIndex].age = 24;
+          } else draft.community[selectedPersonIndex].age = undefined;
+
           draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
             ...income,
             allowance,
@@ -82,6 +86,13 @@ export const EmploymentIncome = ({
       } else {
         /** Create income if no income to be edited was provided. */
         newState = produce(state, (draft) => {
+          if (
+            data.isYoung &&
+            typeof draft.community[selectedPersonIndex].age === "undefined"
+          ) {
+            draft.community[selectedPersonIndex].age = 24;
+          } else draft.community[selectedPersonIndex].age = undefined;
+
           draft.community[selectedPersonIndex].income.push({
             allowance,
             amount: Number(_income),
@@ -142,7 +153,7 @@ export const EmploymentIncome = ({
                 </FormControl>
                 <div className="space-y-1 leading-none">
                   <FormLabel>
-                    Person ist Student, Azubi oder Schüler und jünger als 26.
+                    Person ist Student, Azubi oder Schüler und jünger als 25.
                   </FormLabel>
                 </div>
               </FormItem>

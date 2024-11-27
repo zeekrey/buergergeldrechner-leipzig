@@ -279,21 +279,25 @@ export function calculateSalary({
   gross: number;
   net: number;
   hasMinorChild: boolean;
-  isYoung?: boolean;
+  isYoung: boolean;
 }) {
-  // FIXME: add calculation for isYoung. See https://github.com/zeekrey/buergergeldrechner-leipzig/issues/7
   if (gross < 1 || net < 1 || net > gross)
     return {
       allowance: 0,
       income: 0,
     };
 
-  let allowance = 100;
+  let allowance = isYoung ? 538 : 100;
 
-  if (gross <= 520) {
+  // Check if isYoung is true to skip the first range rule
+  if (!isYoung && gross <= 520) {
     allowance += (gross - 100) * 0.2; // 20% for the range 100-520
-  } else {
+  } else if (!isYoung) {
     allowance += (520 - 100) * 0.2; // 20% for the range 100-520
+  }
+
+  if (gross > (isYoung ? 520 : 520)) {
+    // This check ensures we only apply the next conditions if gross > 520
     if (gross <= 1000) {
       allowance += (gross - 520) * 0.3; // 30% for the range 520-1000 (or 1500 with a minor child)
     } else {
@@ -304,6 +308,11 @@ export function calculateSalary({
         allowance += ((hasMinorChild ? 1500 : 1200) - 1000) * 0.1; // 10% for the range 1000-1200
       }
     }
+  }
+
+  // Ensure allowance does not exceed gross
+  if (allowance > net) {
+    allowance = net;
   }
 
   return {

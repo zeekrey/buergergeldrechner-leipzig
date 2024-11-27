@@ -1,5 +1,4 @@
-import { Dispatch, SetStateAction, createContext, useContext } from "react";
-import { TAction, TStepsState, TStep, TStepContext } from "./types";
+import { TStepsState, TStep } from "./types";
 
 export function stepsReducer(
   state: TStepsState,

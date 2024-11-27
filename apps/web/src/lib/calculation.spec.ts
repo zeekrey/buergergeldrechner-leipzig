@@ -304,7 +304,12 @@ describe("calculateCommunityNeed", () => {
 describe("calculateSalary", () => {
   test("900 gross, 600 net", () => {
     expect(
-      calculateSalary({ gross: 900, net: 600, hasMinorChild: false })
+      calculateSalary({
+        gross: 900,
+        net: 600,
+        hasMinorChild: false,
+        isYoung: false,
+      })
     ).toEqual({
       allowance: 298,
       income: 600,
@@ -313,7 +318,12 @@ describe("calculateSalary", () => {
 
   test("1200 gross, 950 net", () => {
     expect(
-      calculateSalary({ gross: 1200, net: 950, hasMinorChild: false })
+      calculateSalary({
+        gross: 1200,
+        net: 950,
+        hasMinorChild: false,
+        isYoung: false,
+      })
     ).toEqual({
       allowance: 348,
       income: 950,
@@ -322,7 +332,12 @@ describe("calculateSalary", () => {
 
   test("2100 gross, 1700 net", () => {
     expect(
-      calculateSalary({ gross: 2100, net: 1700, hasMinorChild: false })
+      calculateSalary({
+        gross: 2100,
+        net: 1700,
+        hasMinorChild: false,
+        isYoung: false,
+      })
     ).toEqual({
       allowance: 348,
       income: 1700,
@@ -335,6 +350,7 @@ describe("calculateSalary", () => {
         gross: 2100,
         net: 1700,
         hasMinorChild: true,
+        isYoung: false,
       })
     ).toEqual({
       allowance: 378,
@@ -358,6 +374,7 @@ describe("calculateOverall", () => {
                 gross: 1200,
                 net: 950,
                 hasMinorChild: false,
+                isYoung: false,
               }).income,
             },
           ],
@@ -390,6 +407,7 @@ describe("calculateOverall", () => {
                 gross: 2100,
                 net: 1700,
                 hasMinorChild: false,
+                isYoung: false,
               }).income,
             },
           ],
@@ -425,6 +443,7 @@ describe("calculateOverall", () => {
                 gross: 2100,
                 net: 1700,
                 hasMinorChild: true,
+                isYoung: false,
               }).income,
             },
           ],
