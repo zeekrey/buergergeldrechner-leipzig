@@ -1,5 +1,12 @@
 # buergergeldrechner
 
+## 0.4.1
+
+### Patch Changes
+
+- 3a7a44a: Es wird nun auch der Kindergeldübertrag berechnet.
+- Das Alter von Personen mit Erwerbseinkommen wird nun korrekt geprüft und die Altersgrenze wurde korrigiert.
+
 ## 0.4.0
 
 ### Minor Changes
