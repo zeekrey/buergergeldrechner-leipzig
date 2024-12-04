@@ -48,14 +48,14 @@ export function SiteHeader() {
                   </div>
                   </Link> */}
             {/* <CommandMenu /> */}
-            {state && (
+            {/* {state && (
               <Button variant="link" size="sm" asChild onClick={handleReset}>
                 <Link href="/antrag/erwerbsfaehig">
                   <RotateCwIcon className="w-4 h-4 mr-2" />
                   Neu starten
                 </Link>
               </Button>
-            )}
+            )} */}
             <ModeToggle />
             <HelpPopup />
           </nav>

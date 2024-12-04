@@ -21,6 +21,7 @@ import { useStateContext } from "@/components/context";
 import { generateId } from "@/lib/utils";
 import { z } from "zod";
 import { StepNote } from "@/components/ui/step-primitives";
+import { checkChildBenefitTransfert as checkChildBenefitTransfer } from "./default-income";
 
 type TFormData = {
   amount: number;
@@ -133,6 +134,8 @@ export const VoluntarySocialYear = ({
             amount: _income,
             type: incomeType,
           };
+
+          checkChildBenefitTransfer(draft);
         });
       } else {
         newState = produce(state, (draft) => {
@@ -143,6 +146,8 @@ export const VoluntarySocialYear = ({
             type: incomeType,
             id: generateId(),
           });
+
+          checkChildBenefitTransfer(draft);
         });
       }
 

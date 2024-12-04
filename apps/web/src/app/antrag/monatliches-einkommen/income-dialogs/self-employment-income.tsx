@@ -11,11 +11,12 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { produce } from "immer";
-import { calculateSalary } from "@/lib/calculation";
+import { calculateSalary } from "./employment-income";
 import { generateId } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";
 import { z } from "zod";
+import { checkChildBenefitTransfert } from "./default-income";
 
 type TFormData = {
   net: number;
@@ -52,6 +53,8 @@ export const SelfEmploymentIncome = ({
         hasMinorChild: state.community.some(
           (person) => person.type === "child" && person.age < 18
         ),
+        //FIXME: should be respected.
+        isYoung: false,
       });
 
       let newState: TStepContext;
@@ -73,6 +76,8 @@ export const SelfEmploymentIncome = ({
             gros: Number(data.gros),
             net: Number(data.net),
           };
+
+          checkChildBenefitTransfert(draft);
         });
       } else {
         /** Create income if no income to be edited was provided. */
@@ -85,6 +90,8 @@ export const SelfEmploymentIncome = ({
             gros: Number(data.gros),
             net: Number(data.net),
           });
+
+          checkChildBenefitTransfert(draft);
         });
       }
 

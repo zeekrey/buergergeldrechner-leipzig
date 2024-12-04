@@ -52,6 +52,11 @@ test("Case #1 - single with standard income", async ({ page }) => {
   await expect(page.getByTestId("result")).toContainText("477");
 
   await page.getByRole("tab", { name: "Berechnung" }).click();
+
+  const result = page.getByTestId("result-calculation");
+
+  await expect(result).toBeVisible();
+  await result.screenshot();
 });
 
 test("Case #2 - Couple without kids", async ({ page }) => {

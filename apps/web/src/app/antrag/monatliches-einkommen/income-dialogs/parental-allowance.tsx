@@ -17,6 +17,7 @@ import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { z } from "zod";
+import { checkChildBenefitTransfert } from "./default-income";
 
 type TFormData = {
   type: "normal" | "plus";
@@ -146,6 +147,8 @@ export const ParentalAllowance = ({
             officialAllowance: Number(data.officialAllowance),
             parentalAllowanceType: data.type,
           };
+
+          checkChildBenefitTransfert(draft);
         });
       } else {
         /** Create income if no income to be edited was provided. */
@@ -159,6 +162,8 @@ export const ParentalAllowance = ({
             officialAllowance: Number(data.officialAllowance),
             parentalAllowanceType: data.type,
           });
+
+          checkChildBenefitTransfert(draft);
         });
       }
 

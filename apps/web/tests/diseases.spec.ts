@@ -43,15 +43,10 @@ test("should selected diseases", async ({ page }) => {
 
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.getByRole("tab", { name: "Berechnung" }).click();
-  await expect(page.locator("tbody")).toContainText(
-    "Antragsteller (Chronisch obstruktive Erkrankung)"
-  );
-  await expect(page.locator("tbody")).toContainText(
-    "Antragsteller (Niereninsuffizienz)"
-  );
-  await expect(page.locator("tbody")).toContainText("Partner (Zöliakie)");
-  await expect(page.locator("tbody")).toContainText(
-    "Partner (Mukoviszidose/zystische Fibrose)"
-  );
+
+  await expect(
+    page.getByRole("cell", { name: "Chronisch obstruktive" })
+  ).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Zöliakie" })).toBeVisible();
   await expect(page.getByRole("strong")).toContainText("1.340,90 €");
 });

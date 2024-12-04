@@ -14,16 +14,48 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { produce } from "immer";
+import { produce, WritableDraft } from "immer";
 import { IncomeComponentProps } from "../income-dialog";
 import { useStateContext } from "@/components/context";
 import { generateId } from "@/lib/utils";
 import { z } from "zod";
+import { calculateChildBenefitTransfer } from "@/lib/calculation";
 
 type TFormData = {
   amount: number;
   allowance: number;
 };
+
+export function checkChildBenefitTransfert(draft: WritableDraft<TStepContext>) {
+  /** Check child benefit transfer. */
+  const childBenefitTransfer = calculateChildBenefitTransfer(draft);
+
+  const applicant = draft.community.findIndex(
+    (pers) => pers.name === "Antragsteller"
+  );
+
+  /** Remove existing ones. */
+  const existingChildBenefitPosition = draft.community[
+    applicant
+  ].income.findIndex((inc) => inc.type === "ChildBenefitTransfer");
+
+  if (existingChildBenefitPosition !== -1) {
+    draft.community[applicant].income = draft.community[
+      applicant
+    ].income.filter((el) => el.type !== "ChildBenefitTransfer");
+  }
+
+  if (childBenefitTransfer.length) {
+    /** Add new childbenefittransfer */
+    childBenefitTransfer.forEach((benefit) => {
+      draft.community[applicant].income.push({
+        id: generateId(),
+        type: "ChildBenefitTransfer",
+        amount: benefit.amount,
+      });
+    });
+  }
+}
 
 export const DefaultIncome = ({
   person,
@@ -56,31 +88,29 @@ export const DefaultIncome = ({
         income: data.amount,
       };
 
-      let newState: TStepContext;
+      const newState = produce(state, (draft) => {
+        if (income) {
+          /** Inplace update income if it is an existing one. */
+          const selectedIncomeIndex = draft.community[
+            selectedPersonIndex
+          ].income.findIndex((income) => income.id === income.id);
 
-      if (income) {
-        /** Inplace update income if it is an existing one. */
-        const selectedIncomeIndex = state.community[
-          selectedPersonIndex
-        ].income.findIndex((income) => income.id === income.id);
-
-        newState = produce(state, (draft) => {
           draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
             ...income,
             allowance,
             amount: Number(_income),
           };
-        });
-      } else {
-        newState = produce(state, (draft) => {
+        } else {
           draft.community[selectedPersonIndex].income.push({
             allowance,
             amount: Number(_income),
             type: incomeType,
             id: generateId(),
           });
-        });
-      }
+        }
+
+        checkChildBenefitTransfert(draft);
+      });
 
       setState(newState);
     }

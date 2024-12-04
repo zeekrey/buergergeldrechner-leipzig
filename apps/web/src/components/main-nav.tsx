@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { siteConfig } from "@/config/site";
 import LogoImage from "../assets/logo.webp";
+import { Badge } from "./ui/badge";
 
 export function MainNav() {
   return (
@@ -14,6 +15,10 @@ export function MainNav() {
         <span className="hidden font-bold sm:inline-block">
           {siteConfig.name}
         </span>
+        {typeof window !== "undefined" &&
+          ["localhost", "buergergeld.dev"].includes(
+            window.location.hostname
+          ) && <Badge>Preview</Badge>}
       </Link>
       <nav className="flex items-center gap-4 text-sm lg:gap-6">
         {/* <Link

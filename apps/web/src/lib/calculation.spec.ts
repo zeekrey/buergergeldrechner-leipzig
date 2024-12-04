@@ -3,12 +3,13 @@ import {
   calculateAdditionalNeeds,
   calculateAllowance,
   calculateChildBenefitTransfer,
-  calculateCommunityNeed,
+  calculateBaseNeed,
   calculateOverall,
-  calculateSalary,
+  calculateIncome,
 } from "./calculation";
 import { TAdult, TChild, TStepContext } from "./types";
 import { generateId } from "./utils";
+import { calculateSalary } from "@/app/antrag/monatliches-einkommen/income-dialogs/employment-income";
 
 const defaultContext: TStepContext = {
   community: [],
@@ -65,7 +66,7 @@ describe("calculateAdditionalNeeds", () => {
 
     const res = calculateAdditionalNeeds(context);
 
-    expect(res).toStrictEqual([
+    expect(res.community).toStrictEqual([
       {
         personId: adult.id,
         name: "Person",
@@ -87,7 +88,7 @@ describe("calculateAdditionalNeeds", () => {
 
     const res = calculateAdditionalNeeds(context);
 
-    expect(res).toStrictEqual([
+    expect(res.community).toStrictEqual([
       {
         personId: adult.id,
         name: "Partner",
@@ -110,7 +111,7 @@ describe("calculateAdditionalNeeds", () => {
 
     const res = calculateAdditionalNeeds(context);
 
-    expect(res).toStrictEqual([
+    expect(res.community).toStrictEqual([
       {
         personId: adult.id,
         name: "Person",
@@ -139,7 +140,7 @@ describe("calculateAdditionalNeeds", () => {
 
     const res = calculateAdditionalNeeds(context);
 
-    expect(res).toStrictEqual([
+    expect(res.community).toStrictEqual([
       {
         personId: adult.id,
         name: "Person",
@@ -164,7 +165,7 @@ describe("calculateAdditionalNeeds", () => {
 
     const res = calculateAdditionalNeeds(context);
 
-    expect(res).toStrictEqual([
+    expect(res.community).toStrictEqual([
       {
         personId: adult.id,
         name: "Person",
@@ -192,7 +193,7 @@ describe("calculateAdditionalNeeds", () => {
 
     const res = calculateAdditionalNeeds(context);
 
-    expect(res).toStrictEqual([
+    expect(res.community).toStrictEqual([
       {
         personId: adult.id,
         name: "Person",
@@ -209,9 +210,9 @@ describe("calculateCommunityNeed", () => {
       community: [{ ...defaultAdult }],
     };
 
-    const { need } = calculateCommunityNeed(context);
+    const { sum } = calculateBaseNeed(context);
 
-    expect(need).toEqual(563);
+    expect(sum).toEqual(563);
   });
 
   test("with partner, no kids", () => {
@@ -220,9 +221,9 @@ describe("calculateCommunityNeed", () => {
       community: [{ ...defaultAdult }, { ...defaultAdult }],
     };
 
-    const { need } = calculateCommunityNeed(context);
+    const { sum } = calculateBaseNeed(context);
 
-    expect(need).toEqual(1012);
+    expect(sum).toEqual(1012);
   });
 
   test("with partner, one kid (18+)", () => {
@@ -235,9 +236,9 @@ describe("calculateCommunityNeed", () => {
       ],
     };
 
-    const { need } = calculateCommunityNeed(context);
+    const { sum } = calculateBaseNeed(context);
 
-    expect(need).toEqual(506 + 506 + 451);
+    expect(sum).toEqual(506 + 506 + 451);
   });
 
   test("with partner, one kid (14-17)", () => {
@@ -250,9 +251,9 @@ describe("calculateCommunityNeed", () => {
       ],
     };
 
-    const { need } = calculateCommunityNeed(context);
+    const { sum } = calculateBaseNeed(context);
 
-    expect(need).toEqual(506 + 506 + 471);
+    expect(sum).toEqual(506 + 506 + 471);
   });
 
   test("with partner, one kid (6-13)", () => {
@@ -265,9 +266,9 @@ describe("calculateCommunityNeed", () => {
       ],
     };
 
-    const { need } = calculateCommunityNeed(context);
+    const { sum } = calculateBaseNeed(context);
 
-    expect(need).toEqual(506 + 506 + 390);
+    expect(sum).toEqual(506 + 506 + 390);
   });
 
   test("with partner, one kid (0-5)", () => {
@@ -280,9 +281,9 @@ describe("calculateCommunityNeed", () => {
       ],
     };
 
-    const { need } = calculateCommunityNeed(context);
+    const { sum } = calculateBaseNeed(context);
 
-    expect(need).toEqual(506 + 506 + 357);
+    expect(sum).toEqual(506 + 506 + 357);
   });
 
   test("with partner, two kids (0-5, 6-13)", () => {
@@ -295,67 +296,9 @@ describe("calculateCommunityNeed", () => {
         { ...defaultChild, age: 7 },
       ],
     };
-    const { need } = calculateCommunityNeed(context);
+    const { sum } = calculateBaseNeed(context);
 
-    expect(need).toEqual(506 + 506 + 357 + 390);
-  });
-});
-
-describe("calculateSalary", () => {
-  test("900 gross, 600 net", () => {
-    expect(
-      calculateSalary({
-        gross: 900,
-        net: 600,
-        hasMinorChild: false,
-        isYoung: false,
-      })
-    ).toEqual({
-      allowance: 298,
-      income: 600,
-    });
-  });
-
-  test("1200 gross, 950 net", () => {
-    expect(
-      calculateSalary({
-        gross: 1200,
-        net: 950,
-        hasMinorChild: false,
-        isYoung: false,
-      })
-    ).toEqual({
-      allowance: 348,
-      income: 950,
-    });
-  });
-
-  test("2100 gross, 1700 net", () => {
-    expect(
-      calculateSalary({
-        gross: 2100,
-        net: 1700,
-        hasMinorChild: false,
-        isYoung: false,
-      })
-    ).toEqual({
-      allowance: 348,
-      income: 1700,
-    });
-  });
-
-  test("2100 gross, 1700 net", () => {
-    expect(
-      calculateSalary({
-        gross: 2100,
-        net: 1700,
-        hasMinorChild: true,
-        isYoung: false,
-      })
-    ).toEqual({
-      allowance: 378,
-      income: 1700,
-    });
+    expect(sum).toEqual(506 + 506 + 357 + 390);
   });
 });
 
@@ -376,6 +319,8 @@ describe("calculateOverall", () => {
                 hasMinorChild: false,
                 isYoung: false,
               }).income,
+              gros: 1200,
+              net: 950,
             },
           ],
         },
@@ -409,6 +354,8 @@ describe("calculateOverall", () => {
                 hasMinorChild: false,
                 isYoung: false,
               }).income,
+              gros: 2100,
+              net: 1700,
             },
           ],
         },
@@ -445,6 +392,8 @@ describe("calculateOverall", () => {
                 hasMinorChild: true,
                 isYoung: false,
               }).income,
+              gros: 2100,
+              net: 1700,
             },
           ],
         },
@@ -482,9 +431,7 @@ describe("calculateOverall", () => {
       },
     };
 
-    const { overall, ...rest } = calculateOverall(context);
-
-    console.log(rest);
+    const { overall } = calculateOverall(context);
 
     expect(overall).toEqual(-620);
   });
@@ -587,7 +534,15 @@ describe("calculateAllowance", () => {
       community: [
         {
           ...defaultAdult,
-          income: [{ id: generateId(), type: "EmploymentIncome", amount: 1 }],
+          income: [
+            {
+              id: generateId(),
+              type: "EmploymentIncome",
+              amount: 1,
+              gros: 0,
+              net: 0,
+            },
+          ],
         },
         {
           ...defaultChild,
