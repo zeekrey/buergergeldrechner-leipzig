@@ -3,6 +3,7 @@ import {
   TChild,
   diseases as DiseaseMap,
   IncomeTypEnum,
+  TAllowance,
 } from "./types";
 import data from "../config/data.json";
 import {
@@ -12,7 +13,28 @@ import {
 } from "./utils";
 import { z } from "zod";
 
-export function calculateCommunityNeed(context: TStepContext) {
+type TAdditional = { name: string; amount: number };
+
+/**
+ * "Bürgergeld" is the result of the following:
+ *   Regelbedarf (base need)
+ * + Mehrbedarf (additional need)
+ * + Kosten der Unterkunft (spendings)
+ * = need
+ *
+ *   Einkommen (income)
+ * - Freibeträge (allowance)
+ * = Einkommen abzgl. Freibeträge (income after allowance)
+ *
+ *   Bedarf (need)
+ * - Einkommen abzgl. Freibeträge (income after allowance)
+ * = Bürgergeldanspruch (overall)
+ */
+
+/**
+ * Calculates the base need based on person type and age.
+ */
+export function calculateBaseNeed(context: TStepContext) {
   const isSingle =
     context.community.filter((person) => person.type === "adult").length === 1;
 
@@ -25,19 +47,20 @@ export function calculateCommunityNeed(context: TStepContext) {
       amount = data[type][getChildAgeGroup((rest as TChild).age)];
     }
 
-    return { name, amount };
+    return { name, personId: rest.id, amount };
   });
 
-  const need = community.reduce((acc, curr) => acc + curr.amount, 0);
+  const sum = community.reduce((acc, curr) => acc + curr.amount, 0);
 
   return {
-    need,
+    sum,
     community,
   };
 }
 
-type TAdditional = { name: string; amount: number };
-
+/**
+ * Calculated additional needs based an person attributes.
+ */
 export function calculateAdditionalNeeds(context: TStepContext) {
   const isSingle =
     context.community.filter((person) => person.type === "adult").length === 1;
@@ -267,72 +290,7 @@ export function calculateAdditionalNeeds(context: TStepContext) {
     return acc;
   }, []);
 
-  return additionalNeeds;
-}
-
-export function calculateSalary({
-  gross,
-  net,
-  hasMinorChild,
-  isYoung,
-}: {
-  gross: number;
-  net: number;
-  hasMinorChild: boolean;
-  isYoung: boolean;
-}) {
-  if (gross < 1 || net < 1 || net > gross)
-    return {
-      allowance: 0,
-      income: 0,
-    };
-
-  let allowance = isYoung ? 538 : 100;
-
-  // Check if isYoung is true to skip the first range rule
-  if (!isYoung && gross <= 520) {
-    allowance += (gross - 100) * 0.2; // 20% for the range 100-520
-  } else if (!isYoung) {
-    allowance += (520 - 100) * 0.2; // 20% for the range 100-520
-  }
-
-  if (gross > (isYoung ? 520 : 520)) {
-    // This check ensures we only apply the next conditions if gross > 520
-    if (gross <= 1000) {
-      allowance += (gross - 520) * 0.3; // 30% for the range 520-1000 (or 1500 with a minor child)
-    } else {
-      allowance += (1000 - 520) * 0.3; // 30% for the range 520-1000 (or 1500 with a minor child)
-      if (gross <= (hasMinorChild ? 1500 : 1200)) {
-        allowance += (gross - 1000) * 0.1; // 10% for the range 1000-1200
-      } else {
-        allowance += ((hasMinorChild ? 1500 : 1200) - 1000) * 0.1; // 10% for the range 1000-1200
-      }
-    }
-  }
-
-  // Ensure allowance does not exceed gross
-  if (allowance > net) {
-    allowance = net;
-  }
-
-  return {
-    allowance: allowance,
-    income: net,
-  };
-}
-
-export function calculateOverall(context: TStepContext) {
-  const { need } = calculateCommunityNeed(context);
-  const additionalNeeds = calculateAdditionalNeeds(context);
-  const flattenedIncome = flattenIncome(context.community);
-  const incomeSum = flattenedIncome.reduce((acc, curr) => acc + curr.amount, 0);
-  const allowance = calculateAllowance(context);
-  const childBenefitTransferSum = calculateChildBenefitTransfer(context).reduce(
-    (acc, curr) => acc + curr.amount,
-    0
-  );
-
-  const additionalNeedsSum = additionalNeeds.reduce((totalSum, item) => {
+  const sum = additionalNeeds.reduce((totalSum, item) => {
     // Sum the values of additionals for the current item
     const additionalsSum = item.additionals.reduce(
       (sum, additional) => sum + additional.amount,
@@ -342,34 +300,31 @@ export function calculateOverall(context: TStepContext) {
   }, 0);
 
   return {
-    need,
-    income: incomeSum,
-    spendingNeed: need + context.spendings.sum,
-    allowance,
-    overall:
-      need +
-      additionalNeedsSum +
-      context.spendings.sum +
-      allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0) -
-      incomeSum -
-      childBenefitTransferSum,
+    sum,
+    community: additionalNeeds,
   };
 }
 
 export function calculateChildBenefitTransfer(context: TStepContext) {
   /** Child benefit transfer (Kindergeldübertrag) */
+
+  /** 1.Evenly distribute the expenses (KdU) among all community members. */
   const rentPerPerson =
     Math.round((context.spendings.sum / context.community.length) * 100) / 100;
 
+  /** 2. Go through all childs */
   const childBenefitTransfer = context.community
     .filter((pers) => pers.type === "child")
     .reduce<{ name: string; amount: number }[]>((acc, child) => {
+      /** 3. Get the base amount for the child (depending on age) */
       const baseAmount = data.child[getChildAgeGroup(child.age)];
 
+      /** 4. Calculate the income sum. */
       const incomeSum = child.income.reduce((_acc, curr) => {
         return _acc + curr.amount;
       }, 0);
 
+      /** 5. If the income is greater then the base amount + the rent share, add a benefit transfer. */
       if (incomeSum > baseAmount + rentPerPerson)
         acc.push({
           name: child.name,
@@ -382,7 +337,11 @@ export function calculateChildBenefitTransfer(context: TStepContext) {
   return childBenefitTransfer;
 }
 
-export function calculateAllowance(context: TStepContext) {
+export function calculateAllowance(context: TStepContext): {
+  id: string;
+  type: TAllowance;
+  amount: number;
+}[] {
   /** Private insurance */
   const legitimate = context.community.filter((person) => {
     if (
@@ -399,22 +358,18 @@ export function calculateAllowance(context: TStepContext) {
       .filter((income) => income.allowance)
       .map((income) => ({
         id: income.id,
-        amount: income.allowance,
+        amount: income.allowance ?? 0,
         type: income.type,
       }))
   );
 
   /** Basic deduction amount, only once */
-  // FIXME:
   const schema = z.array(IncomeTypEnum);
   const legitimateIncomeTypes: z.infer<typeof schema> = [
     "BAfOG",
     "VocationalTrainingAllowance",
     "MaintenanceContributionFromMasterCraftsmen",
   ];
-  // const [hasBasicDeduction] = context.community.flatMap((group) =>
-  //   group.income.some((item) => legitimateIncomeTypes.includes(item.type))
-  // );
 
   const baseDeduction = context.community.reduce<
     { id: string; type: "baseDeduction"; amount: number }[]
@@ -424,19 +379,49 @@ export function calculateAllowance(context: TStepContext) {
     );
 
     if (hasBasicDeduction) {
-      acc.push({ id: curr.id, type: "baseDeduction", amount: 100 });
+      acc.push({ id: curr.id, type: "baseDeduction" as const, amount: 100 });
     }
 
-    return acc; // Ensure to return the accumulator in every iteration
+    return acc;
   }, []);
 
   return [
     ...baseDeduction,
     ...legitimate.map((person) => ({
       id: person.id,
-      type: "insurance",
+      type: "insurance" as const,
       amount: 30,
     })),
     ...incomeAllowance,
   ];
+}
+
+export function calculateIncome(context: TStepContext) {
+  const flattenedIncome = flattenIncome(context.community);
+  return flattenedIncome.reduce((acc, curr) => acc + curr.amount, 0);
+}
+
+export function calculateOverall(context: TStepContext) {
+  const baseNeed = calculateBaseNeed(context);
+  const additionalNeeds = calculateAdditionalNeeds(context);
+  const income = calculateIncome(context);
+  const allowance = calculateAllowance(context);
+
+  const need = baseNeed.sum + additionalNeeds.sum + context.spendings.sum;
+  const incomeAfterAllowance =
+    income - allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
+
+  return {
+    baseNeed,
+    additionalNeeds,
+    spendings: context.spendings.sum,
+    need,
+    income: {
+      sum: income,
+      community: flattenIncome,
+    },
+    allowance,
+    incomeAfterAllowance,
+    overall: need - incomeAfterAllowance,
+  };
 }

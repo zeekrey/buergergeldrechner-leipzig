@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-type RecursivePartial<T> = {
-  [P in keyof T]?: RecursivePartial<T[P]>;
-};
-
 export type TStep = {
   description: string;
   id: string;
@@ -11,27 +7,6 @@ export type TStep = {
   previous: number;
   title: string;
 };
-
-export const IncomeTypEnum = z.enum([
-  "EmploymentIncome",
-  "SelfEmploymentIncome",
-  "ChildAllowance",
-  "AdvanceMaintenancePayment",
-  "Maintenance",
-  "UnemploymentBenefits",
-  "SicknessBenefits",
-  "HousingAllowance",
-  "ChildSupplement",
-  "BAfOG",
-  "ParentalAllowance",
-  "Pension",
-  "MaintenanceContributionFromMasterCraftsmen",
-  "ShortTimeWorkAllowance",
-  "VocationalTrainingAllowance",
-  "TaxFreeSideJob",
-  "VoluntarySocialYear",
-  "OtherIncome",
-]);
 
 export const diseases = [
   {
@@ -57,24 +32,35 @@ export const diseases = [
   },
 ] as const;
 
-export const diseasesSchema = z.object({
-  id: z.string(),
-  label: z.string(),
-  description: z.string(),
-});
+export const IncomeTypEnum = z.enum([
+  "EmploymentIncome",
+  "SelfEmploymentIncome",
+  "ChildAllowance",
+  "AdvanceMaintenancePayment",
+  "Maintenance",
+  "UnemploymentBenefits",
+  "SicknessBenefits",
+  "HousingAllowance",
+  "ChildSupplement",
+  "BAfOG",
+  "ParentalAllowance",
+  "Pension",
+  "MaintenanceContributionFromMasterCraftsmen",
+  "ShortTimeWorkAllowance",
+  "VocationalTrainingAllowance",
+  "TaxFreeSideJob",
+  "VoluntarySocialYear",
+  "OtherIncome",
+  "ChildBenefitTransfer",
+]);
 
-/* FIXME: Feels weird. */
-// const [firstKey, ...otherKeys] = Object.keys(
-//   diseases
-// ) as (keyof typeof diseases)[];
-
-// export const Diseases = z.enum([firstKey, ...otherKeys]);
+export type TIncomeType = z.infer<typeof IncomeTypEnum>;
 
 export const IncomeBaseSchema = z.object({
   id: z.string(),
   type: IncomeTypEnum,
   amount: z.number(),
-  allowance: z.number(),
+  allowance: z.optional(z.number()),
 });
 
 export const EmploymentIncomeSchema = IncomeBaseSchema.extend({
@@ -141,6 +127,9 @@ export const VoluntarySocialYearSchema = IncomeBaseSchema.extend({
 export const OtherIncomeSchema = IncomeBaseSchema.extend({
   type: z.literal("OtherIncome"),
 });
+export const ChildBenefitTransferSchema = IncomeBaseSchema.extend({
+  type: z.literal("ChildBenefitTransfer"),
+});
 
 export const ExtendedIncomeSchema = z.union([
   EmploymentIncomeSchema,
@@ -161,6 +150,7 @@ export const ExtendedIncomeSchema = z.union([
   TaxFreeSideJobSchema,
   VoluntarySocialYearSchema,
   OtherIncomeSchema,
+  ChildBenefitTransferSchema,
 ]);
 
 const PersonCommon = z.object({
@@ -212,40 +202,19 @@ export type TChild = z.infer<typeof Child>;
 export type TAdult = z.infer<typeof Adult>;
 export type TIncome = z.infer<typeof Person>["income"][0];
 
-export type TIncomeType =
-  | "EmploymentIncome"
-  | "SelfEmploymentIncome"
-  | "ChildAllowance"
-  | "AdvanceMaintenancePayment"
-  | "Maintenance"
-  | "UnemploymentBenefits"
-  | "SicknessBenefits"
-  | "HousingAllowance"
-  | "ChildSupplement"
-  | "BAfOG"
-  | "ParentalAllowance"
-  | "Pension"
-  | "MaintenanceContributionFromMasterCraftsmen"
-  | "ShortTimeWorkAllowance"
-  | "VocationalTrainingAllowance"
-  | "TaxFreeSideJob"
-  | "VoluntarySocialYear"
-  | "OtherIncome";
-
 export type TStepsState = {
   context: TStepContext;
   step: TStep;
   currentStep: number;
 };
 
+type RecursivePartial<T> = {
+  [P in keyof T]?: RecursivePartial<T[P]>;
+};
+
 export type TAction = {
   state?: RecursivePartial<TStepsState>;
   type: "next" | "previous" | "load";
-};
-
-export const allowanceType = {
-  insurance: "Pauschale für angemessene private Versicherungen",
-  income: "Einkommen aus Erwerbstätigkeit",
 };
 
 export const incomeType: {
@@ -274,5 +243,22 @@ export const incomeType: {
   VoluntarySocialYear: {
     label: "Freiwilligendienst, Soziales/Ökologisches Jahr",
   },
-  OtherIncome: { label: "Sonstiges Einkommen (Geldgeschenke)" },
+  OtherIncome: {
+    label: "Sonstiges Einkommen (Geldgeschenke)",
+  },
+  ChildBenefitTransfer: { label: "Kindergeldübertrag" },
+};
+
+export type TAllowance = TIncomeType | "insurance" | "income" | "baseDeduction";
+
+export const allowanceType: {
+  [key in TAllowance]: {
+    label: string;
+    standardAmount?: number;
+  };
+} = {
+  insurance: { label: "Pauschale für angemessene private Versicherungen" },
+  income: { label: "Einkommen aus Erwerbstätigkeit" },
+  baseDeduction: { label: "Grund" },
+  ...incomeType,
 };

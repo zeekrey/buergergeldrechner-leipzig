@@ -3,7 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { PenIcon, PlusCircleIcon, XCircleIcon } from "lucide-react";
+import {
+  CircleHelpIcon,
+  PenIcon,
+  PlusCircleIcon,
+  XCircleIcon,
+} from "lucide-react";
 import { IncomeDialog } from "./income-dialog";
 import {
   Table,
@@ -15,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { Fragment, useCallback, useMemo } from "react";
+import { Fragment, useCallback, useEffect, useMemo } from "react";
 import { produce } from "immer";
 import { type TIncome, TPerson, incomeType } from "@/lib/types";
 import {
@@ -26,16 +31,21 @@ import {
 import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/components/context";
-import { calculateOverall } from "@/lib/calculation";
 import HelpMarkdown from "@/config/steps/monatliches-einkommen.mdx";
+import { checkChildBenefitTransfert } from "./income-dialogs/default-income";
+import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { calculateIncome } from "@/lib/calculation";
 
 const step = stepsConfig[8];
 
 export default function StepSalary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
-
-  const { income } = useMemo(() => calculateOverall(state), [state]);
 
   const handleRemove = useCallback(
     (person: TPerson, income: TIncome) => {
@@ -50,12 +60,16 @@ export default function StepSalary() {
           if (incomeIndex !== -1)
             draft.community[personIndex].income.splice(incomeIndex, 1);
         }
+
+        checkChildBenefitTransfert(draft);
       });
 
       setState(newState);
     },
     [state]
   );
+
+  const incomeSum = useMemo(() => calculateIncome(state), [state.community]);
 
   function handleSubmit() {
     const nextStep = step.next(state);
@@ -88,36 +102,66 @@ export default function StepSalary() {
                 <Fragment key={person.id}>
                   {person.income?.map((income) => (
                     <TableRow key={income.id}>
-                      <TableCell>{person.name}</TableCell>
-                      <TableCell>{incomeType[income.type].label}</TableCell>
-                      <TableCell className="">
+                      <TableCell
+                        className={cn({
+                          "opacity-50": income.type === "ChildBenefitTransfer",
+                        })}
+                      >
+                        {person.name}
+                      </TableCell>
+                      <TableCell
+                        className={cn({
+                          "opacity-50": income.type === "ChildBenefitTransfer",
+                        })}
+                      >
+                        {incomeType[income.type].label}
+                      </TableCell>
+                      <TableCell
+                        className={cn({
+                          "opacity-50": income.type === "ChildBenefitTransfer",
+                        })}
+                      >
                         {income.amount.toLocaleString("de-DE", {
                           style: "currency",
                           currency: "EUR",
                         })}{" "}
-                        (
-                        {income.allowance?.toLocaleString("de-DE", {
-                          style: "currency",
-                          currency: "EUR",
-                        })}
-                        )
+                        {typeof income.allowance !== "undefined" &&
+                          income.allowance > 0 &&
+                          `(${income.allowance?.toLocaleString("de-DE", {
+                            style: "currency",
+                            currency: "EUR",
+                          })})`}
                       </TableCell>
-                      <TableCell className="flex text-center">
-                        <IncomeDialog
-                          selectedPerson={person}
-                          selectedIncome={income}
-                        >
-                          <Button variant="ghost" type="button">
-                            <PenIcon className="w-4 h-4" />
-                          </Button>
-                        </IncomeDialog>
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => handleRemove(person, income)}
-                        >
-                          <XCircleIcon className="w-4 h-4" />
-                        </Button>
+                      <TableCell className="flex justify-center">
+                        {income.type === "ChildBenefitTransfer" ? (
+                          <Popover>
+                            <PopoverTrigger>
+                              <CircleHelpIcon className="w-4 h-4 opacity-50 mx-auto" />
+                            </PopoverTrigger>
+                            <PopoverContent className="text-sm">
+                              Ein Kindergeldübertrag wird automatisch
+                              hinzugefügt und kann nicht verändert werden.
+                            </PopoverContent>
+                          </Popover>
+                        ) : (
+                          <>
+                            <IncomeDialog
+                              selectedPerson={person}
+                              selectedIncome={income}
+                            >
+                              <Button variant="ghost" type="button">
+                                <PenIcon className="w-4 h-4" />
+                              </Button>
+                            </IncomeDialog>
+                            <Button
+                              variant="ghost"
+                              type="button"
+                              onClick={() => handleRemove(person, income)}
+                            >
+                              <XCircleIcon className="w-4 h-4" />
+                            </Button>
+                          </>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -140,7 +184,7 @@ export default function StepSalary() {
                   Gesamteinkommen
                 </TableCell>
                 <TableCell className="text-right" colSpan={2}>
-                  {income.toLocaleString("de-DE", {
+                  {incomeSum.toLocaleString("de-DE", {
                     style: "currency",
                     currency: "EUR",
                   })}

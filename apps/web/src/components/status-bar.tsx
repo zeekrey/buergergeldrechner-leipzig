@@ -6,12 +6,7 @@ import { useStateContext } from "./context";
 export function StatusBar() {
   const [state] = useStateContext();
 
-  const result = useMemo(() => calculateOverall(state).overall, [state]);
-
-  // const communitySize = useMemo(
-  //   () => state.context.community.length,
-  //   [state.context.community]
-  // );
+  const { overall } = useMemo(() => calculateOverall(state), [state]);
 
   return (
     <div className="fixed bottom-8 w-full z-10">
@@ -32,7 +27,7 @@ export function StatusBar() {
           <div className="flex flex-col justify-center gap-2">
             <small className="text-xs">Möglicher Anspruch</small>
             <strong className="text-lg text-right">
-              {result.toLocaleString("de-DE", {
+              {overall.toLocaleString("de-DE", {
                 currency: "EUR",
                 style: "currency",
               })}

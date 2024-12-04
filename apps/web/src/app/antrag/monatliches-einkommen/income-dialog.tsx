@@ -57,6 +57,7 @@ export const incomeComponentMap: {
   TaxFreeSideJob: DefaultIncome,
   VoluntarySocialYear: VoluntarySocialYear,
   OtherIncome: DefaultIncome,
+  ChildBenefitTransfer: DefaultIncome,
 };
 
 export const IncomeDialog = ({

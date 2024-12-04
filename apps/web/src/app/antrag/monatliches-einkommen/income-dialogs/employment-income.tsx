@@ -10,13 +10,127 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { produce } from "immer";
-import { calculateSalary } from "@/lib/calculation";
 import { generateId } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { checkChildBenefitTransfert } from "./default-income";
+
+export function calculateSalary({
+  gross,
+  net,
+  hasMinorChild,
+  isYoung,
+}: {
+  gross: number;
+  net: number;
+  hasMinorChild: boolean;
+  isYoung: boolean;
+}) {
+  if (gross < 1 || net < 1 || net > gross)
+    return {
+      allowance: 0,
+      income: 0,
+    };
+
+  let allowance = isYoung ? 538 : 100;
+
+  // Check if isYoung is true to skip the first range rule
+  if (!isYoung && gross <= 520) {
+    allowance += (gross - 100) * 0.2; // 20% for the range 100-520
+  } else if (!isYoung) {
+    allowance += (520 - 100) * 0.2; // 20% for the range 100-520
+  }
+
+  if (gross > (isYoung ? 520 : 520)) {
+    // This check ensures we only apply the next conditions if gross > 520
+    if (gross <= 1000) {
+      allowance += (gross - 520) * 0.3; // 30% for the range 520-1000 (or 1500 with a minor child)
+    } else {
+      allowance += (1000 - 520) * 0.3; // 30% for the range 520-1000 (or 1500 with a minor child)
+      if (gross <= (hasMinorChild ? 1500 : 1200)) {
+        allowance += (gross - 1000) * 0.1; // 10% for the range 1000-1200
+      } else {
+        allowance += ((hasMinorChild ? 1500 : 1200) - 1000) * 0.1; // 10% for the range 1000-1200
+      }
+    }
+  }
+
+  // Ensure allowance does not exceed gross
+  if (allowance > net) {
+    allowance = net;
+  }
+
+  return {
+    allowance: allowance,
+    income: net,
+  };
+}
+
+/**
+ * Tests for parentalAllowanceCalculation
+ */
+if (import.meta.vitest) {
+  const { it, expect } = import.meta.vitest;
+
+  it("900 gross, 600 net", () => {
+    expect(
+      calculateSalary({
+        gross: 900,
+        net: 600,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 298,
+      income: 600,
+    });
+  });
+
+  it("1200 gross, 950 net", () => {
+    expect(
+      calculateSalary({
+        gross: 1200,
+        net: 950,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 348,
+      income: 950,
+    });
+  });
+
+  it("2100 gross, 1700 net", () => {
+    expect(
+      calculateSalary({
+        gross: 2100,
+        net: 1700,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 348,
+      income: 1700,
+    });
+  });
+
+  it("2100 gross, 1700 net", () => {
+    expect(
+      calculateSalary({
+        gross: 2100,
+        net: 1700,
+        hasMinorChild: true,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 378,
+      income: 1700,
+    });
+  });
+}
 
 const formSchema = z.object({
   gros: z.coerce.number(),
@@ -82,6 +196,8 @@ export const EmploymentIncome = ({
             gros: Number(data.gros),
             net: Number(data.net),
           };
+
+          checkChildBenefitTransfert(draft);
         });
       } else {
         /** Create income if no income to be edited was provided. */
@@ -101,6 +217,8 @@ export const EmploymentIncome = ({
             gros: Number(data.gros),
             net: Number(data.net),
           });
+
+          checkChildBenefitTransfert(draft);
         });
       }
 

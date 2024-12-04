@@ -16,12 +16,12 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { produce } from "immer";
-import { calculateSalary } from "@/lib/calculation";
+import { calculateSalary } from "./employment-income";
 import { generateId } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";
 import { z } from "zod";
-import { Checkbox } from "@/components/ui/checkbox";
+import { checkChildBenefitTransfert } from "./default-income";
 
 type TFormData = {
   isYoung: boolean;
@@ -62,6 +62,7 @@ export const ShortTimeWorkIncome = ({
         hasMinorChild: state.community.some(
           (person) => person.type === "child" && person.age < 18
         ),
+        isYoung: false,
       });
 
       let newState: TStepContext;
@@ -81,6 +82,8 @@ export const ShortTimeWorkIncome = ({
             gros: Number(data.gros),
             net: Number(data.net),
           };
+
+          checkChildBenefitTransfert(draft);
         });
       } else {
         /** Create income if no income to be edited was provided. */
@@ -93,6 +96,8 @@ export const ShortTimeWorkIncome = ({
             gros: Number(data.gros),
             net: Number(data.net),
           });
+
+          checkChildBenefitTransfert(draft);
         });
       }
 
