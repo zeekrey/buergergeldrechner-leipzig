@@ -1,5 +1,16 @@
 # buergergeldrechner
 
+## 0.5.0
+
+### Minor Changes
+
+- 8bb8c6d: Am Ende des Rechners gibt es jetzt die Möglichkeit, einen einzigartigen Link zur gemeinsamen Nutzung der Bürgergeldberechnung zu erstellen.
+
+### Patch Changes
+
+- 8bb8c6d: Die Visualisierung des Berechnungsergebnisses wurde optimiert.
+- 8bb8c6d: Die Berechnung des Kindergeldübertrags wurde verbessert. Ein Kindergeldübertrag wird nun als unveränderbares Einkommen angezeigt.
+
 ## 0.4.1
 
 ### Patch Changes
