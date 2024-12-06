@@ -149,7 +149,13 @@ export const DefaultIncome = ({
             <FormItem>
               <FormLabel>Betrag</FormLabel>
               <FormControl>
-                <Input placeholder="0,00€" type="number" min={1} {...field} />
+                <Input
+                  placeholder="0,00€"
+                  type="number"
+                  min={1}
+                  step="any"
+                  {...field}
+                />
               </FormControl>
             </FormItem>
           )}

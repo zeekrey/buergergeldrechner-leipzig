@@ -1,10 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 test("Case #1 - single with standard income", async ({ page }) => {
-  await page.goto("/");
-  await page.getByRole("button", { name: "Starten" }).click();
+  await page.goto("http://localhost:3000/antrag/erwerbsfaehig");
 
-  await page.waitForURL("**/erwerbsfaehig");
   await page.getByLabel("Ja, ich bin erwerbsfähig.").click();
   await page.getByRole("button", { name: "Weiter" }).click();
 
@@ -60,9 +58,7 @@ test("Case #1 - single with standard income", async ({ page }) => {
 });
 
 test("Case #2 - Couple without kids", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
-  await page.getByRole("button", { name: "Starten" }).click();
-  await page.waitForURL("**/erwerbsfaehig");
+  await page.goto("http://localhost:3000/antrag/erwerbsfaehig");
 
   await page.getByText("Ja, ich bin erwerbsfähig.").click();
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -111,9 +107,7 @@ test("Case #2 - Couple without kids", async ({ page }) => {
 });
 
 test("Case #3 - Couple with 1 kid", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
-  await page.getByRole("button", { name: "Starten" }).click();
-  await page.waitForURL("**/erwerbsfaehig");
+  await page.goto("http://localhost:3000/antrag/erwerbsfaehig");
 
   await page.getByText("Ja, ich bin erwerbsfähig.").click();
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -162,9 +156,7 @@ test("Case #3 - Couple with 1 kid", async ({ page }) => {
 });
 
 test("Case #4 - Couple with 2 kids", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
-  await page.getByRole("button", { name: "Starten" }).click();
-  await page.waitForURL("**/erwerbsfaehig");
+  await page.goto("http://localhost:3000/antrag/erwerbsfaehig");
 
   await page.getByText("Ja, ich bin erwerbsfähig.").click();
   await page.getByRole("button", { name: "Weiter" }).click();

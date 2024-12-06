@@ -218,7 +218,13 @@ export const ParentalAllowance = ({
               <FormItem>
                 <FormLabel>Elterngeldanspruch</FormLabel>
                 <FormControl>
-                  <Input placeholder="0,00€" type="number" min={1} {...field} />
+                  <Input
+                    placeholder="0,00€"
+                    type="number"
+                    min={1}
+                    step="any"
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -237,6 +243,7 @@ export const ParentalAllowance = ({
                     placeholder="0,00€"
                     type="number"
                     max={form.getValues("type") === "normal" ? 300 : 150}
+                    step="any"
                     {...field}
                   />
                 </FormControl>

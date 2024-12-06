@@ -117,6 +117,7 @@ export const SelfEmploymentIncome = ({
                       placeholder="0,00€"
                       type="number"
                       min={1}
+                      step="any"
                       {...field}
                     />
                   </FormControl>
@@ -131,7 +132,12 @@ export const SelfEmploymentIncome = ({
                 <FormItem>
                   <FormLabel>Betriebsausgaben</FormLabel>
                   <FormControl>
-                    <Input placeholder="0,00€" type="number" {...field} />
+                    <Input
+                      placeholder="0,00€"
+                      type="number"
+                      step="any"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}

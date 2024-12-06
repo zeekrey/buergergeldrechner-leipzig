@@ -171,6 +171,7 @@ export const VoluntarySocialYear = ({
                 <Input
                   placeholder="Wie alt sind Sie?"
                   type="number"
+                  step="any"
                   min={1}
                   {...field}
                 />
@@ -187,7 +188,13 @@ export const VoluntarySocialYear = ({
               <FormItem>
                 <FormLabel>Betrag</FormLabel>
                 <FormControl>
-                  <Input placeholder="0,00€" type="number" min={1} {...field} />
+                  <Input
+                    placeholder="0,00€"
+                    type="number"
+                    step="any"
+                    min={1}
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
