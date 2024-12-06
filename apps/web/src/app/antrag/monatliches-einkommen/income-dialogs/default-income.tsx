@@ -26,6 +26,12 @@ type TFormData = {
   allowance: number;
 };
 
+/**
+ * Child benefit transfer checks whether a child has an income that exceeds their needs. If so, the child's income will be set to the maximum need, and the remainder will be considered additional income for the parents.
+ * For this two steps are made:
+ * 1. Determine the difference between income and need, and apply this amount as income to the parents.
+ * 2. Decrease the child's income to ensure that the need is not exceeded.
+ */
 export function checkChildBenefitTransfert(draft: WritableDraft<TStepContext>) {
   /** Check child benefit transfer. */
   const childBenefitTransfer = calculateChildBenefitTransfer(draft);
@@ -34,16 +40,18 @@ export function checkChildBenefitTransfert(draft: WritableDraft<TStepContext>) {
     (pers) => pers.name === "Antragsteller"
   );
 
-  /** Remove existing ones. */
-  const existingChildBenefitPosition = draft.community[
-    applicant
-  ].income.findIndex((inc) => inc.type === "ChildBenefitTransfer");
+  /** Remove all existing child benefits. */
+  draft.community.forEach((p, i) => {
+    const existingChildBenefitPosition = p.income.findIndex(
+      (inc) => inc.type === "ChildBenefitTransfer"
+    );
 
-  if (existingChildBenefitPosition !== -1) {
-    draft.community[applicant].income = draft.community[
-      applicant
-    ].income.filter((el) => el.type !== "ChildBenefitTransfer");
-  }
+    if (existingChildBenefitPosition !== -1) {
+      draft.community[i].income = draft.community[i].income.filter(
+        (el) => el.type !== "ChildBenefitTransfer"
+      );
+    }
+  });
 
   if (childBenefitTransfer.length) {
     /** Add new childbenefittransfer */
@@ -53,6 +61,18 @@ export function checkChildBenefitTransfert(draft: WritableDraft<TStepContext>) {
         type: "ChildBenefitTransfer",
         amount: benefit.amount,
       });
+
+      const childIndex = draft.community.findIndex(
+        (c) => c.name === benefit.name
+      );
+
+      if (childIndex !== -1) {
+        draft.community[childIndex].income.push({
+          id: generateId(),
+          type: "ChildBenefitTransfer",
+          amount: -benefit.amount,
+        });
+      }
     });
   }
 }
