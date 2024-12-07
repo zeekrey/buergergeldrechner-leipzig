@@ -1,13 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  ChildAllowanceSchema,
-  IncomeTypEnum,
-  TChild,
-  TStepContext,
-  VoluntarySocialYearSchema,
-} from "@/lib/types";
+import { TChild, TStepContext, VoluntarySocialYearSchema } from "@/lib/types";
 import {
   Form,
   FormControl,
@@ -20,8 +14,9 @@ import { IncomeComponentProps } from "../income-dialog";
 import { useStateContext } from "@/components/context";
 import { generateId } from "@/lib/utils";
 import { z } from "zod";
-import { StepNote } from "@/components/ui/step-primitives";
 import { checkChildBenefitTransfert as checkChildBenefitTransfer } from "./default-income";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ShieldAlertIcon } from "lucide-react";
 
 type TFormData = {
   amount: number;
@@ -160,6 +155,27 @@ export const VoluntarySocialYear = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
+        {!(person.type === "child" && person.age < 25) && (
+          <FormField
+            control={form.control}
+            name="amount"
+            rules={{ min: 1 }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Betrag</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="0,00€"
+                    type="number"
+                    step="any"
+                    min={1}
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="age"
@@ -171,6 +187,7 @@ export const VoluntarySocialYear = ({
                 <Input
                   placeholder="Wie alt sind Sie?"
                   type="number"
+                  step="any"
                   min={1}
                   {...field}
                 />
@@ -178,27 +195,18 @@ export const VoluntarySocialYear = ({
             </FormItem>
           )}
         />
-        {!(person.type === "child" && person.age < 25) && (
-          <FormField
-            control={form.control}
-            name="amount"
-            rules={{ min: 1 }}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Betrag</FormLabel>
-                <FormControl>
-                  <Input placeholder="0,00€" type="number" min={1} {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        )}
-        <StepNote className="px-0 pt-2">
-          Für Personen in Freiwilligendienst, sozialem/ökologischen Jahr, gilt
-          ab dem 01.01.2024 in Höhe von 538,00 Euro monatlich, sofern die Person
-          an mindestens einem Tag des Monats das 25. Lebensjahr noch nicht
-          vollendet hat.
-        </StepNote>
+        <div className="px-0 pt-2">
+          <Alert variant="warning">
+            <ShieldAlertIcon className="h-4 w-4" />
+            <AlertTitle>Pauschalbetrag</AlertTitle>
+            <AlertDescription>
+              Für Personen in Freiwilligendienst, sozialem/ökologischen Jahr,
+              gilt ab dem 01.01.2024 in Höhe von 538,00 Euro monatlich, sofern
+              die Person an mindestens einem Tag des Monats das 25. Lebensjahr
+              noch nicht vollendet hat.
+            </AlertDescription>
+          </Alert>
+        </div>
         <div className="flex justify-between pt-2">
           <Button
             type="button"

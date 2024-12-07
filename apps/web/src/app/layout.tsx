@@ -1,10 +1,8 @@
-import { ThemeProvider } from "@/components/theme-provider";
 import { fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
 
 import "./globals.css";
-import { SiteHeader } from "@/components/header";
-import { ReactNode } from "react";
 
 export const metadata = {
   description:
@@ -26,14 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           fontSans.variable
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          disableTransitionOnChange
-          enableSystem
-        >
-          {children}
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   );

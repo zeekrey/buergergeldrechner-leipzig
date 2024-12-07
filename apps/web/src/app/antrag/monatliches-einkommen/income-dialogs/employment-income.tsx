@@ -240,7 +240,12 @@ export const EmploymentIncome = ({
                 <FormItem>
                   <FormLabel>Brutto</FormLabel>
                   <FormControl>
-                    <Input placeholder="0,00€" type="number" {...field} />
+                    <Input
+                      placeholder="0,00€"
+                      type="number"
+                      step="any"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -252,7 +257,12 @@ export const EmploymentIncome = ({
                 <FormItem>
                   <FormLabel>Netto</FormLabel>
                   <FormControl>
-                    <Input placeholder="0,00€" type="number" {...field} />
+                    <Input
+                      placeholder="0,00€"
+                      type="number"
+                      step="any"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}

@@ -123,6 +123,7 @@ export const ShortTimeWorkIncome = ({
                     <Input
                       placeholder="0,00€"
                       type="number"
+                      step="any"
                       min={1}
                       {...field}
                     />
@@ -138,7 +139,12 @@ export const ShortTimeWorkIncome = ({
                 <FormItem>
                   <FormLabel>Netto</FormLabel>
                   <FormControl>
-                    <Input placeholder="0,00€" type="number" {...field} />
+                    <Input
+                      placeholder="0,00€"
+                      type="number"
+                      step="any"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}

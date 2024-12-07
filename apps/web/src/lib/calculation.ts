@@ -328,7 +328,8 @@ export function calculateChildBenefitTransfer(context: TStepContext) {
       if (incomeSum > baseAmount + rentPerPerson)
         acc.push({
           name: child.name,
-          amount: incomeSum - (baseAmount + rentPerPerson),
+          // FIXME: 250 should be the amount of child benefit
+          amount: Math.min(incomeSum - (baseAmount + rentPerPerson), 250),
         });
 
       return acc;

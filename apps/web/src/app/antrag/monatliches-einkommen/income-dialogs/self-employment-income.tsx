@@ -5,7 +5,6 @@ import { SelfEmploymentIncomeSchema, TStepContext } from "@/lib/types";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,6 +16,8 @@ import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";
 import { z } from "zod";
 import { checkChildBenefitTransfert } from "./default-income";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ShieldAlertIcon } from "lucide-react";
 
 type TFormData = {
   net: number;
@@ -117,6 +118,7 @@ export const SelfEmploymentIncome = ({
                       placeholder="0,00€"
                       type="number"
                       min={1}
+                      step="any"
                       {...field}
                     />
                   </FormControl>
@@ -131,12 +133,27 @@ export const SelfEmploymentIncome = ({
                 <FormItem>
                   <FormLabel>Betriebsausgaben</FormLabel>
                   <FormControl>
-                    <Input placeholder="0,00€" type="number" {...field} />
+                    <Input
+                      placeholder="0,00€"
+                      type="number"
+                      step="any"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
           </div>
+        </div>
+        <div className="px-0 pt-2">
+          <Alert variant="warning">
+            <ShieldAlertIcon className="h-4 w-4" />
+            <AlertTitle>Monatlich durchschnittliche Einnahmen</AlertTitle>
+            <AlertDescription>
+              Bitte tragen Sie die monatlich zu erwartenden Betriebseinnahmen
+              und -ausgaben über die nächsten 6 Monate ein.
+            </AlertDescription>
+          </Alert>
         </div>
         <div className="flex justify-between pt-2">
           <Button

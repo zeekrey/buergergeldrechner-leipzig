@@ -443,7 +443,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           </TableRow>
         )}
         {/* overall sum  */}
-        <TableRow className="bg-primary font-bold">
+        <TableRow className="bg-primary font-bold ">
           <TableCell colSpan={3}>Bürgergeldanspruch</TableCell>
           <TableCell className="text-right">
             {overall.toLocaleString("de-DE", {
