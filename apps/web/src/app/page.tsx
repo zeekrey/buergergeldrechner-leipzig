@@ -55,7 +55,7 @@ const features = [
   },
   {
     description:
-      "Der Bürgergeldrechner berücksichtigt bereits zahlreiche Informationen, die für den Anspruch auf Bürgergeld relevant sind, und bietet somit eine Schätzung des Anspruchs.",
+      "Der Bürgergeldrechner berücksichtigt bereits zahlreiche Informationen, die für den Anspruch auf Bürgergeld relevant sind.",
     name: "Detailgenaue berechnung",
     icon: DraftingCompassIcon,
   },
@@ -293,7 +293,7 @@ export default function HomePage() {
               <h2 className="text-base font-semibold leading-7 text-zinc-900/50">
                 Ein Projekt des Jobcenter Leipzig und der Stadt Leipzig
               </h2>
-              <p className="text-center text-2xl font-semibold text-zinc-900 mt-2">
+              <p className="text-center text-xl font-semibold text-zinc-900 mt-2">
                 Der Bürgergeldrechner wurde im Rahmen des Innovationswettbewerbs
                 "Smart City Challenge Leipzig" durch das Referat Digitale Stadt
                 Leipzig gefördert.

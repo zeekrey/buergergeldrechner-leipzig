@@ -103,24 +103,4 @@ const StepNavigation = forwardRef<HTMLDivElement, InputProps>(
 
 StepNavigation.displayName = "StepNavigation";
 
-const StepNote = forwardRef<HTMLDivElement, InputProps>(
-  ({ children, ...props }, ref) => {
-    return (
-      <div className="px-8 py-6" {...props}>
-        <div className="px-2 py-4 rounded-md bg-yellow-100 flex gap-2 items-center">
-          <AlertCircleIcon className="shrink-0 w-5 h-5 text-yellow-950" />
-          <p className="text-sm text-yellow-950">{children}</p>
-        </div>
-      </div>
-    );
-  }
-);
-
-export {
-  StepContent,
-  StepDescription,
-  StepNavigation,
-  StepRoot,
-  StepTitle,
-  StepNote,
-};
+export { StepContent, StepDescription, StepNavigation, StepRoot, StepTitle };
