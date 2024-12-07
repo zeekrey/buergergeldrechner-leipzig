@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -20,7 +19,6 @@ import {
   ShapesIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
 import { StepExample } from "../components/step-example";
 import ExportScreenshotImage from "../assets/export-screenshot.png";
 import StadtLeipzigImage from "../assets/stadt-leipzig.webp";
@@ -31,6 +29,22 @@ export const metadata: Metadata = {
   title: "Bürgergeldrechner des Jobcenter Leipzig",
   description:
     "Berechnen Sie Ihr Bürgergeld einfach und unkompliziert mit dem Bürgergeldrechner des Jobcenters Leipzig. Erfahren Sie, welche Leistungen Ihnen zustehen und erhalten Sie individuelle Unterstützung bei Ihrer Antragstellung. Nutzen Sie unseren kostenlosen Online-Rechner für eine schnelle und präzise Berechnung.",
+  openGraph: {
+    title: "Bürgergeldrechner des Jobcenter Leipzig",
+    description:
+      "Berechnen Sie Ihr Bürgergeld einfach und unkompliziert mit dem Bürgergeldrechner des Jobcenters Leipzig. Erfahren Sie, welche Leistungen Ihnen zustehen und erhalten Sie individuelle Unterstützung bei Ihrer Antragstellung. Nutzen Sie unseren kostenlosen Online-Rechner für eine schnelle und präzise Berechnung.",
+    url: "https://buergergeld.io",
+    siteName: "Bürgergeldrechner des Jobcenter Leipzig",
+    images: [
+      {
+        url: "https://www.buergergeld.dev/og.png", // Must be an absolute URL
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "de_DE",
+    type: "website",
+  },
 };
 
 // const navigation = [
@@ -136,7 +150,7 @@ export default function HomePage() {
             <Button variant="default" asChild>
               <Link
                 className="text-sm font-semibold leading-6 flex items-center gap-1"
-                href="https://app.vesk.org/"
+                href="/antrag"
               >
                 Berechnen
                 <ArrowRightIcon className="w-3 h-3" aria-hidden="true" />
