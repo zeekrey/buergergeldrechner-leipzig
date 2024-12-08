@@ -1,5 +1,4 @@
 import { ResultSheet } from "@/app/antrag/ergebnis/page";
-import { SiteHeader } from "@/components/header";
 import { HelpPopup } from "@/components/help-popup";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Card } from "@/components/ui/card";
@@ -22,7 +21,6 @@ async function getData(
     const sql = neon(process.env.DATABASE_URL);
     const response = await sql`SELECT * FROM links WHERE alias = ${slug}`;
 
-    console.log(response);
     return { success: true, data: JSON.stringify(response[0].state) };
   } catch (error) {
     return { success: false, error: JSON.stringify(error) };
