@@ -400,14 +400,19 @@ export function ResultSheet({ state }: { state: TStepContext }) {
         )}
         {/* allowance */}
         {allowance.map((_allowance, index) => (
-          <TableRow key={_allowance.id}>
+          <TableRow key={index}>
             {index === 0 && (
               <TableCell className="font-medium" rowSpan={allowance.length + 1}>
                 Freibeträge
               </TableCell>
             )}
             <TableCell className="font-medium" colSpan={2}>
-              {allowanceType[_allowance.type].label}
+              {allowanceType[_allowance.type].label} (
+              {
+                state.community.find((pers) => pers.id === _allowance.personId)
+                  ?.name
+              }
+              )
             </TableCell>
             <TableCell className="font-medium text-right">
               {_allowance.amount?.toLocaleString("de-DE", {
