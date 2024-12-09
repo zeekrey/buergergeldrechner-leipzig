@@ -70,7 +70,7 @@ const features = [
   {
     description:
       "Der Bürgergeldrechner berücksichtigt bereits zahlreiche Informationen, die für den Anspruch auf Bürgergeld relevant sind.",
-    name: "Detailgenaue berechnung",
+    name: "Detailgenaue Berechnung",
     icon: DraftingCompassIcon,
   },
 ];
@@ -189,7 +189,7 @@ export default function HomePage() {
           ></rect>
         </svg>
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          <div className="hidden sm:mb-8 sm:flex sm:justify-center">
+          {/* <div className="hidden sm:mb-8 sm:flex sm:justify-center">
             <a
               className="relative bg-white flex items-center gap-1 rounded-full px-3 py-1 text-sm leading-6 text-zinc-600 ring-1 ring-zinc-900/10 hover:ring-zinc-600/20"
               href="https://www.arbeitsagentur.de/arbeitslos-arbeit-finden/buergergeld"
@@ -198,7 +198,7 @@ export default function HomePage() {
               <span className="">Direkt zu Jobcenter.digital</span>
               <ArrowRightIcon className="w-3 h-3" aria-hidden />
             </a>
-          </div>
+          </div> */}
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-900 sm:text-6xl">
               Bürgergeld, schnell und einfach berechnen
@@ -280,7 +280,7 @@ export default function HomePage() {
             </p>
             <p className="mt-6 text-lg leading-8 text-zinc-700">
               Der Bürgergeldrechner zeigt eine detailgenaue Berechnung des
-              Bürgergelds. Zudem haben Sie die Möglichkeit das Ergebnis mit
+              Bürgergeldes. Zudem haben Sie die Möglichkeit das Ergebnis mit
               jemandem zu teilen.
             </p>
           </div>
