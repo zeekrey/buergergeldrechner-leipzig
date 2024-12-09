@@ -50,9 +50,8 @@ export default async function Image({ params }: { params: { slug: string } }) {
     const data = response[0].state as TStepContext;
 
     const communitySize = data.community.length;
-    const income = data.income.sum;
     const spendings = data.spendings.sum;
-    const { allowance, overall } = calculateOverall(data);
+    const { allowance, overall, income } = calculateOverall(data);
 
     const allowanceSum = allowance.reduce(
       (acc, curr) => acc + (curr.amount ?? 0),
@@ -81,7 +80,10 @@ export default async function Image({ params }: { params: { slug: string } }) {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div>Berechneter Bürgergeldanspruch</div>
             <div style={{ fontWeight: 600, fontSize: 98, color: "#18181B" }}>
-              1.800,65€
+              {overall.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -179,7 +181,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
                   style: "currency",
                   currency: "EUR",
                 })}{" "}
-                Freiebträge
+                Freibträge
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -227,7 +229,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
                     stroke-linejoin="round"
                   />
                 </svg>
-                {income.toLocaleString("de-DE", {
+                {income.sum.toLocaleString("de-DE", {
                   style: "currency",
                   currency: "EUR",
                 })}{" "}
