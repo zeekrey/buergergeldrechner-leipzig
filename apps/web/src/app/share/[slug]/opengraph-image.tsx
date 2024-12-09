@@ -42,11 +42,6 @@ export default async function Image({ params }: { params: { slug: string } }) {
     return { success: false, error: "Check server logs!" };
   }
 
-  // Font
-  const interSemiBold = fetch(
-    new URL("./Inter-SemiBold.ttf", import.meta.url)
-  ).then((res) => res.arrayBuffer());
-
   try {
     const sql = neon(process.env.DATABASE_URL);
     const response =
