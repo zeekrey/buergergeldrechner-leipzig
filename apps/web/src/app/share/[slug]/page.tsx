@@ -1,5 +1,4 @@
 import { ResultSheet } from "@/app/antrag/ergebnis/page";
-import { SiteHeader } from "@/components/header";
 import { HelpPopup } from "@/components/help-popup";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Card } from "@/components/ui/card";
@@ -22,7 +21,6 @@ async function getData(
     const sql = neon(process.env.DATABASE_URL);
     const response = await sql`SELECT * FROM links WHERE alias = ${slug}`;
 
-    console.log(response);
     return { success: true, data: JSON.stringify(response[0].state) };
   } catch (error) {
     return { success: false, error: JSON.stringify(error) };
@@ -82,10 +80,20 @@ export default async function Page({
       </header>
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-background  to-muted"></div>
       <div className="mx-auto max-w-4xl">
-        <h1 className="text-2xl font-bold my-12">Bürgergeldrechnung</h1>
-        <Card>
-          <ResultSheet state={JSON.parse(result.data)} />
-        </Card>
+        <h1 className="text-2xl font-bold my-12">
+          Bürgergeldrechner des Jobcenter Leipzig
+        </h1>
+        <div className="-m-4 p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30">
+          <div className="rounded-lg drop-shadow-xl">
+            <Card className="overflow-hidden">
+              <div className="bg-muted/50 px-4 py-6">
+                <h2 className="font-bold">Berechnet am 06.12.2024</h2>
+                <p className="text-sm text-muted-foreground">Version 0.5.0</p>
+              </div>
+              <ResultSheet state={JSON.parse(result.data)} />
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

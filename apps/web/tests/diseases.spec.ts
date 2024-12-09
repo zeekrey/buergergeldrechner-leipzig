@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 test("should selected diseases", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
-  await page.getByRole("button", { name: "Starten" }).click();
+  await page.goto("http://localhost:3000/antrag/erwerbsfaehig");
+
   await page.getByText("Ja, ich bin erwerbsfähig.").click();
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.waitForURL("**/partnerschaft");

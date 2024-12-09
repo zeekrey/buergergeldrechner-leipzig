@@ -3,12 +3,8 @@
 import type { FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  StepContent,
-  StepNavigation,
-  StepNote,
-} from "@/components/ui/step-primitives";
-import { ArrowRightCircleIcon } from "lucide-react";
+import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import { ArrowRightCircleIcon, ShieldAlertIcon } from "lucide-react";
 import { useCallback } from "react";
 import { Checkbox } from "../../../components/ui/checkbox";
 import {
@@ -22,6 +18,7 @@ import { produce } from "immer";
 import { generateId, generateMember } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 import HelpMarkdown from "@/config/steps/erwerbsfaehig.mdx";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const step = stepsConfig[0];
 
@@ -97,14 +94,23 @@ export default function StepEmployable() {
           </Button>
         </StepNavigation>
       </form>
-      <StepNote>
-        Sind Sie nicht erwerbsfähig, so stehen Ihnen unter Umständen andere
-        Sozialleistungen zu. Hier finden Sie eine Übersicht über möglich
-        Alternativen.{" "}
-        <a href="https://www.leipzig.de/buergerservice-und-verwaltung/aemter-und-behoerdengaenge/behoerden-und-dienstleistungen/dienstleistung/sozialhilfe-beantragen-5b5842148421a/">
-          → Sozialhilfe
-        </a>
-      </StepNote>
+      {/* <StepNote>
+      
+      </StepNote> */}
+      <div className="mx-8 mb-6">
+        <Alert variant="warning">
+          <ShieldAlertIcon className="h-4 w-4" />
+          <AlertTitle>Nicht erwerbsfähig?</AlertTitle>
+          <AlertDescription>
+            Sind Sie nicht erwerbsfähig, so stehen Ihnen unter Umständen andere
+            Sozialleistungen zu. Hier finden Sie eine Übersicht über möglich
+            Alternativen.{" "}
+            <a href="https://www.leipzig.de/buergerservice-und-verwaltung/aemter-und-behoerdengaenge/behoerden-und-dienstleistungen/dienstleistung/sozialhilfe-beantragen-5b5842148421a/">
+              → Sozialhilfe
+            </a>
+          </AlertDescription>
+        </Alert>
+      </div>
     </StepRoot>
   );
 }
