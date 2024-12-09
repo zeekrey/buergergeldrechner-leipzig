@@ -32,10 +32,13 @@ export async function createShareable(
     return { success: false, error: "Check server logs!" };
   }
 
+  const version = process.env.npm_package_version ?? "0.0.0";
+
   try {
     const sql = neon(process.env.DATABASE_URL);
-    const response = await sql`INSERT INTO links (alias, state, visit_count) 
-      VALUES (${slug()}, ${JSON.parse(data)}, 1)
+    const response =
+      await sql`INSERT INTO links (alias, state, visit_count, version) 
+      VALUES (${slug()}, ${JSON.parse(data)}, 1, ${version})
       RETURNING *;`;
 
     // TODO: handle not unique error (code: 23505)

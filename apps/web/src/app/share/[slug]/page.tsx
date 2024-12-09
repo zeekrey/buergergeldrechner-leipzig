@@ -2,6 +2,7 @@ import { ResultSheet } from "@/app/antrag/ergebnis/page";
 import { HelpPopup } from "@/components/help-popup";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Card } from "@/components/ui/card";
+import { TStepContext } from "@/lib/types";
 import { neon } from "@neondatabase/serverless";
 
 async function getData(
@@ -21,7 +22,7 @@ async function getData(
     const sql = neon(process.env.DATABASE_URL);
     const response = await sql`SELECT * FROM links WHERE alias = ${slug}`;
 
-    return { success: true, data: JSON.stringify(response[0].state) };
+    return { success: true, data: JSON.stringify(response[0]) };
   } catch (error) {
     return { success: false, error: JSON.stringify(error) };
   }
@@ -36,6 +37,15 @@ export default async function Page({
   const result = await getData(slug);
 
   if (!result.success) return <>Unknown</>;
+  const data = JSON.parse(result.data) as {
+    id: number;
+    alias: string;
+    state: TStepContext;
+    visit_count: number;
+    version: string;
+    created_at: string;
+  };
+  console.log(data);
 
   return (
     <div className="">
@@ -87,10 +97,15 @@ export default async function Page({
           <div className="rounded-lg drop-shadow-xl">
             <Card className="overflow-hidden">
               <div className="bg-muted/50 px-4 py-6">
-                <h2 className="font-bold">Berechnet am 06.12.2024</h2>
-                <p className="text-sm text-muted-foreground">Version 0.5.0</p>
+                <h2 className="font-bold">
+                  Berechnet am{" "}
+                  {new Date(data.created_at).toLocaleString("de-DE")}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Version {data.version}
+                </p>
               </div>
-              <ResultSheet state={JSON.parse(result.data)} />
+              <ResultSheet state={data.state} />
             </Card>
           </div>
         </div>
