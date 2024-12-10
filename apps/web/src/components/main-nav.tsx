@@ -9,12 +9,10 @@ import { Badge } from "./ui/badge";
 
 export function MainNav() {
   return (
-    <div className="mr-4 hidden md:flex">
+    <div className="mr-4 flex">
       <Link href="/" className="mr-6 flex items-center space-x-2">
         {/* <Image src={LogoImage} alt="jobcenter-leipzig-logo" width={60} /> */}
-        <span className="hidden font-bold sm:inline-block">
-          {siteConfig.name}
-        </span>
+        <span className="font-bold">{siteConfig.name}</span>
         {typeof window !== "undefined" &&
           ["localhost", "buergergeld.dev"].includes(
             window.location.hostname

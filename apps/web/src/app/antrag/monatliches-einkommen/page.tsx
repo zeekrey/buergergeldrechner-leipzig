@@ -204,7 +204,7 @@ export default function StepSalary() {
           <ArrowLeftCircleIcon className="w-4 h-4" />
         </Button>
         <Button
-          className="grow sm:grow-0 sm:w-48 "
+          className="grow sm:grow-0 sm:w-48 ml-4"
           size="lg"
           type="button"
           onClick={handleSubmit}
