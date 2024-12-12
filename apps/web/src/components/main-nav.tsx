@@ -7,7 +7,7 @@ import { Badge } from "./ui/badge";
 
 export function MainNav() {
   return (
-    <div className="mr-4 flex">
+    <div className="flex">
       <Link href="/" className="mr-6 flex items-center space-x-2">
         <span className="font-bold">{siteConfig.name}</span>
         {typeof window !== "undefined" &&

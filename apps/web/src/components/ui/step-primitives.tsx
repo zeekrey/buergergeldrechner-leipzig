@@ -19,15 +19,11 @@ const StepRoot = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
     return (
       <div
-        className="sm:flex sm:items-center sm:pt-24 sm:pb-36 sm:min-h-dvh"
+        className="sm:border sm:shadow-sm sm:rounded-lg flex flex-col sm:min-h-96 flex-grow sm:flex-grow-0 bg-background max-w-full sm:max-w-3xl py-2"
+        ref={ref}
         {...props}
       >
-        <div
-          className="sm:border sm:shadow-sm rounded-lg w-full flex flex-col sm:min-h-96 bg-background pt-14 sm:pt-0"
-          ref={ref}
-        >
-          {children}
-        </div>
+        {children}
       </div>
     );
   }

@@ -16,11 +16,13 @@ export default function Layout({ children }: { children: ReactNode }) {
       enableSystem
     >
       <StateProvider initialState={initialStepsState.context}>
-        <Toaster position="top-right" />
-        <SiteHeader />
-        <main className="flex flex-col sm:gap-12 mx-auto max-w-3xl">
-          {children}
-        </main>
+        <Toaster position="bottom-right" />
+        <div className="flex flex-col min-h-dvh">
+          <SiteHeader />
+          <main className="flex-grow flex flex-col justify-center items-center">
+            {children}
+          </main>
+        </div>
       </StateProvider>
     </ThemeProvider>
   );
