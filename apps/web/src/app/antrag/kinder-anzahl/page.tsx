@@ -1,7 +1,6 @@
 "use client";
 
 import type { FormEvent } from "react";
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -22,7 +21,6 @@ import {
   StepTitle,
   StepDescription,
 } from "@/components/ui/step-primitives";
-
 import { Button } from "../../../components/ui/button";
 import { produce } from "immer";
 import { TChild, TPerson } from "@/lib/types";
