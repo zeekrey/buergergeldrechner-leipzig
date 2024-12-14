@@ -24,11 +24,11 @@ export function StatusBar() {
       <DrawerTrigger className="w-full group">
         <div className="px-8 pt-6">
           <div className="flex justify-between mx-auto max-w-7xl">
-            <div className="flex flex-col justify-between gap-2">
+            <div className="flex flex-col justify-between">
               <small className="text-xs text-left">Fortschritt</small>
               <Progress />
             </div>
-            <div className="flex flex-col justify-center gap-2">
+            <div className="flex flex-col justify-center">
               <small className="text-xs">Möglicher Anspruch</small>
               <strong className="text-lg text-right">
                 {overall.toLocaleString("de-DE", {

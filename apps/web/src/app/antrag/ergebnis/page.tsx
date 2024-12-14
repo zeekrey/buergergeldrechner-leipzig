@@ -272,7 +272,6 @@ export function ResultSheet({ state }: { state: TStepContext }) {
                   {person.name}
                 </TableCell>
               )}
-
               <TableCell className="font-medium">
                 {additionalNeed.name}
               </TableCell>
