@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeftCircleIcon, RotateCwIcon } from "lucide-react";
+import { ArrowLeftCircleIcon, RotateCwIcon, ShareIcon } from "lucide-react";
 import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
 import { initialStepsState, stepsConfig } from "@/lib/machine";
 import { useCallback } from "react";
@@ -156,6 +156,14 @@ export default function StepSummary() {
             </div>
           </TabsContent>
         </Tabs>
+        <Button
+          onClick={onCreateShareableClick}
+          disabled={isPending}
+          variant="secondary"
+          className="w-full"
+        >
+          <ShareIcon className="w-4 h-4" /> Teilen
+        </Button>
       </StepContent>
       <StepNavigation>
         <Button
@@ -166,9 +174,6 @@ export default function StepSummary() {
         >
           <ArrowLeftCircleIcon className="w-4 h-4 mr-3" />
           Zurück
-        </Button>
-        <Button onClick={onCreateShareableClick} disabled={isPending}>
-          Teilen
         </Button>
         <Button variant="secondary" size="lg" asChild onClick={handleReset}>
           <Link href="/antrag/erwerbsfaehig">
