@@ -47,6 +47,13 @@ export default async function Page({
     created_at: string;
   };
 
+  const _data = [
+    [
+      [1, 2],
+      [1, 2],
+    ],
+  ];
+
   return (
     <ThemeProvider
       attribute="class"
@@ -67,7 +74,7 @@ export default async function Page({
           </div>
         </header>
         {/* <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-background  to-muted"></div> */}
-        <div className="mx-auto sm:max-w-2xl lg:max-w-4xl">
+        <div className="container sm:max-w-2xl lg:max-w-4xl">
           <h1 className="text-2xl font-bold my-12">
             Bürgergeldrechner des Jobcenter Leipzig
           </h1>
