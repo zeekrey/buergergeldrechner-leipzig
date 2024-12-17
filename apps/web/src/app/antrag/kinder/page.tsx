@@ -137,7 +137,11 @@ export default function StepChildren() {
           <Button onClick={handleBack} size="lg" type="button">
             <ArrowLeftCircleIcon className="w-4 h-4" />
           </Button>
-          <Button className="grow sm:grow-0 sm:w-48 " size="lg" type="submit">
+          <Button
+            className="grow sm:grow-0 sm:w-48 ml-4"
+            size="lg"
+            type="submit"
+          >
             Weiter
             <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
           </Button>

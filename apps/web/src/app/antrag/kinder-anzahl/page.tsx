@@ -1,7 +1,6 @@
 "use client";
 
 import type { FormEvent } from "react";
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -22,7 +21,6 @@ import {
   StepTitle,
   StepDescription,
 } from "@/components/ui/step-primitives";
-
 import { Button } from "../../../components/ui/button";
 import { produce } from "immer";
 import { TChild, TPerson } from "@/lib/types";
@@ -166,7 +164,11 @@ export default function StepChildrenCount() {
           <Button onClick={handleBack} size="lg" type="button">
             <ArrowLeftCircleIcon className="w-4 h-4" />
           </Button>
-          <Button className="grow sm:grow-0 sm:w-48 " size="lg" type="submit">
+          <Button
+            className="grow sm:grow-0 sm:w-48 ml-4"
+            size="lg"
+            type="submit"
+          >
             Weiter
             <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
           </Button>

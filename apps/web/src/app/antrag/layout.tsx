@@ -5,7 +5,6 @@ import { SiteHeader } from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import { initialStepsState } from "@/lib/machine";
 import { StateProvider } from "@/components/context";
-import { StatusBar } from "@/components/status-bar";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -17,12 +16,13 @@ export default function Layout({ children }: { children: ReactNode }) {
       enableSystem
     >
       <StateProvider initialState={initialStepsState.context}>
-        <Toaster position="top-right" />
-        <SiteHeader />
-        <StatusBar />
-        <main className="flex flex-col sm:gap-12 min-h-dvh mx-auto max-w-3xl">
-          {children}
-        </main>
+        <Toaster position="bottom-right" />
+        <div className="flex flex-col min-h-dvh">
+          <SiteHeader />
+          <main className="flex-grow flex flex-col justify-center items-center sm:py-6">
+            {children}
+          </main>
+        </div>
       </StateProvider>
     </ThemeProvider>
   );

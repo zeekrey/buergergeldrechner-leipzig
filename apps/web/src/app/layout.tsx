@@ -19,10 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         name="viewport"
       />
       <body
-        className={cn(
-          "min-h-screen bg-muted/40 font-sans antialiased",
-          fontSans.variable
-        )}
+        className={cn("bg-muted/40 font-sans antialiased", fontSans.variable)}
       >
         {children}
       </body>

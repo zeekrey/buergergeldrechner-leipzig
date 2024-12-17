@@ -61,10 +61,4 @@ test("should assign child benefit transfer", async ({ page }) => {
   await expect(page.locator("tbody")).toContainText("Kind 1");
   await page.getByRole("button", { name: "Weiter" }).click();
   await expect(page.getByTestId("result")).toContainText("1.528,39 €");
-  await page.getByRole("button", { name: "Zurück" }).click();
-  await page
-    .getByRole("row", { name: "Kind 1 Unterhalt 500,00 €" })
-    .getByRole("button")
-    .nth(1)
-    .click();
 });
