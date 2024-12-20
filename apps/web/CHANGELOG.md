@@ -1,5 +1,19 @@
 # buergergeldrechner
 
+## 0.5.1
+
+### Patch Changes
+
+- 59e5b1b: Neben den Freibeträgen in der Ergebnisansicht, werden nun auch die betroffenen Personen angezeigt.
+- 74ff4c9: Die Nutzbarkeit auf kleineren Bildschirmen wie Smartphones wurde verbessert.
+- 4329b47: Ein Fehler beim Bearbeiten eines Einkommens wurde behoben.
+- 756deb9: Es wurden Hinweistexte bei der Eingabe der Einnahmen aus Selbstständigkeit hinzugefügt und bisherige visuell verbessert.
+- 5c7a073: Geteilte Berechnungen haben nun ein dynamisches Vorschaubild beim Teilen des Links.
+- 59e5b1b: Bei geteilten Ergebnissen wird nun der Erstellungszeitpunkt angezeigt. Außerdem wird die Versionsnummer des Rechners mit dem das Ergebnis erstellt wurde angezeigt.
+- f5fee20: Die Ergebnisdarstellung ist nun korrekt, auch wenn es keine Freibeträge oder keine Mehrbedarfe gibt.
+- 5f11114: Die maximale Höhe des Kindergeldübertrags entspricht nun der Höhe des Kindergeldes.
+- 756deb9: Der Kindergeldübertrag wird nun korrekt, sowohl beim Kind also auch beim Antragsteller angerechnet.
+
 ## 0.5.0
 
 ### Minor Changes
