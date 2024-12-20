@@ -27,14 +27,14 @@ export function Result({
     <div className="py-6 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-5">
       <div className="flex items-center">
         {isPositive ? (
-          <p className="text-base leading-7 text-gray-600">
+          <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
             Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des
             Bürgergeldes. Ob Sie tatsächlich Anspruch haben, hängt von weiteren
             Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine
             unverbindliche Berechnung handelt.
           </p>
         ) : (
-          <p className="text-base leading-7 text-gray-600">
+          <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
             Entsprechend Ihrer Angaben werden Sie keinen Anspruch auf Bürgergeld
             haben. Verfügen Sie über niedriges Einkommen, dann können Sie
             Wohngeld beantragen. Verfügen Sie über niedriges Einkommen und haben
@@ -45,13 +45,13 @@ export function Result({
       </div>
       <div
         className={cn(
-          "row-span-2 rounded-2xl bg-green-50 px-8 text-center ring-1 ring-inset ring-green-200 md:flex md:flex-col md:justify-center lg:py-16",
+          "row-span-2 rounded-2xl bg-green-50 dark:bg-green-800 px-8 text-center ring-1 ring-inset ring-green-200 dark:ring-green-500 flex flex-col justify-center lg:py-16",
           { "ring-yellow-400 bg-yellow-50": !isPositive }
         )}
       >
         <p className="flex items-baseline justify-center gap-x-2">
           <span
-            className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900"
+            className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white"
             data-testid="result"
           >
             {isPositive
@@ -70,7 +70,7 @@ export function Result({
             </a>
           </Button>
         ) : (
-          <p className="mt-6 text-xs leading-5 text-gray-600">
+          <p className="mt-6 text-xs leading-5 text-gray-600 dark:text-gray-300">
             Auch wenn kein Anspruch auf Bürgergeld bestehen sollte, können Sie
             sich hier über{" "}
             <a
@@ -99,7 +99,7 @@ export function Result({
         </div>
         <ul
           role="list"
-          className="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-gray-600 sm:grid-cols-2 sm:gap-6"
+          className="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-gray-600 dark:text-gray-300 sm:grid-cols-2 sm:gap-6"
         >
           <li className="flex gap-x-3">
             <UsersIcon

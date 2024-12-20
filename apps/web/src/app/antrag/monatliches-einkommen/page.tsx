@@ -15,12 +15,10 @@ import {
   TableBody,
   TableCell,
   TableFooter,
-  TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { Fragment, useCallback, useEffect, useMemo } from "react";
+import { Fragment, useCallback, useMemo } from "react";
 import { produce } from "immer";
 import { type TIncome, TPerson, incomeType } from "@/lib/types";
 import {
@@ -87,88 +85,90 @@ export default function StepSalary() {
       </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <StepContent>
-        <ScrollArea className="sm:h-[380px]">
+        <ScrollArea className="sm:h-[380px] w-full">
           <Table>
-            <TableHeader>
+            {/* <TableHeader>
               <TableRow>
                 <TableHead>Person</TableHead>
                 <TableHead className="w-[320px]">Einkommensart</TableHead>
                 <TableHead className="w-[180px]">Betrag (Freibetrag)</TableHead>
                 <TableHead className="text-center">Aktionen</TableHead>
               </TableRow>
-            </TableHeader>
+            </TableHeader> */}
             <TableBody>
-              {state.community.map((person) => (
-                <Fragment key={person.id}>
-                  {person.income?.map((income) => (
-                    <TableRow key={income.id}>
-                      <TableCell
-                        className={cn({
-                          "opacity-50": income.type === "ChildBenefitTransfer",
-                        })}
-                      >
+              {state.community
+                .filter((p) => p.income.length)
+                .map((person) => (
+                  <Fragment key={person.id}>
+                    <TableRow>
+                      <TableCell colSpan={3} className="font-semibold bg-muted">
                         {person.name}
                       </TableCell>
-                      <TableCell
-                        className={cn({
-                          "opacity-50": income.type === "ChildBenefitTransfer",
-                        })}
-                      >
-                        {incomeType[income.type].label}
-                      </TableCell>
-                      <TableCell
-                        className={cn({
-                          "opacity-50": income.type === "ChildBenefitTransfer",
-                        })}
-                      >
-                        {income.amount.toLocaleString("de-DE", {
-                          style: "currency",
-                          currency: "EUR",
-                        })}{" "}
-                        {typeof income.allowance !== "undefined" &&
-                          income.allowance > 0 &&
-                          `(${income.allowance?.toLocaleString("de-DE", {
+                    </TableRow>
+                    {person.income?.map((income) => (
+                      <TableRow key={income.id}>
+                        <TableCell
+                          className={cn({
+                            "opacity-50":
+                              income.type === "ChildBenefitTransfer",
+                          })}
+                        >
+                          {incomeType[income.type].label}
+                        </TableCell>
+                        <TableCell
+                          className={cn({
+                            "opacity-50":
+                              income.type === "ChildBenefitTransfer",
+                          })}
+                        >
+                          {income.amount.toLocaleString("de-DE", {
                             style: "currency",
                             currency: "EUR",
-                          })})`}
-                      </TableCell>
-                      <TableCell className="flex justify-center">
-                        {income.type === "ChildBenefitTransfer" ? (
-                          <Popover>
-                            <PopoverTrigger>
-                              <CircleHelpIcon className="w-4 h-4 opacity-50 mx-auto" />
-                            </PopoverTrigger>
-                            <PopoverContent className="text-sm">
-                              Ein Kindergeldübertrag wird automatisch
-                              hinzugefügt und kann nicht verändert werden.
-                            </PopoverContent>
-                          </Popover>
-                        ) : (
-                          <>
-                            <IncomeDialog
-                              selectedPerson={person}
-                              selectedIncome={income}
-                            >
-                              <Button variant="ghost" type="button">
-                                <PenIcon className="w-4 h-4" />
+                          })}{" "}
+                          {typeof income.allowance !== "undefined" &&
+                            income.allowance > 0 &&
+                            `(${income.allowance?.toLocaleString("de-DE", {
+                              style: "currency",
+                              currency: "EUR",
+                            })})`}
+                        </TableCell>
+                        <TableCell className="flex justify-center">
+                          {income.type === "ChildBenefitTransfer" ? (
+                            <Popover>
+                              <PopoverTrigger>
+                                <CircleHelpIcon className="w-4 h-4 opacity-50 mx-auto" />
+                              </PopoverTrigger>
+                              <PopoverContent className="text-sm">
+                                Ein Kindergeldübertrag wird automatisch
+                                hinzugefügt und kann nicht verändert werden.
+                              </PopoverContent>
+                            </Popover>
+                          ) : (
+                            <>
+                              <IncomeDialog
+                                selectedPerson={person}
+                                selectedIncome={income}
+                              >
+                                <Button variant="ghost" type="button">
+                                  <PenIcon className="w-4 h-4" />
+                                </Button>
+                              </IncomeDialog>
+                              <Button
+                                variant="ghost"
+                                type="button"
+                                onClick={() => handleRemove(person, income)}
+                              >
+                                <XCircleIcon className="w-4 h-4" />
                               </Button>
-                            </IncomeDialog>
-                            <Button
-                              variant="ghost"
-                              type="button"
-                              onClick={() => handleRemove(person, income)}
-                            >
-                              <XCircleIcon className="w-4 h-4" />
-                            </Button>
-                          </>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </Fragment>
-              ))}
+                            </>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </Fragment>
+                ))}
               <TableRow>
-                <TableCell className="text-center" colSpan={5}>
+                <TableCell className="text-center" colSpan={3}>
                   <IncomeDialog>
                     <Button variant="secondary" type="button">
                       <PlusCircleIcon className="w-4 h-4 mr-2" />
@@ -180,10 +180,10 @@ export default function StepSalary() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={3} className="font-bold">
+                <TableCell colSpan={2} className="font-bold">
                   Gesamteinkommen
                 </TableCell>
-                <TableCell className="text-right" colSpan={2}>
+                <TableCell className="text-right">
                   {incomeSum.toLocaleString("de-DE", {
                     style: "currency",
                     currency: "EUR",
@@ -204,7 +204,7 @@ export default function StepSalary() {
           <ArrowLeftCircleIcon className="w-4 h-4" />
         </Button>
         <Button
-          className="grow sm:grow-0 sm:w-48 "
+          className="grow sm:grow-0 sm:w-48 ml-4"
           size="lg"
           type="button"
           onClick={handleSubmit}

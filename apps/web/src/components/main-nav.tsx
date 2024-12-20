@@ -1,24 +1,24 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
-
-import { siteConfig } from "@/config/site";
-import LogoImage from "../assets/logo.webp";
+import { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
+import { siteConfig } from "@/config/site";
 
 export function MainNav() {
+  const [isPreview, setIsPreview] = useState(false);
+
+  useEffect(() => {
+    setIsPreview(
+      ["localhost", "buergergeld.dev"].includes(window?.location.hostname)
+    );
+  });
+
   return (
-    <div className="mr-4 hidden md:flex">
+    <div className="flex">
       <Link href="/" className="mr-6 flex items-center space-x-2">
-        {/* <Image src={LogoImage} alt="jobcenter-leipzig-logo" width={60} /> */}
-        <span className="hidden font-bold sm:inline-block">
-          {siteConfig.name}
-        </span>
-        {typeof window !== "undefined" &&
-          ["localhost", "buergergeld.dev"].includes(
-            window.location.hostname
-          ) && <Badge>Preview</Badge>}
+        <span className="font-bold">{siteConfig.name}</span>
+        {isPreview && <Badge>Preview</Badge>}
       </Link>
       <nav className="flex items-center gap-4 text-sm lg:gap-6">
         {/* <Link

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { AlertCircleIcon, HelpCircleIcon } from "lucide-react";
+import { HelpCircleIcon } from "lucide-react";
 import { forwardRef } from "react";
 import {
   Dialog,
@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import Markdown from "react-markdown";
 import { ScrollArea } from "./scroll-area";
@@ -18,15 +19,11 @@ const StepRoot = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
     return (
       <div
-        className="sm:min-h-screen sm:flex sm:items-center sm:pt-24 sm:pb-36"
+        className="sm:border sm:shadow-sm sm:rounded-lg flex flex-col sm:min-h-96 flex-grow sm:flex-grow-0 bg-background max-w-full sm:max-w-3xl py-2"
+        ref={ref}
         {...props}
       >
-        <div
-          className="sm:border sm:shadow-sm rounded-lg w-full flex flex-col min-h-dvh sm:min-h-96 bg-background pt-14 sm:pt-0"
-          ref={ref}
-        >
-          {children}
-        </div>
+        {children}
       </div>
     );
   }
@@ -43,23 +40,25 @@ const StepTitle = forwardRef<HTMLDivElement, InputProps & { title: string }>(
         {...props}
       >
         <h2 className="font-semibold tracking-tight text-2xl">{props.title}</h2>
-        <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost">
-                <HelpCircleIcon className="w-5 h-5" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Über diese Frage</DialogTitle>
-              </DialogHeader>
-              <ScrollArea className="h-[500px] prose prose-sm">
-                {children}
-              </ScrollArea>
-            </DialogContent>
-          </Dialog>
-        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="ghost">
+              <HelpCircleIcon className="w-5 h-5" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Über diese Frage</DialogTitle>
+              <DialogDescription className="hidden">
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="h-[500px] prose prose-sm dark:prose-invert">
+              {children}
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -94,7 +93,7 @@ StepContent.displayName = "StepContent";
 const StepNavigation = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
     return (
-      <div className="px-8 py-6 flex justify-between gap-4" {...props}>
+      <div className="px-8 py-6 flex justify-between" {...props}>
         {children}
       </div>
     );

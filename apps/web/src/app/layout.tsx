@@ -13,16 +13,12 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html className="" lang="de" suppressHydrationWarning>
-      {/* Suppress input zooming on mobile devices. */}
       <meta
         content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
         name="viewport"
       />
       <body
-        className={cn(
-          "min-h-screen bg-muted/40 font-sans antialiased",
-          fontSans.variable
-        )}
+        className={cn("bg-muted/40 font-sans antialiased", fontSans.variable)}
       >
         {children}
       </body>

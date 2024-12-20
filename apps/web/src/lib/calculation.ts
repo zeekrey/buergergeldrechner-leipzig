@@ -339,7 +339,7 @@ export function calculateChildBenefitTransfer(context: TStepContext) {
 }
 
 export function calculateAllowance(context: TStepContext): {
-  id: string;
+  personId: string;
   type: TAllowance;
   amount: number;
 }[] {
@@ -358,7 +358,7 @@ export function calculateAllowance(context: TStepContext): {
     group.income
       .filter((income) => income.allowance)
       .map((income) => ({
-        id: income.id,
+        personId: group.id,
         amount: income.allowance ?? 0,
         type: income.type,
       }))
@@ -373,14 +373,18 @@ export function calculateAllowance(context: TStepContext): {
   ];
 
   const baseDeduction = context.community.reduce<
-    { id: string; type: "baseDeduction"; amount: number }[]
+    { personId: string; type: "baseDeduction"; amount: number }[]
   >((acc, curr) => {
     const hasBasicDeduction = curr.income.some((item) =>
       legitimateIncomeTypes.includes(item.type)
     );
 
     if (hasBasicDeduction) {
-      acc.push({ id: curr.id, type: "baseDeduction" as const, amount: 100 });
+      acc.push({
+        personId: curr.id,
+        type: "baseDeduction" as const,
+        amount: 100,
+      });
     }
 
     return acc;
@@ -389,7 +393,7 @@ export function calculateAllowance(context: TStepContext): {
   return [
     ...baseDeduction,
     ...legitimate.map((person) => ({
-      id: person.id,
+      personId: person.id,
       type: "insurance" as const,
       amount: 30,
     })),
