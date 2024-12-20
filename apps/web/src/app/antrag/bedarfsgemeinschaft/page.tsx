@@ -16,7 +16,6 @@ import {
 import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
-  ChevronDownIcon,
   PlusCircle,
   XCircleIcon,
 } from "lucide-react";

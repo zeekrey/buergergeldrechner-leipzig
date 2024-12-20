@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { neon } from "@neondatabase/serverless";
 import { HelpPopup } from "@/components/help-popup";
 import { ModeToggle } from "@/components/mode-toggle";
-import { ResultSheet } from "@/app/antrag/ergebnis/page";
+import { ResultSheet } from "@/app/antrag/ergebnis/result-sheet";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ContinueButton } from "./continue";
 

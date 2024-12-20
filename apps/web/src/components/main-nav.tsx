@@ -1,18 +1,24 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
-import { siteConfig } from "@/config/site";
+import { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
+import { siteConfig } from "@/config/site";
 
 export function MainNav() {
+  const [isPreview, setIsPreview] = useState(false);
+
+  useEffect(() => {
+    setIsPreview(
+      ["localhost", "buergergeld.dev"].includes(window?.location.hostname)
+    );
+  });
+
   return (
     <div className="flex">
       <Link href="/" className="mr-6 flex items-center space-x-2">
         <span className="font-bold">{siteConfig.name}</span>
-        {["localhost", "buergergeld.dev"].includes(
-          window.location.hostname
-        ) && <Badge>Preview</Badge>}
+        {isPreview && <Badge>Preview</Badge>}
       </Link>
       <nav className="flex items-center gap-4 text-sm lg:gap-6">
         {/* <Link

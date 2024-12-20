@@ -2,7 +2,7 @@ import { Progress } from "./progress";
 import { useMemo } from "react";
 import { calculateOverall } from "@/lib/calculation";
 import { useStateContext } from "./context";
-import { ResultSheet } from "@/app/antrag/ergebnis/page";
+import { ResultSheet } from "@/app/antrag/ergebnis/result-sheet";
 import {
   Drawer,
   DrawerContent,
