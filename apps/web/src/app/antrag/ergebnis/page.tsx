@@ -220,13 +220,6 @@ export function ResultSheet({ state }: { state: TStepContext }) {
 
   return (
     <Table>
-      {/* <TableHeader>
-        <TableRow>
-          <TableHead className="w-[200px]">Kategorie</TableHead>
-          <TableHead colSpan={2}>Position</TableHead>
-          <TableHead className="text-right">Betrag</TableHead>
-        </TableRow>
-      </TableHeader> */}
       <TableBody className="grid grid-cols-2 sm:grid-cols-4">
         {/* Base need */}
         <TableCell
@@ -250,24 +243,28 @@ export function ResultSheet({ state }: { state: TStepContext }) {
             </TableCell>
           </>
         ))}
-        <TableCell className="sm:col-span-2 bg-muted/60">Summe</TableCell>
-        <TableCell className="text-right bg-muted/60">
+        <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
+          Summe
+        </TableCell>
+        <TableCell className="text-right bg-muted/30 font-bold">
           {baseNeed.sum.toLocaleString("de-DE", {
             style: "currency",
             currency: "EUR",
           })}
         </TableCell>
         {/* Additional need */}
-        <TableCell
-          className="font-medium col-span-2 sm:col-span-1"
-          style={{
-            gridRow: `span ${additionalsCount + 1} / span ${
-              additionalsCount + 1
-            }`,
-          }}
-        >
-          Mehrbedarfe
-        </TableCell>
+        {Boolean(additionalNeeds.community.length) && (
+          <TableCell
+            className="font-medium col-span-2 sm:col-span-1"
+            style={{
+              gridRow: `span ${additionalsCount + 1} / span ${
+                additionalsCount + 1
+              }`,
+            }}
+          >
+            Mehrbedarfe
+          </TableCell>
+        )}
         {additionalNeeds.community.map((person, personIndex) => (
           <>
             <TableCell
@@ -295,8 +292,10 @@ export function ResultSheet({ state }: { state: TStepContext }) {
         ))}
         {Boolean(additionalNeeds.community.length) && (
           <>
-            <TableCell className="sm:col-span-2 bg-muted/60">Summe</TableCell>
-            <TableCell className="text-right bg-muted/60">
+            <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
+              Summe
+            </TableCell>
+            <TableCell className="text-right bg-muted/30">
               {additionalNeeds.sum.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
@@ -333,8 +332,10 @@ export function ResultSheet({ state }: { state: TStepContext }) {
                 currency: "EUR",
               })}
             </TableCell>
-            <TableCell className="sm:col-span-2 bg-muted/60">Summe</TableCell>
-            <TableCell className="text-right bg-muted/60">
+            <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
+              Summe
+            </TableCell>
+            <TableCell className="text-right bg-muted/30">
               {state.spendings.sum.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
@@ -343,10 +344,10 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           </>
         )}
         {/* sub sum needs */}
-        <TableCell className="sm:col-span-3 bg-muted">
+        <TableCell className="sm:col-span-3 bg-muted font-bold">
           Summe aller Bedarfe
         </TableCell>
-        <TableCell className="text-right bg-muted">
+        <TableCell className="text-right bg-muted font-bold">
           {need.toLocaleString("de-DE", {
             style: "currency",
             currency: "EUR",
@@ -390,8 +391,10 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           ))}
         {incomeCount > 0 && (
           <>
-            <TableCell className="sm:col-span-2 bg-muted/60">Summe</TableCell>
-            <TableCell className="text-right bg-muted/60">
+            <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
+              Summe
+            </TableCell>
+            <TableCell className="text-right bg-muted/30 font-bold">
               {income.sum.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
@@ -400,16 +403,18 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           </>
         )}
         {/* allowance */}
-        <TableCell
-          className="font-medium col-span-2 sm:col-span-1"
-          style={{
-            gridRow: `span ${allowance.length + 1} / span ${
-              allowance.length + 1
-            }`,
-          }}
-        >
-          Freibeträge
-        </TableCell>
+        {Boolean(allowance.length) && (
+          <TableCell
+            className="font-medium col-span-2 sm:col-span-1"
+            style={{
+              gridRow: `span ${allowance.length + 1} / span ${
+                allowance.length + 1
+              }`,
+            }}
+          >
+            Freibeträge
+          </TableCell>
+        )}
         {allowance.map((_allowance, index) => (
           <>
             <TableCell className="font-medium sm:col-span-2">
@@ -430,8 +435,10 @@ export function ResultSheet({ state }: { state: TStepContext }) {
         ))}
         {Boolean(allowance.length > 0) && (
           <>
-            <TableCell className="sm:col-span-2 bg-muted/60">Summe</TableCell>
-            <TableCell className="text-right bg-muted/60">
+            <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
+              Summe
+            </TableCell>
+            <TableCell className="text-right bg-muted/30 font-bold">
               {allowanceSum.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
@@ -442,10 +449,10 @@ export function ResultSheet({ state }: { state: TStepContext }) {
         {/* sub sum income */}
         {incomeAfterAllowance > 0 && (
           <>
-            <TableCell className="sm:col-span-3 bg-muted">
+            <TableCell className="sm:col-span-3 bg-muted font-bold">
               Summe aller Einkommen (abzgl. Freibeträge)
             </TableCell>
-            <TableCell className="text-right bg-muted">
+            <TableCell className="text-right bg-muted font-bold">
               {incomeAfterAllowance.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
