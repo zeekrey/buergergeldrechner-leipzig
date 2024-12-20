@@ -106,66 +106,64 @@ export default function StepSalary() {
                       </TableCell>
                     </TableRow>
                     {person.income?.map((income) => (
-                      <Fragment key={person.id}>
-                        <TableRow key={income.id}>
-                          <TableCell
-                            className={cn({
-                              "opacity-50":
-                                income.type === "ChildBenefitTransfer",
-                            })}
-                          >
-                            {incomeType[income.type].label}
-                          </TableCell>
-                          <TableCell
-                            className={cn({
-                              "opacity-50":
-                                income.type === "ChildBenefitTransfer",
-                            })}
-                          >
-                            {income.amount.toLocaleString("de-DE", {
+                      <TableRow key={income.id}>
+                        <TableCell
+                          className={cn({
+                            "opacity-50":
+                              income.type === "ChildBenefitTransfer",
+                          })}
+                        >
+                          {incomeType[income.type].label}
+                        </TableCell>
+                        <TableCell
+                          className={cn({
+                            "opacity-50":
+                              income.type === "ChildBenefitTransfer",
+                          })}
+                        >
+                          {income.amount.toLocaleString("de-DE", {
+                            style: "currency",
+                            currency: "EUR",
+                          })}{" "}
+                          {typeof income.allowance !== "undefined" &&
+                            income.allowance > 0 &&
+                            `(${income.allowance?.toLocaleString("de-DE", {
                               style: "currency",
                               currency: "EUR",
-                            })}{" "}
-                            {typeof income.allowance !== "undefined" &&
-                              income.allowance > 0 &&
-                              `(${income.allowance?.toLocaleString("de-DE", {
-                                style: "currency",
-                                currency: "EUR",
-                              })})`}
-                          </TableCell>
-                          <TableCell className="flex justify-center">
-                            {income.type === "ChildBenefitTransfer" ? (
-                              <Popover>
-                                <PopoverTrigger>
-                                  <CircleHelpIcon className="w-4 h-4 opacity-50 mx-auto" />
-                                </PopoverTrigger>
-                                <PopoverContent className="text-sm">
-                                  Ein Kindergeldübertrag wird automatisch
-                                  hinzugefügt und kann nicht verändert werden.
-                                </PopoverContent>
-                              </Popover>
-                            ) : (
-                              <>
-                                <IncomeDialog
-                                  selectedPerson={person}
-                                  selectedIncome={income}
-                                >
-                                  <Button variant="ghost" type="button">
-                                    <PenIcon className="w-4 h-4" />
-                                  </Button>
-                                </IncomeDialog>
-                                <Button
-                                  variant="ghost"
-                                  type="button"
-                                  onClick={() => handleRemove(person, income)}
-                                >
-                                  <XCircleIcon className="w-4 h-4" />
+                            })})`}
+                        </TableCell>
+                        <TableCell className="flex justify-center">
+                          {income.type === "ChildBenefitTransfer" ? (
+                            <Popover>
+                              <PopoverTrigger>
+                                <CircleHelpIcon className="w-4 h-4 opacity-50 mx-auto" />
+                              </PopoverTrigger>
+                              <PopoverContent className="text-sm">
+                                Ein Kindergeldübertrag wird automatisch
+                                hinzugefügt und kann nicht verändert werden.
+                              </PopoverContent>
+                            </Popover>
+                          ) : (
+                            <>
+                              <IncomeDialog
+                                selectedPerson={person}
+                                selectedIncome={income}
+                              >
+                                <Button variant="ghost" type="button">
+                                  <PenIcon className="w-4 h-4" />
                                 </Button>
-                              </>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      </Fragment>
+                              </IncomeDialog>
+                              <Button
+                                variant="ghost"
+                                type="button"
+                                onClick={() => handleRemove(person, income)}
+                              >
+                                <XCircleIcon className="w-4 h-4" />
+                              </Button>
+                            </>
+                          )}
+                        </TableCell>
+                      </TableRow>
                     ))}
                   </Fragment>
                 ))}

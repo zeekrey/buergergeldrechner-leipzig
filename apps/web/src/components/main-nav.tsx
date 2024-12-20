@@ -10,10 +10,9 @@ export function MainNav() {
     <div className="flex">
       <Link href="/" className="mr-6 flex items-center space-x-2">
         <span className="font-bold">{siteConfig.name}</span>
-        {typeof window !== "undefined" &&
-          ["localhost", "buergergeld.dev"].includes(
-            window.location.hostname
-          ) && <Badge>Preview</Badge>}
+        {["localhost", "buergergeld.dev"].includes(
+          window.location.hostname
+        ) && <Badge>Preview</Badge>}
       </Link>
       <nav className="flex items-center gap-4 text-sm lg:gap-6">
         {/* <Link

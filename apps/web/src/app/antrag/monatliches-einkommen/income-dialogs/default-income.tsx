@@ -113,7 +113,7 @@ export const DefaultIncome = ({
           /** Inplace update income if it is an existing one. */
           const selectedIncomeIndex = draft.community[
             selectedPersonIndex
-          ].income.findIndex((income) => income.id === income.id);
+          ].income.findIndex((inc) => inc.id === income.id);
 
           draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
             ...income,
