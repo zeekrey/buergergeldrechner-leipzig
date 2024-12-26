@@ -1,5 +1,11 @@
 # buergergeldrechner
 
+## 0.5.2
+
+### Patch Changes
+
+- ca988a3: Die Ergebnisübersicht wird nun auch korrekt angezeigt, wenn es keine Mehrbedarfe oder Freibeträge gibt.
+
 ## 0.5.1
 
 ### Patch Changes
