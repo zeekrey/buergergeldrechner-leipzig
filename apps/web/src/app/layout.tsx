@@ -1,6 +1,7 @@
-import { fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
+import { fontSans } from "@/lib/fonts";
+import { FathomAnalytics } from "@/lib/fathom";
 
 import "./globals.css";
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body
         className={cn("bg-muted/40 font-sans antialiased", fontSans.variable)}
       >
+        <FathomAnalytics />
         {children}
       </body>
     </html>
