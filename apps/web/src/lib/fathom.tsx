@@ -10,7 +10,7 @@ function TrackPageView() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV === "production") {
       assert(
         process.env.NEXT_PUBLIC_FATHOM_ID !== undefined,
         "No env var for fathom found."

@@ -83,7 +83,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           </TableCell>
         )}
         {additionalNeeds.community.map((person, personIndex) => (
-          <Fragment key={personIndex}>
+          <Fragment key={person.personId + personIndex}>
             <TableCell
               className="font-medium col-span-2 sm:col-span-1"
               style={{
