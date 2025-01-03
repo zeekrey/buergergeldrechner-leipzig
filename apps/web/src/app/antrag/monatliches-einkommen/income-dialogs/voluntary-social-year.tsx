@@ -27,7 +27,7 @@ export const voluntarySocialYearCalculation = ({ age, amount }: TFormData) => {
   let allowance = 0;
 
   if (age && age < 25) {
-    allowance = 538;
+    allowance = 556;
   }
 
   const rest = Math.min(amount, allowance);
@@ -63,7 +63,7 @@ if (import.meta.vitest) {
         age: 16,
       })
     ).toEqual({
-      allowance: 538,
+      allowance: 556,
       income: 600,
     });
   });
@@ -201,7 +201,7 @@ export const VoluntarySocialYear = ({
             <AlertTitle>Pauschalbetrag</AlertTitle>
             <AlertDescription>
               Für Personen in Freiwilligendienst, sozialem/ökologischen Jahr,
-              gilt ab dem 01.01.2024 in Höhe von 538,00 Euro monatlich, sofern
+              gilt ab dem 01.01.2025 in Höhe von 556,00 Euro monatlich, sofern
               die Person an mindestens einem Tag des Monats das 25. Lebensjahr
               noch nicht vollendet hat.
             </AlertDescription>
