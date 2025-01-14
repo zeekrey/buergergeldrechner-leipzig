@@ -3,7 +3,6 @@
 import { useMemo, useTransition } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-
 import { ArrowLeftCircleIcon, RotateCwIcon, ShareIcon } from "lucide-react";
 import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
 import { initialStepsState, stepsConfig } from "@/lib/machine";
@@ -61,17 +60,24 @@ export default function StepSummary() {
         const data = JSON.parse(result.data);
         const { origin } = new URL(window?.location.href);
 
-        toast("Teilbarer Link wurde erstellt.", {
-          description:
-            "Auf Kopieren klicken um den Link in die Zwischenablage zu kopieren.",
-          action: {
-            label: "Kopieren",
-            onClick: async () =>
-              await navigator.clipboard.writeText(
-                `${origin}/share/${data.alias}`
-              ),
-          },
-        });
+        try {
+          await navigator.share({
+            title: "Ich habe einen möglichen Bürgergeldanspruch berechnet:",
+            url: `${origin}/share/${data.alias}`,
+          });
+        } catch (err) {
+          toast("Teilbarer Link wurde erstellt.", {
+            description:
+              "Auf Kopieren klicken um den Link in die Zwischenablage zu kopieren.",
+            action: {
+              label: "Kopieren",
+              onClick: async () =>
+                await navigator.clipboard.writeText(
+                  `${origin}/share/${data.alias}`
+                ),
+            },
+          });
+        }
       } else console.warn(result.error);
     });
   };

@@ -1,6 +1,5 @@
 "use server";
 
-import { TStepContext } from "@/lib/types";
 import { neon } from "@neondatabase/serverless";
 import slug from "unique-slug";
 
@@ -24,6 +23,8 @@ export async function createShareable(
 > {
   "use server";
 
+  let version = "0.0.0";
+
   if (
     typeof process.env.DATABASE_URL === "undefined" ||
     typeof data === "undefined"
@@ -32,7 +33,10 @@ export async function createShareable(
     return { success: false, error: "Check server logs!" };
   }
 
-  const version = process.env.npm_package_version ?? "0.0.0";
+  if (typeof process.env.npm_package_version === "undefined") {
+    console.error("npm_package_version env var is not available.");
+    return { success: false, error: "Check server logs!" };
+  } else version = process.env.npm_package_version;
 
   try {
     const sql = neon(process.env.DATABASE_URL);
