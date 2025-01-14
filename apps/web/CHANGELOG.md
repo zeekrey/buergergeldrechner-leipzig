@@ -1,5 +1,14 @@
 # buergergeldrechner
 
+## 0.5.2
+
+### Patch Changes
+
+- ca988a3: Die Ergebnisübersicht wird nun auch korrekt angezeigt, wenn es keine Mehrbedarfe oder Freibeträge gibt.
+- 8cd1481: Der Freibetrag für Freiwilligendienst, sozialem/ökologischen Jahr wurde auf 556,00€ erhöht.
+- 65f7473: Beim Erstellen eines teilbaren Links wird nun versucht, das native Menü zum Teilen von Inhalten zu verwenden.
+- 65f7473: Die Ergebnisansicht wird nun auch korrekte dargestellt wenn es kein Einkommen gibt.
+
 ## 0.5.1
 
 ### Patch Changes
