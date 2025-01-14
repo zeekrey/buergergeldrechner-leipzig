@@ -171,14 +171,16 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           })}
         </TableCell>
         {/* income */}
-        <TableCell
-          className="font-medium col-span-2 sm:col-span-1"
-          style={{
-            gridRow: `span ${incomeCount + 1} / span ${incomeCount + 1}`,
-          }}
-        >
-          Einkommen
-        </TableCell>
+        {Boolean(incomeCount > 0) && (
+          <TableCell
+            className="font-medium col-span-2 sm:col-span-1"
+            style={{
+              gridRow: `span ${incomeCount + 1} / span ${incomeCount + 1}`,
+            }}
+          >
+            Einkommen
+          </TableCell>
+        )}
         {state.community
           .filter((p) => p.income.length)
           .map((person, personIndex) => (
