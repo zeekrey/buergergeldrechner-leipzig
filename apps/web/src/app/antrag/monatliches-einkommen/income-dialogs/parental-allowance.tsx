@@ -53,12 +53,12 @@ if (import.meta.vitest) {
     expect(
       parentalAllowanceCalculation({
         claim: 300,
-        officialAllowance: 250,
+        officialAllowance: 255,
         type: "normal",
       })
     ).toEqual({
-      allowance: 250,
-      amount: 50,
+      allowance: 255,
+      amount: 45,
     });
   });
 

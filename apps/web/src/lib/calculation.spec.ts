@@ -409,14 +409,14 @@ describe("calculateOverall", () => {
         },
         {
           ...defaultChild,
-          income: [{ id: generateId(), amount: 250, type: "ChildAllowance" }],
+          income: [{ id: generateId(), amount: 255, type: "ChildAllowance" }],
         },
         {
           ...defaultChild,
           income: [
             {
               id: generateId(),
-              amount: 250,
+              amount: 255,
               type: "ChildAllowance",
             },
           ],
@@ -433,7 +433,7 @@ describe("calculateOverall", () => {
 
     const { overall } = calculateOverall(context);
 
-    expect(overall).toEqual(-620);
+    expect(overall).toEqual(-630);
   });
 });
 
@@ -608,7 +608,7 @@ describe("calculate child benefit transfert", () => {
           ...child,
           age: 7,
           income: [
-            { id: generateId(), type: "ChildAllowance", amount: 250 },
+            { id: generateId(), type: "ChildAllowance", amount: 255 },
             { id: generateId(), type: "Maintenance", amount: 500 },
           ],
         },
@@ -620,7 +620,7 @@ describe("calculate child benefit transfert", () => {
     expect(res).toStrictEqual([
       {
         name: child.name,
-        amount: 172.5,
+        amount: 177.5,
       },
     ]);
   });
