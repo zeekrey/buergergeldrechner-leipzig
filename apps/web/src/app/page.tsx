@@ -17,13 +17,24 @@ import {
   LockIcon,
   MenuIcon,
   ShapesIcon,
+  ShieldIcon,
+  UsersIcon,
+  LightbulbIcon,
+  GithubIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StepExample } from "../components/step-example";
-import ExportScreenshotImage from "../assets/export-screenshot.png";
+import ExportScreenshotImage from "../assets/export-screenshot.webp";
 import StadtLeipzigImage from "../assets/stadt-leipzig.webp";
 import SmartCityImage from "../assets/smart-city-challenge.webp";
 import JobcenterImage from "../assets/logo.webp";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Bürgergeldrechner des Jobcenter Leipzig",
@@ -269,15 +280,15 @@ export default function HomePage() {
         </div>
       </div>
       {/* results */}
-      <div className="py-24 sm:py-32" id="import">
+      <div className="pt-24 sm:pt-32" id="import">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
-            <h2 className="text-base font-semibold leading-7 text-zinc-900/50">
+            <p className="text-base font-semibold leading-7 text-zinc-900/50">
               Ganz einfach
-            </h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-              Ergebnisse teilen
             </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
+              Ergebnisse teilen
+            </h2>
             <p className="mt-6 text-lg leading-8 text-zinc-700">
               Der Bürgergeldrechner zeigt eine detailgenaue Berechnung des
               Bürgergeldes. Zudem haben Sie die Möglichkeit das Ergebnis mit
@@ -299,14 +310,90 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      {/* open source */}
+      <section className="pt-32 sm:pt-48 bg-gradient-to-b from-muted/40 to-secondary/20">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="mx-auto max-w-2xl lg:text-center pb-14">
+            <p className="text-base font-semibold leading-7 text-zinc-900/50">
+              Open Source
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
+              Vertrauenswürdig transparent
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-zinc-700">
+              Unser Service beruht auf Open-Source-Prinzipien, was bedeutet,
+              dass unsere Arbeit öffentlich und transparent ist.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShieldIcon className="h-5 w-5" />
+                  Nichts zu verstecken
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Alle Berechnungen und Methoden sind für jeden zugänglich. Der
+                  gesamte Programmcode des Rechners kann öffentlich eingesehen
+                  und bewertet werden.
+                </CardDescription>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <UsersIcon className="h-5 w-5" />
+                  Geprüft durch Experten
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Das Projekt wurde in Zusammenarbeit mit den Experten des
+                  Jobcenters in Leipzig entwickelt. Auch andere Fachleute haben
+                  die Möglichkeit, durch den frei zugänglichen Programmcode
+                  Verbesserungen beizutragen.
+                </CardDescription>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <LightbulbIcon className="h-5 w-5" />
+                  Regelmäßige Verbesserung
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Open-Source zu sein bedeutet, dass wir zügig neue Funktionen
+                  und Verbesserungen einfügen können, die von unseren Nutzern
+                  und Experten vorgeschlagen werden.
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="text-center">
+            <p className="mb-4 text-muted-foreground">
+              Sie wollen etwas beitragen oder mehr erfahren?
+            </p>
+            <Button size="lg" asChild>
+              <a
+                href="https://github.com/zeekrey/buergergeldrechner-leipzig"
+                className="flex gap-2"
+              >
+                <GithubIcon className="w-4 h-4" />
+                Projekt auf Github
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
       {/* supported by */}
       <div className="py-24 sm:py-32" id="roadmap">
         <div className="py-24 sm:py-32">
           <div className="mx-auto max-w-4xl px-6 lg:px-8 ">
             <div className="text-center mx-auto">
-              <h2 className="text-base font-semibold leading-7 text-zinc-900/50">
-                Ein Projekt des Jobcenter Leipzig und der Stadt Leipzig
-              </h2>
               <p className="text-center text-xl font-semibold text-zinc-900 mt-2">
                 Der Bürgergeldrechner wurde im Rahmen des Innovationswettbewerbs
                 "Smart City Challenge Leipzig" durch das Referat Digitale Stadt
