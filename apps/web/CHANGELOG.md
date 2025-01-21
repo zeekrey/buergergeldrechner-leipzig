@@ -1,5 +1,12 @@
 # buergergeldrechner
 
+## 0.5.3
+
+### Patch Changes
+
+- c4961bf: Es wurden Hinweise zum Open Source Projekt hinzugefügt.
+- fc84417: Alle Berechnungen berücksichtigen nun den neuen Kindergeldbetrag von 255,00€.
+
 ## 0.5.2
 
 ### Patch Changes
