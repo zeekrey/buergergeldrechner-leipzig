@@ -54,13 +54,13 @@ test("should assign child benefit transfer", async ({ page }) => {
   await page.getByPlaceholder("€").press("Tab");
   await page.getByRole("button", { name: "Hinzufügen" }).click();
   await expect(page.locator("tbody")).toContainText("Kindergeldübertrag");
-  await expect(page.locator("tbody")).toContainText("172,50 €");
+  await expect(page.locator("tbody")).toContainText("177,50 €");
   await expect(page.locator("tbody")).toContainText("Kindergeldübertrag");
-  await expect(page.locator("tbody")).toContainText("-172,50 €");
+  await expect(page.locator("tbody")).toContainText("-177,50 €");
   await expect(page.locator("tbody")).toContainText("Antragsteller");
   await expect(page.locator("tbody")).toContainText("Kind 1");
   await page.getByRole("button", { name: "Weiter" }).click();
-  await expect(page.getByTestId("result")).toContainText("1.528,39 €");
+  await expect(page.getByTestId("result")).toContainText("1.513,39 €");
 });
 
 test("should assign child benefit transfer if changed", async ({ page }) => {

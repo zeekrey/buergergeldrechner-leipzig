@@ -132,7 +132,7 @@ export const coupleWithKids: TStepContext = {
         {
           id: generateId(),
           type: "ChildAllowance",
-          amount: 250,
+          amount: 255,
         },
       ],
     },
@@ -145,7 +145,7 @@ export const coupleWithKids: TStepContext = {
         {
           id: generateId(),
           type: "ChildAllowance",
-          amount: 250,
+          amount: 255,
         },
       ],
     },
