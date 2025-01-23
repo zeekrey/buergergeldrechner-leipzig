@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
 import createMDX from '@next/mdx'
 
+import pkg from './package.json' with { type: "json" };
+
 const nextConfig = {
     env: {
-        APP_VERSION: process.env.npm_package_version
+        APP_VERSION: pkg.version
     },
     pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
     experimental: {
