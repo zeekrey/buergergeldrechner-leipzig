@@ -33,10 +33,7 @@ export async function createShareable(
     return { success: false, error: "Check server logs!" };
   }
 
-  if (typeof process.env.npm_package_version === "undefined") {
-    console.error("npm_package_version env var is not available.");
-    return { success: false, error: "Check server logs!" };
-  } else version = process.env.npm_package_version;
+  if (process.env.APP_VERSION) version = process.env.APP_VERSION;
 
   try {
     const sql = neon(process.env.DATABASE_URL);
