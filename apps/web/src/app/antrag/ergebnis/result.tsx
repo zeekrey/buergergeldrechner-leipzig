@@ -24,7 +24,7 @@ export function Result({
   const isPositive = overall > 0;
 
   return (
-    <div className="py-6 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-5">
+    <div className="py-6 grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-5">
       <div className="flex items-center">
         {isPositive ? (
           <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
@@ -45,11 +45,37 @@ export function Result({
       </div>
       <div
         className={cn(
-          "row-span-2 rounded-2xl bg-green-50 dark:bg-green-800 px-8 text-center ring-1 ring-inset ring-green-200 dark:ring-green-500 flex flex-col justify-center lg:py-16",
+          "row-span-2 rounded-2xl bg-green-50 dark:bg-green-800 px-8 text-center ring-1 ring-inset ring-green-200 dark:ring-green-500 flex flex-col justify-center py-6 lg:py-12",
           { "ring-yellow-400 bg-yellow-50": !isPositive }
         )}
       >
-        <p className="flex items-baseline justify-center gap-x-2">
+        <h3 className="text-left text-sm font-bold text-muted-foreground pb-3">
+          Berechnung
+        </h3>
+        <div className="text-sm text-muted-foreground">
+          <div className="flex justify-between border-b border-b-gray-100 py-2">
+            <div>Regelbedarfe</div>
+            <div>10,00€</div>
+          </div>
+          <div className="flex justify-between border-b border-b-gray-100 py-2">
+            <div>Mehrbedarfe</div>
+            <div>10,00€</div>
+          </div>
+          <div className="flex justify-between border-b border-b-gray-100 py-2">
+            <div>Ausgaben</div>
+            <div>10,00€</div>
+          </div>
+          <div className="flex justify-between border-b border-b-gray-100 py-2">
+            <div>Einkommen</div>
+            <div>-10,00€</div>
+          </div>
+        </div>
+        <p className="flex flex-col justify-center gap-2 pt-6">
+          {isPositive && (
+            <span className="text-sm text-muted-foreground">
+              Möglicher Anspruch
+            </span>
+          )}
           <span
             className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white"
             data-testid="result"
@@ -62,14 +88,7 @@ export function Result({
               : "Kein Anspruch"}
           </span>
         </p>
-        {overall > 0 ? (
-          <Button asChild>
-            <a href="https://jobcenter.digital" className="mt-10">
-              <ExternalLinkIcon className="w-4 h-4 mr-2" />
-              Jetzt beantragen
-            </a>
-          </Button>
-        ) : (
+        {overall <= 0 && (
           <p className="mt-6 text-xs leading-5 text-gray-600 dark:text-gray-300">
             Auch wenn kein Anspruch auf Bürgergeld bestehen sollte, können Sie
             sich hier über{" "}

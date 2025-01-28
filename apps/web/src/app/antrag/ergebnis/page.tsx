@@ -3,7 +3,15 @@
 import { useMemo, useTransition } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { ArrowLeftCircleIcon, RotateCwIcon, ShareIcon } from "lucide-react";
+import {
+  ArrowLeftCircleIcon,
+  ClipboardCheckIcon,
+  ExternalLinkIcon,
+  FileQuestionIcon,
+  FileTextIcon,
+  RotateCwIcon,
+  ShareIcon,
+} from "lucide-react";
 import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
 import { initialStepsState, stepsConfig } from "@/lib/machine";
 import { useCallback } from "react";
@@ -26,6 +34,18 @@ import Link from "next/link";
 import { createShareable } from "./actions";
 import { toast } from "sonner";
 import { ResultSheet } from "./result-sheet";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
 const step = stepsConfig[9];
 
@@ -91,6 +111,7 @@ export default function StepSummary() {
         <Tabs defaultValue="result">
           <TabsList className="grid grid-cols-2">
             <TabsTrigger value="result">Ergebnis</TabsTrigger>
+            {/* <TabsTrigger value="documents">Dokumente</TabsTrigger> */}
             <TabsTrigger value="calculation">Berechnung</TabsTrigger>
           </TabsList>
           <TabsContent value="result">
@@ -130,14 +151,107 @@ export default function StepSummary() {
             </div>
           </TabsContent>
         </Tabs>
-        <Button
-          onClick={onCreateShareableClick}
-          disabled={isPending}
-          variant="secondary"
-          className="w-full"
-        >
-          <ShareIcon className="w-4 h-4" /> Teilen
-        </Button>
+        <div className="mt-4 grid md:grid-cols-3 gap-4">
+          <Button asChild>
+            <a href="https://jobcenter.digital" className="">
+              <ExternalLinkIcon className="w-4 h-4 mr-2" />
+              Jetzt beantragen
+            </a>
+          </Button>
+          <Drawer>
+            <DrawerTrigger>
+              <Button variant="secondary">
+                <ClipboardCheckIcon className="w-4 h-4 mr-2" />
+                Benötigte Dokumente
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="mx-auto w-full max-w-3xl">
+                <DrawerHeader>
+                  <DrawerTitle>
+                    Benötigte Dokumente und Informationen
+                  </DrawerTitle>
+                  <DrawerDescription>
+                    Auf Basis Ihrer Eingaben werden folgende Dokumente für die
+                    Beantragung des Bürgergelds benötigt.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <div className="p-4 pb-0">
+                  <Alert variant="warning">
+                    Reichen Sie bitte grundsätzlich keine Originalbelege,
+                    sondern Kopien ein.
+                  </Alert>
+                  <h3 className="font-bold py-3">Auszufüllende Anträge</h3>
+                  <ul className="list-disc list-inside">
+                    <li>
+                      <Badge className="mr-1">HA</Badge>
+                      Hauptantrag
+                    </li>
+                    <li>
+                      <Badge className="mr-1">KI</Badge>
+                      Anlage für ein Kind unter 15 Jahren
+                    </li>
+                    <li>
+                      <Badge className="mr-1">EK</Badge>
+                      Anlage zur Feststellung der Einkommenverähltnisse...{" "}
+                    </li>
+                    <li>
+                      <Badge className="mr-1">KDU</Badge>
+                      Anlage zur Feststellung der Kosten der Untrkunft und
+                      Heizung
+                    </li>
+                  </ul>
+                  <h3 className="font-bold py-3">Benötigte Dokumente</h3>
+                  <div className="space-y-2 divide-y">
+                    <div className="grid grid-cols-3 font-bold">
+                      <div>Typ</div>
+                      <div>Grund</div>
+                      <div>Art</div>
+                    </div>
+                    <div className="grid grid-cols-3">
+                      <div>
+                        <FileQuestionIcon className="w-4 h-4" />
+                      </div>
+                      <div>Allgemein</div>
+                      <div>Rentenversicherungsnummer</div>
+                    </div>
+                    <div className="grid grid-cols-3">
+                      <div>
+                        <FileTextIcon className="w-4 h-4" />
+                      </div>
+                      <div>Schwangerschaft</div>
+                      <div>
+                        Nachweis über voraussichtlichen Entbindungstermin
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3">
+                      <div>
+                        <FileTextIcon className="w-4 h-4" />
+                      </div>
+                      <div>Einkommen</div>
+                      <div>Kontoauszüge der letzten 3 Monate</div>
+                    </div>
+                  </div>
+                </div>
+                <DrawerFooter>
+                  <Button>Ausdrucken</Button>
+                  <DrawerClose>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </div>
+            </DrawerContent>
+          </Drawer>
+
+          <Button
+            onClick={onCreateShareableClick}
+            disabled={isPending}
+            variant="secondary"
+            className="w-full"
+          >
+            <ShareIcon className="w-4 h-4" /> Teilen
+          </Button>
+        </div>
       </StepContent>
       <StepNavigation>
         <Button
