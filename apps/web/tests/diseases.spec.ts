@@ -44,9 +44,7 @@ test("should selected diseases", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.getByRole("tab", { name: "Berechnung" }).click();
 
-  await expect(
-    page.getByRole("cell", { name: "Chronisch obstruktive" })
-  ).toBeVisible();
-  await expect(page.getByRole("cell", { name: "Zöliakie" })).toBeVisible();
+  await expect(page.getByText("Chronisch obstruktive")).toBeVisible();
+  await expect(page.getByText("Zöliakie")).toBeVisible();
   await expect(page.getByRole("strong")).toContainText("1.340,90 €");
 });
