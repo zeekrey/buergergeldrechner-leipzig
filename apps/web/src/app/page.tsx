@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StepExample } from "../components/step-example";
-import ExportScreenshotImage from "../assets/export-screenshot.webp";
 import StadtLeipzigImage from "../assets/stadt-leipzig.webp";
 import SmartCityImage from "../assets/smart-city-challenge.webp";
 import JobcenterImage from "../assets/logo.webp";
@@ -35,6 +34,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ResultExample } from "@/components/result-example";
 
 export const metadata: Metadata = {
   title: "Bürgergeldrechner des Jobcenter Leipzig",
@@ -200,16 +200,15 @@ export default function HomePage() {
           ></rect>
         </svg>
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          {/* <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <a
+          <div className="hidden sm:mb-8 sm:flex sm:justify-center">
+            <Link
               className="relative bg-white flex items-center gap-1 rounded-full px-3 py-1 text-sm leading-6 text-zinc-600 ring-1 ring-zinc-900/10 hover:ring-zinc-600/20"
-              href="https://www.arbeitsagentur.de/arbeitslos-arbeit-finden/buergergeld"
+              href="/antrag"
             >
-              Sie sind bereit einen Bürgergeldantrag zu stellen?
-              <span className="">Direkt zu Jobcenter.digital</span>
+              Alle Berechnungen & Sätze wurden für 2025 aktualisiert.
               <ArrowRightIcon className="w-3 h-3" aria-hidden />
-            </a>
-          </div> */}
+            </Link>
+          </div>
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-900 sm:text-6xl">
               Bürgergeld, schnell und einfach berechnen
@@ -237,7 +236,7 @@ export default function HomePage() {
         </div>
       </div>
       {/* features */}
-      <div className="overflow-x-hidden py-24 sm:py-32" id="features">
+      <section className="overflow-x-hidden py-24 sm:py-32" id="features">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
             <div className="lg:pr-8 lg:pt-4">
@@ -269,7 +268,7 @@ export default function HomePage() {
                 </dl>
               </div>
             </div>
-            <div className="w-[42rem] max-w-none sm:w-[42rem] md:-ml-4 lg:-ml-0 self-center">
+            <div className="w-[42rem] max-w-none sm:w-[42rem] lg:-ml-0 self-center hidden md:block">
               <div className="-m-4 p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30">
                 <div className="rounded-lg drop-shadow-xl overflow-hidden">
                   <StepExample />
@@ -278,9 +277,9 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
       {/* results */}
-      <div className="pt-24 sm:pt-32" id="import">
+      <section className="pt-24 sm:pt-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
             <p className="text-base font-semibold leading-7 text-zinc-900/50">
@@ -295,23 +294,19 @@ export default function HomePage() {
               jemandem zu teilen.
             </p>
           </div>
-          <div className="pt-16 overflow-hidden relative">
-            <div className="px-6 mx-auto max-w-6xl">
-              <Image
-                className="ring-1 ring-zinc-200 drop-shadow-2xl rounded-xl mx-auto"
-                style={{ marginBottom: "-12%" }}
-                alt="import image"
-                src={ExportScreenshotImage}
-              />
-              <div className="relative" aria-hidden>
-                <div className="bg-gradient-to-b from-transparent to-muted/40 pt-[7%] absolute bottom-0 -inset-x-20"></div>
+          <div className="pt-16 pb-1 overflow-hidden relative">
+            <div className="px-6 mx-auto max-w-3xl">
+              <div className="p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30">
+                <div className="rounded-lg drop-shadow-xl overflow-hidden">
+                  <ResultExample />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
       {/* open source */}
-      <section className="pt-32 sm:pt-48 bg-gradient-to-b from-muted/40 to-secondary/20">
+      <section className="pt-32 sm:pt-48">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="mx-auto max-w-2xl lg:text-center pb-14">
             <p className="text-base font-semibold leading-7 text-zinc-900/50">

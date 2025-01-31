@@ -42,7 +42,7 @@ const StepTitle = forwardRef<HTMLDivElement, InputProps & { title: string }>(
         <h2 className="font-semibold tracking-tight text-2xl">{props.title}</h2>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="ghost">
+            <Button variant="ghost" aria-label="Hilfe">
               <HelpCircleIcon className="w-5 h-5" />
             </Button>
           </DialogTrigger>

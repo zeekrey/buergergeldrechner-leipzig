@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { StepTitle, StepDescription } from "@/components/ui/step-primitives";
-
 import { Button } from "@/components/ui/button";
 import { stepsConfig } from "@/lib/machine";
 import HelpMarkdown from "@/config/steps/kinder-anzahl.mdx";

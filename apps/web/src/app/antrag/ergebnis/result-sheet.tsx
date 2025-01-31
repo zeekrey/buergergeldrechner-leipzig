@@ -1,7 +1,42 @@
-import { Fragment, useMemo } from "react";
-import { Table, TableBody, TableCell } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+import { Fragment, useMemo, forwardRef } from "react";
 import { allowanceType, incomeType, TStepContext } from "@/lib/types";
 import { calculateBaseNeed, calculateOverall } from "@/lib/calculation";
+
+const Table = forwardRef<
+  HTMLTableElement,
+  React.HTMLAttributes<HTMLTableElement>
+>(({ className, ...props }, ref) => (
+  <div className="relative w-full overflow-auto">
+    <div
+      ref={ref}
+      className={cn("w-full caption-bottom text-sm", className)}
+      {...props}
+    />
+  </div>
+));
+
+const TableBody = forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("[&_tr:last-child]:border-0", className)}
+    {...props}
+  />
+));
+
+const TableCell = forwardRef<
+  HTMLTableCellElement,
+  React.TdHTMLAttributes<HTMLTableCellElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
+    {...props}
+  />
+));
 
 export function ResultSheet({ state }: { state: TStepContext }) {
   const baseNeed = useMemo(() => calculateBaseNeed(state), [state]);
@@ -50,7 +85,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           Regelbedarf
         </TableCell>
         {baseNeed.community.map((item, index) => (
-          <>
+          <Fragment key={index}>
             <TableCell className="sm:col-span-2">{item.name}</TableCell>
             <TableCell className="text-right">
               {item.amount.toLocaleString("de-DE", {
@@ -58,7 +93,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
                 currency: "EUR",
               })}
             </TableCell>
-          </>
+          </Fragment>
         ))}
         <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
           Summe
@@ -93,7 +128,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
               {person.name}
             </TableCell>
             {person.additionals.map((additionalNeed, needIndex) => (
-              <>
+              <Fragment key={needIndex}>
                 <TableCell className="font-medium">
                   {additionalNeed.name}
                 </TableCell>
@@ -103,7 +138,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
                     currency: "EUR",
                   })}
                 </TableCell>
-              </>
+              </Fragment>
             ))}
           </Fragment>
         ))}
@@ -184,7 +219,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
         {state.community
           .filter((p) => p.income.length)
           .map((person, personIndex) => (
-            <>
+            <Fragment key={personIndex}>
               <TableCell
                 className="font-medium col-span-2 sm:col-span-1"
                 style={{
@@ -194,7 +229,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
                 {person.name}
               </TableCell>
               {person.income.map((income, incomeIndex) => (
-                <>
+                <Fragment key={incomeIndex}>
                   <TableCell className="font-medium">
                     {incomeType[income.type].label}
                   </TableCell>
@@ -204,9 +239,9 @@ export function ResultSheet({ state }: { state: TStepContext }) {
                       currency: "EUR",
                     })}
                   </TableCell>
-                </>
+                </Fragment>
               ))}
-            </>
+            </Fragment>
           ))}
         {incomeCount > 0 && (
           <>
@@ -235,7 +270,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           </TableCell>
         )}
         {allowance.map((_allowance, index) => (
-          <>
+          <Fragment key={index}>
             <TableCell className="font-medium sm:col-span-2">
               {allowanceType[_allowance.type].label} (
               {
@@ -250,7 +285,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
                 currency: "EUR",
               })}
             </TableCell>
-          </>
+          </Fragment>
         ))}
         {Boolean(allowance.length > 0) && (
           <>
@@ -281,10 +316,10 @@ export function ResultSheet({ state }: { state: TStepContext }) {
         )}
         {/* overall sum  */}
         <>
-          <TableCell className="sm:col-span-3 bg-primary font-bold">
+          <TableCell className="sm:col-span-3 bg-primary font-bold text-primary-foreground">
             Bürgergeldanspruch
           </TableCell>
-          <TableCell className="text-right bg-primary font-bold">
+          <TableCell className="text-right bg-primary font-bold text-primary-foreground">
             {overall.toLocaleString("de-DE", {
               style: "currency",
               currency: "EUR",
