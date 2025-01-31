@@ -1,5 +1,13 @@
 # buergergeldrechner
 
+## 0.5.4
+
+### Patch Changes
+
+- f15b54c: Ein Fehler bei der Erstellung von geteilten Berechnungen wurde behoben.
+- 7ab325f: Bei den meisten Hilfedialogen sind nun Erklärvideos von arbeitsagentur.de hinterlegt.
+- e670e78: Kleinere Anpassungen an den Hilfetexten.
+
 ## 0.5.3
 
 ### Patch Changes
