@@ -46,7 +46,7 @@ const StepTitle = forwardRef<HTMLDivElement, InputProps & { title: string }>(
               <HelpCircleIcon className="w-5 h-5" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-[1200px]">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Über diese Frage</DialogTitle>
               <DialogDescription className="hidden">
