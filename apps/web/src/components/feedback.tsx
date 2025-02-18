@@ -54,21 +54,24 @@ export function Feedback() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     startTransition(async () => {
-      // Do stuff.
       const result = await sendEmail(
         JSON.stringify({ feedbackType, text: data.feedback })
       );
 
+      setOpen(false);
+      form.reset();
+      setFeedbackType(undefined);
+
       if (result.success) {
-        console.log(result);
-        toast("Wir haben ihr Feedback erhalten.", {
+        toast("Wir haben Ihr Feedback erhalten.", {
           description: "Vielen lieben Dank!",
         });
-
-        setOpen(false);
-        form.reset();
-        setFeedbackType(undefined);
-      } else console.warn(result.error);
+      } else {
+        toast("Wir konnten Ihr Feedback nicht speichern.", {
+          description: "Bitte versuchen Sie es später erneut.",
+        });
+        console.warn(result.error);
+      }
     });
   }
 
