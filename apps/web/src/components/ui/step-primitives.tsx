@@ -93,7 +93,7 @@ StepContent.displayName = "StepContent";
 const StepNavigation = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
     return (
-      <div className="px-8 py-6 flex justify-between gap-2" {...props}>
+      <div className="px-8 py-6 flex justify-between sm:gap-2" {...props}>
         {children}
       </div>
     );

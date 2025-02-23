@@ -13,6 +13,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ChevronDownIcon } from "lucide-react";
+import { ScrollArea } from "./ui/scroll-area";
 
 export function StatusBar() {
   const [state] = useStateContext();
@@ -43,7 +44,7 @@ export function StatusBar() {
           <ChevronDownIcon className="w-4 h-4 text-muted group-hover:text-primary transition" />
         </div>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="max-h-[80%]">
         <DrawerHeader className="max-w-3xl mx-auto px-0">
           <DrawerTitle>Ihre aktuellen Eingaben</DrawerTitle>
           <DrawerDescription>
@@ -53,7 +54,9 @@ export function StatusBar() {
           </DrawerDescription>
         </DrawerHeader>
         <div className="max-w-4xl mx-auto">
-          <ResultSheet state={state} />
+          <ScrollArea className="h-[480px]">
+            <ResultSheet state={state} />
+          </ScrollArea>
         </div>
         <DrawerFooter />
       </DrawerContent>
