@@ -1,5 +1,5 @@
 {
-  "name": "with-tailwindcss-app",
+  "name": "buergergeldrechner",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "GNU",
   "devDependencies": {
     "@changesets/cli": "^2.27.9"
   },
