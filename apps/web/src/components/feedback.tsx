@@ -95,7 +95,7 @@ export function Feedback() {
           )}
           <h4
             className={cn(
-              "font-bold flex-grow",
+              "font-bold grow",
               typeof feedbackType !== "undefined"
                 ? "pl-3 h-auto"
                 : "pl-14 h-12 pt-2"

@@ -33,7 +33,7 @@ export function HelpPopup() {
             />
           </div>
         </SheetHeader>
-        <div className="flex-grow"></div>
+        <div className="grow"></div>
         <div>
           <div className="flex justify-center gap-2">
             <Image

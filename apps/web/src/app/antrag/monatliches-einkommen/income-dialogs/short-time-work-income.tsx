@@ -151,7 +151,7 @@ export const ShortTimeWorkIncome = ({
             />
           </div>
           {/* <div className="flex pt-4 gap-2">
-            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
               <WandSparklesIcon className="h-4 w-4 text-green-600" />
             </div>
             <FormDescription>

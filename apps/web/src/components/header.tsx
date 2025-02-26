@@ -6,7 +6,7 @@ import { Feedback } from "./feedback";
 
 export function SiteHeader() {
   return (
-    <header className="w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
       <div className=" px-8 py-3 border-b border-border/40">
         <div className="flex items-center max-w-7xl mx-auto">
           <MainNav />

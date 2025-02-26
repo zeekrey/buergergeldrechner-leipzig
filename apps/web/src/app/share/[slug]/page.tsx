@@ -57,7 +57,7 @@ export default async function Page({
     >
       <div className="mb-12">
         <header className="w-full">
-          <div className="container flex h-14 max-w-screen-2xl items-center">
+          <div className="container flex h-14 max-w-(--breakpoint-2xl) items-center">
             <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
               <div className="w-full flex-1 md:w-auto md:flex-none"></div>
               <nav className="flex items-center">
