@@ -69,8 +69,8 @@ StepTitle.displayName = "StepTitle";
 const StepDescription = forwardRef<HTMLDivElement, { children: string }>(
   ({ children, ...props }, ref) => {
     return (
-      <div className="px-8 pt-4" ref={ref} {...props}>
-        <Markdown className="text-muted-foreground">{children}</Markdown>
+      <div className="px-8 pt-4 text-muted-foreground" ref={ref} {...props}>
+        <Markdown>{children}</Markdown>
       </div>
     );
   }
