@@ -154,7 +154,7 @@ export const VoluntarySocialYear = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {!(person.type === "child" && person.age < 25) && (
           <FormField
             control={form.control}
@@ -162,7 +162,7 @@ export const VoluntarySocialYear = ({
             rules={{ min: 1 }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Betrag</FormLabel>
+                <FormLabel>Monatlicher Betrag in Euro</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="0,00€"

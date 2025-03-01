@@ -89,7 +89,7 @@ export default function StepSummary() {
       </StepTitle>
       <StepContent>
         <Tabs defaultValue="result">
-          <TabsList className="grid grid-cols-2">
+          <TabsList className="grid grid-cols-2 w-full">
             <TabsTrigger value="result">Ergebnis</TabsTrigger>
             <TabsTrigger value="calculation">Berechnung</TabsTrigger>
           </TabsList>

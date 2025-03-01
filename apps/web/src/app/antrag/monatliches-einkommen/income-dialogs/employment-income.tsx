@@ -230,7 +230,7 @@ export const EmploymentIncome = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <div className="grid grid-cols-2 gap-6 pb-4">
             <FormField
@@ -272,7 +272,7 @@ export const EmploymentIncome = ({
             control={form.control}
             name="isYoung"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormItem className="flex flex-row items-start rounded-md border p-4">
                 <FormControl>
                   <Checkbox
                     checked={field.value}

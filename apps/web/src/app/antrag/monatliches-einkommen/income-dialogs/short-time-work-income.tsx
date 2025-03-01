@@ -109,7 +109,7 @@ export const ShortTimeWorkIncome = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <div className="grid grid-cols-2 gap-6 pb-4">
             <FormField
