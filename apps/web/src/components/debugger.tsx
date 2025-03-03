@@ -34,7 +34,7 @@ const jsonToHtml = (json) => {
 
 const JsonFormatter = ({ jsonData }) => {
   return (
-    <div className="bg-gray-50 p-4 border border-gray-300 rounded-md shadow-sm">
+    <div className="bg-gray-50 p-4 border border-gray-300 rounded-md shadow-xs">
       <pre className="whitespace-pre-wrap overflow-x-auto text-sm">
         {jsonToHtml(jsonData)}
       </pre>

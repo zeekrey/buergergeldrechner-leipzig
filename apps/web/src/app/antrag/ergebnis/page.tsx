@@ -89,7 +89,7 @@ export default function StepSummary() {
       </StepTitle>
       <StepContent>
         <Tabs defaultValue="result">
-          <TabsList className="grid grid-cols-2">
+          <TabsList className="grid grid-cols-2 w-full">
             <TabsTrigger value="result">Ergebnis</TabsTrigger>
             <TabsTrigger value="calculation">Berechnung</TabsTrigger>
           </TabsList>
@@ -105,8 +105,8 @@ export default function StepSummary() {
           <TabsContent value="calculation" data-testid="result-calculation">
             <div className="pb-8">
               <ScrollArea className="sm:h-[380px]">
-                <Card className="overflow-hidden">
-                  <CardHeader className="flex flex-row items-start bg-muted/50">
+                <Card className="overflow-hidden py-0">
+                  <CardHeader className="flex flex-row items-start bg-muted/50 py-2">
                     <div className="grid gap-0.5">
                       <CardTitle className="group flex items-center gap-2 text-lg">
                         Berechnungsergebnis

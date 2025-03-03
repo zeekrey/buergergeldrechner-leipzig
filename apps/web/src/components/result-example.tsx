@@ -64,7 +64,7 @@ const exampleResult: TStepContext = {
 
 export function ResultExample() {
   return (
-    <div className="sm:border sm:shadow-sm rounded-lg w-full flex flex-col min-h-96 bg-background">
+    <div className="sm:border sm:shadow-xs rounded-lg w-full flex flex-col min-h-96 bg-background">
       <ResultSheet state={exampleResult} />
     </div>
   );

@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <Toaster position="bottom-right" />
         <div className="flex flex-col min-h-dvh">
           <SiteHeader />
-          <main className="flex-grow flex flex-col justify-center items-center sm:py-6">
+          <main className="grow flex flex-col justify-center items-center sm:py-6">
             {children}
           </main>
         </div>

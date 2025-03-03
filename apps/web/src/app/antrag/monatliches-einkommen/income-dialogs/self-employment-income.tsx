@@ -18,11 +18,13 @@ import { z } from "zod";
 import { checkChildBenefitTransfert } from "./default-income";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldAlertIcon } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
-type TFormData = {
-  net: number;
-  gros: number;
-};
+const formSchema = z.object({
+  gros: z.coerce.number(),
+  net: z.coerce.number(),
+  isYoung: z.boolean(),
+});
 
 export const SelfEmploymentIncome = ({
   person,
@@ -33,16 +35,16 @@ export const SelfEmploymentIncome = ({
 }) => {
   const [state, setState] = useStateContext();
 
-  const form = useForm<TFormData>({
+  const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
+      isYoung:
+        typeof person?.age !== "undefined" && person.age < 25 ? true : false,
       gros: income?.gros ?? 0,
       net: income?.net ?? 0,
     },
   });
 
-  const onSubmit: SubmitHandler<TFormData> = (data, event) => {
-    // event.preventDefault();
-
+  function onSubmit(data: z.infer<typeof formSchema>) {
     const selectedPersonIndex = state.community.findIndex(
       (per) => per.id === person.id
     );
@@ -54,8 +56,7 @@ export const SelfEmploymentIncome = ({
         hasMinorChild: state.community.some(
           (person) => person.type === "child" && person.age < 18
         ),
-        //FIXME: should be respected.
-        isYoung: false,
+        isYoung: data.isYoung,
       });
 
       let newState: TStepContext;
@@ -100,12 +101,13 @@ export const SelfEmploymentIncome = ({
     }
 
     setOpen(false);
-  };
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6 pb-4">
             <FormField
               control={form.control}
               name="gros"
@@ -144,6 +146,25 @@ export const SelfEmploymentIncome = ({
               )}
             />
           </div>
+          <FormField
+            control={form.control}
+            name="isYoung"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start rounded-md border p-4">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>
+                    Person ist Student, Azubi oder Schüler und jünger als 25.
+                  </FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
         </div>
         <div className="px-0 pt-2">
           <Alert variant="warning">

@@ -225,3 +225,63 @@ test("Case #4 - Couple with 2 kids", async ({ page }) => {
   await expect(result).toBeVisible();
   await result.screenshot();
 });
+
+test("Case #5 - young single with standard income", async ({ page }) => {
+  await page.goto("http://localhost:3000/antrag/erwerbsfaehig");
+
+  await page.getByLabel("Ja, ich bin erwerbsfähig.").click();
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/partnerschaft");
+  await expect(page.getByRole("strong")).toContainText("563,00 €");
+
+  await page.getByText("Alleinstehend").click();
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/kinder");
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/bedarfsgemeinschaft");
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/kosten-unterkunft-heizung");
+  await page
+    .getByRole("row", { name: "Kaltmiete" })
+    .getByPlaceholder("Kaltmiete")
+    .fill("350");
+  await page
+    .getByRole("row", { name: "Nebenkosten" })
+    .getByPlaceholder("Nebenkosten")
+    .fill("66");
+  await page
+    .getByRole("row", { name: "Heizkosten" })
+    .getByPlaceholder("Heizkosten")
+    .fill("100");
+
+  await expect(page.getByText("516,00 €")).toBeVisible();
+
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/monatliches-einkommen");
+  await expect(page.getByRole("strong")).toContainText("1.079,00 €");
+
+  await page.getByRole("button", { name: "Einkommen hinzufügen" }).click();
+  await page.getByLabel("Brutto").fill("1200");
+  await page.getByLabel("Netto").fill("950");
+  await page
+    .getByLabel("Person ist Student, Azubi oder Schüler und jünger als 25.")
+    .click();
+  await page.getByRole("button", { name: "Hinzufügen" }).click();
+
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/ergebnis");
+  await expect(page.getByTestId("result")).toContainText("685");
+
+  await page.getByRole("tab", { name: "Berechnung" }).click();
+
+  const result = page.getByTestId("result-calculation");
+
+  await expect(result).toBeVisible();
+  await result.screenshot();
+});

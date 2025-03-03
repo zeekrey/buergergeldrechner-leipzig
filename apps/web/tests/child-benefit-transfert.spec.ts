@@ -50,7 +50,8 @@ test("should assign child benefit transfer", async ({ page }) => {
     .click();
   await page.getByText("Unterhalt", { exact: true }).click();
   await page.getByPlaceholder("€").click();
-  await page.getByPlaceholder("€").fill("500");
+  // FIXME: .fill is not working here.
+  await page.getByPlaceholder("€").type("500");
   await page.getByPlaceholder("€").press("Tab");
   await page.getByRole("button", { name: "Hinzufügen" }).click();
   await expect(page.locator("tbody")).toContainText("Kindergeldübertrag");
@@ -113,7 +114,8 @@ test("should assign child benefit transfer if changed", async ({ page }) => {
     .click();
   await page.getByLabel("Unterhalt", { exact: true }).click();
   await page.getByPlaceholder("€").click();
-  await page.getByPlaceholder("€").fill("800");
+  // FIXME: .fill is not working here.
+  await page.getByPlaceholder("€").type("800");
   await page.getByPlaceholder("€").press("Tab");
   await page.getByRole("button", { name: "Hinzufügen" }).click();
   await expect(page.locator("tbody")).toContainText("Kindergeldübertrag");
@@ -125,7 +127,9 @@ test("should assign child benefit transfer if changed", async ({ page }) => {
     .first()
     .click();
   await page.getByPlaceholder("€").click();
-  await page.getByPlaceholder("€").fill("100");
+  await page.getByPlaceholder("€").clear();
+  // FIXME: .fill is not working here.
+  await page.getByPlaceholder("€").type("100");
   await page.getByPlaceholder("€").press("Tab");
   await page.getByRole("button", { name: "Bearbeiten" }).click();
   await expect(page.locator("tbody")).toContainText("100,00 €");

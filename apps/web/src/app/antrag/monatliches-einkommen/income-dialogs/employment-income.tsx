@@ -35,16 +35,16 @@ export function calculateSalary({
       income: 0,
     };
 
-  let allowance = isYoung ? 538 : 100;
+  let allowance = isYoung ? 556 : 100;
 
-  // Check if isYoung is true to skip the first range rule
+  // Check if isYoung is true to skip the following rules.
   if (!isYoung && gross <= 520) {
     allowance += (gross - 100) * 0.2; // 20% for the range 100-520
   } else if (!isYoung) {
     allowance += (520 - 100) * 0.2; // 20% for the range 100-520
   }
 
-  if (gross > (isYoung ? 520 : 520)) {
+  if (!isYoung && gross > 520) {
     // This check ensures we only apply the next conditions if gross > 520
     if (gross <= 1000) {
       allowance += (gross - 520) * 0.3; // 30% for the range 520-1000 (or 1500 with a minor child)
@@ -230,7 +230,7 @@ export const EmploymentIncome = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <div className="grid grid-cols-2 gap-6 pb-4">
             <FormField
@@ -272,7 +272,7 @@ export const EmploymentIncome = ({
             control={form.control}
             name="isYoung"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormItem className="flex flex-row items-start rounded-md border p-4">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
