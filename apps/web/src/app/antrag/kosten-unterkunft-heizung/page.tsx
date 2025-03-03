@@ -83,9 +83,9 @@ export default function StepSpending() {
         draft.spendings["heating"] = 0;
         draft.spendings.sum = 0;
       } else {
-        draft.spendings["rent"] = rent;
-        draft.spendings["utilities"] = utilities;
-        draft.spendings["heating"] = heating;
+        draft.spendings["rent"] = rent ?? 0;
+        draft.spendings["utilities"] = utilities ?? 0;
+        draft.spendings["heating"] = heating ?? 0;
         draft.spendings.sum = calculateSum(draft.spendings);
       }
     });
