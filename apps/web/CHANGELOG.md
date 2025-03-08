@@ -1,5 +1,19 @@
 # buergergeldrechner
 
+## 0.5.4
+
+### Patch Changes
+
+- f1bbe97: Einnahmen aus Selbstständigkeit berücksichtigen nun das Alter der ausgewähltenen Person.
+- f15b54c: Ein Fehler bei der Erstellung von geteilten Berechnungen wurde behoben.
+- 3731c53: Im Einkommensdialog für das freiwillige soziale Jahr, wird nun eine Checkbox für die Altersabfrage anstatt einer Nummern-Eingabe verwendet.
+- 7ab325f: Bei den meisten Hilfedialogen sind nun Erklärvideos von arbeitsagentur.de hinterlegt.
+- 7bacab0: Eine Feedbackmöglichkeit wurde hinzugefügt.
+- e670e78: Kleinere Anpassungen an den Hilfetexten.
+- d4bac6f: Es gibt nun die Möglichkeit Feedback abzugeben.
+- d4bac6f: Der Freibetrag für Personen unter 25 wurde aktualisiert. Außerdem wird der Freibetrag nun korrekt auf das Netto-Einkommen angerechnet.
+- d4bac6f: Wird der Bürgergeldrechner über die Startseite geöffnet, so werden bisherige Berechnungen gelöscht.
+
 ## 0.5.3
 
 ### Patch Changes
