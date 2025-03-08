@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { TChild, TStepContext, VoluntarySocialYearSchema } from "@/lib/types";
+import { TStepContext, VoluntarySocialYearSchema } from "@/lib/types";
 import {
   Form,
   FormControl,
@@ -17,16 +17,20 @@ import { z } from "zod";
 import { checkChildBenefitTransfert as checkChildBenefitTransfer } from "./default-income";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldAlertIcon } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type TFormData = {
   amount: number;
-  age?: number;
+  isYoung: boolean;
 };
 
-export const voluntarySocialYearCalculation = ({ age, amount }: TFormData) => {
+export const voluntarySocialYearCalculation = ({
+  isYoung,
+  amount,
+}: TFormData) => {
   let allowance = 0;
 
-  if (age && age < 25) {
+  if (isYoung) {
     allowance = 556;
   }
 
@@ -48,7 +52,7 @@ if (import.meta.vitest) {
     expect(
       voluntarySocialYearCalculation({
         amount: 100,
-        age: 16,
+        isYoung: true,
       })
     ).toEqual({
       allowance: 100,
@@ -60,7 +64,7 @@ if (import.meta.vitest) {
     expect(
       voluntarySocialYearCalculation({
         amount: 600,
-        age: 16,
+        isYoung: true,
       })
     ).toEqual({
       allowance: 556,
@@ -72,7 +76,7 @@ if (import.meta.vitest) {
     expect(
       voluntarySocialYearCalculation({
         amount: 100,
-        age: 26,
+        isYoung: false,
       })
     ).toEqual({
       allowance: 0,
@@ -95,21 +99,18 @@ export const VoluntarySocialYear = ({
   const form = useForm<TFormData>({
     defaultValues: {
       amount: income?.amount ?? 0,
-      age: person?.age ?? 18,
+      isYoung: person?.age && person.age < 25 ? true : false,
     },
   });
 
   const onSubmit: SubmitHandler<TFormData> = (data, event) => {
-    const age = data.age ?? (person as TChild).age;
-    // event.preventDefault();
-
     const selectedPersonIndex = state.community.findIndex(
       (per) => per.id === person.id
     );
 
     if (selectedPersonIndex !== -1) {
       const { allowance, income: _income } = voluntarySocialYearCalculation({
-        age,
+        isYoung: data.isYoung,
         amount: data.amount,
       });
 
@@ -122,7 +123,6 @@ export const VoluntarySocialYear = ({
         ].income.findIndex((income) => income.id === income.id);
 
         newState = produce(state, (draft) => {
-          draft.community[selectedPersonIndex].age = Number(data.age);
           draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
             ...income,
             allowance,
@@ -134,7 +134,6 @@ export const VoluntarySocialYear = ({
         });
       } else {
         newState = produce(state, (draft) => {
-          draft.community[selectedPersonIndex].age = Number(data.age);
           draft.community[selectedPersonIndex].income.push({
             allowance,
             amount: Number(_income),
@@ -154,7 +153,7 @@ export const VoluntarySocialYear = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {!(person.type === "child" && person.age < 25) && (
           <FormField
             control={form.control}
@@ -162,7 +161,7 @@ export const VoluntarySocialYear = ({
             rules={{ min: 1 }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Betrag</FormLabel>
+                <FormLabel>Monatlicher Betrag in Euro</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="0,00€"
@@ -178,20 +177,18 @@ export const VoluntarySocialYear = ({
         )}
         <FormField
           control={form.control}
-          name="age"
-          rules={{ min: 1 }}
+          name="isYoung"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Alter</FormLabel>
+            <FormItem className="flex flex-row items-start rounded-md border p-4">
               <FormControl>
-                <Input
-                  placeholder="Wie alt sind Sie?"
-                  type="number"
-                  step="any"
-                  min={1}
-                  {...field}
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
                 />
               </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>Person ist jünger als 25.</FormLabel>
+              </div>
             </FormItem>
           )}
         />

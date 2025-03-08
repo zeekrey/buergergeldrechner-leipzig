@@ -5,7 +5,7 @@ import type { FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { ArrowRightCircleIcon, ShieldAlertIcon } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { Checkbox } from "../../../components/ui/checkbox";
 import {
   StepRoot,
@@ -23,6 +23,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 const step = stepsConfig[0];
 
 export default function StepEmployable() {
+  /** Product requirement: coming from the index page should reset existing calculations. */
+  useEffect(() => localStorage.removeItem("state"), []);
+
   const { push } = useRouter();
   const [state, setState] = useStateContext();
 

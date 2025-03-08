@@ -140,14 +140,14 @@ export const DefaultIncome = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="amount"
           rules={{ min: 1 }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Betrag</FormLabel>
+              <FormLabel>Monatlicher Betrag in Euro</FormLabel>
               <FormControl>
                 <Input
                   placeholder="0,00€"

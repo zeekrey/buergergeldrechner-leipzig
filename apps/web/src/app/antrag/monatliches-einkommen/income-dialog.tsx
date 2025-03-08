@@ -119,8 +119,11 @@ export const IncomeDialog = ({
           </SelectContent>
         </Select>
         <Select onValueChange={handleIncomeChange} defaultValue={incomeType}>
-          <SelectTrigger>
-            <SelectValue placeholder="Einkommensart auswählen" />
+          <SelectTrigger className="truncate">
+            <SelectValue
+              placeholder="Einkommensart auswählen"
+              className="truncate"
+            />
           </SelectTrigger>
           <SelectContent>
             {incomeTypeList.map((type) => (

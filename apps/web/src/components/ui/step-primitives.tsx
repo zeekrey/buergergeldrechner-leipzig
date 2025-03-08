@@ -19,7 +19,7 @@ const StepRoot = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
     return (
       <div
-        className="sm:border sm:shadow-sm sm:rounded-lg flex flex-col sm:min-h-96 flex-grow sm:flex-grow-0 bg-background max-w-full sm:max-w-3xl lg:w-8/12 py-2"
+        className="sm:border sm:shadow-xs sm:rounded-lg flex flex-col sm:min-h-96 grow sm:grow-0 bg-background max-w-full sm:max-w-3xl lg:w-8/12 py-2"
         ref={ref}
         {...props}
       >
@@ -69,8 +69,8 @@ StepTitle.displayName = "StepTitle";
 const StepDescription = forwardRef<HTMLDivElement, { children: string }>(
   ({ children, ...props }, ref) => {
     return (
-      <div className="px-8 pt-4" ref={ref} {...props}>
-        <Markdown className="text-muted-foreground">{children}</Markdown>
+      <div className="px-8 pt-4 text-muted-foreground" ref={ref} {...props}>
+        <Markdown>{children}</Markdown>
       </div>
     );
   }
@@ -93,7 +93,7 @@ StepContent.displayName = "StepContent";
 const StepNavigation = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
     return (
-      <div className="px-8 py-6 flex justify-between gap-2" {...props}>
+      <div className="px-8 py-6 flex justify-between sm:gap-2" {...props}>
         {children}
       </div>
     );
