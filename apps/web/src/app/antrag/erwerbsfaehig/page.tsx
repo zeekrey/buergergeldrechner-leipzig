@@ -24,6 +24,7 @@ const step = stepsConfig[0];
 
 export default function StepEmployable() {
   /** Product requirement: coming from the index page should reset existing calculations. */
+  /** FIXME: Can we check the previous page in history? */
   useEffect(() => localStorage.removeItem("state"), []);
 
   const { push } = useRouter();
