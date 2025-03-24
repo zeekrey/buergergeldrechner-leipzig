@@ -82,12 +82,29 @@ export function calculateRent({
   }
 }
 
-//TODO:
-// if (import.meta.vitest) {
-//   const { it, expect } = import.meta.vitest;
-//   it("add", () => {
-//     expect(calculateRent()).toBe(0);
-//     expect(calculateRent(1)).toBe(1);
-//     expect(calculateRent(1, 2, 3)).toBe(6);
-//   });
-// }
+if (import.meta.vitest) {
+  const { it, expect } = import.meta.vitest;
+  it("ok case", () => {
+    expect(
+      calculateRent({
+        communityCount: 0,
+        rent: 0,
+        space: 0,
+        utilities: 0,
+      }).isOk
+    ).toBeTruthy();
+  });
+
+  it("ok case", () => {
+    const { isOk, description } = calculateRent({
+      communityCount: 1,
+      rent: maxRent[1] - (maxSpace[1] * 1.2 + 1),
+      space: maxSpace[1] - 1,
+      utilities: maxSpace[1] * 1.2 + 1,
+    });
+
+    console.log(description);
+
+    expect(isOk).toBeTruthy();
+  });
+}
