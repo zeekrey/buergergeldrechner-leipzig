@@ -22,8 +22,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { useCallback } from "react";
+import {
+  ArrowLeftCircleIcon,
+  ArrowRightCircleIcon,
+  CalculatorIcon,
+  OctagonAlertIcon,
+} from "lucide-react";
+import { useCallback, useState } from "react";
 import { produce } from "immer";
 import {
   StepRoot,
@@ -37,6 +42,19 @@ import HelpMarkdown from "@/config/steps/kosten-unterkunft-heizung.mdx";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { calculateRent } from "@/lib/rent-calculation";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { RentCalculation } from "@/app/mietpruefung/rent-calculation";
 
 const step = stepsConfig[7];
 
@@ -50,6 +68,7 @@ const formSchema = z.object({
 export default function StepSpending() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
+  const [dialogIsOpen, setDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -101,6 +120,15 @@ export default function StepSpending() {
     "utilities",
   ]);
   const sum = Number(heating ?? 0) + Number(rent ?? 0) + Number(utilities ?? 0);
+  const { isOk, issues, description } = calculateRent({
+    rent: Number(rent ?? 0),
+    utilities: Number(utilities ?? 0) + Number(heating ?? 0),
+    communityCount: state.community.length,
+    space: 1,
+  });
+
+  console.log("isOk", isOk);
+  console.log("description", description);
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous].id}`);
@@ -231,6 +259,44 @@ export default function StepSpending() {
                   </TableRow>
                 </TableFooter>
               </Table>
+              {issues?.includes("rent") && (
+                <Dialog open={dialogIsOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Alert
+                      className="absolute bottom-0 cursor-pointer hover:shadow transition-shadow"
+                      onClick={() => console.log("click")}
+                    >
+                      <CalculatorIcon className="h-4 w-4" />
+                      <AlertTitle>
+                        Ihre Miete ist zu eventuell zu hoch.
+                      </AlertTitle>
+                      <AlertDescription>
+                        {description} Drücken Sie um auf den Button um mehr zu
+                        erfahren.
+                      </AlertDescription>
+                    </Alert>
+                  </DialogTrigger>
+                  <DialogContent className="md:min-w-[625px]">
+                    <DialogHeader>
+                      <DialogTitle>Bedarfsprüfung für Wohnkosten</DialogTitle>
+                      <DialogDescription>
+                        Hier können Sie die Höhe der angemessenen Kosten für
+                        Unterkunft und Heizung (KdU) prüfen.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex items-center space-x-2">
+                      <RentCalculation />
+                    </div>
+                    {/* <DialogFooter className="sm:justify-start">
+                      <DialogClose asChild>
+                        <Button type="button" variant="secondary">
+                          Close
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter> */}
+                  </DialogContent>
+                </Dialog>
+              )}
             </ScrollArea>
           </StepContent>
           <StepNavigation>

@@ -44,11 +44,16 @@ export function calculateRent({
   space: number;
   utilities: number;
   communityCount: number;
-}): { isOk: boolean; description: string } {
+}): {
+  isOk: boolean;
+  issues?: ("rent" | "space" | "utilities")[];
+  description: string;
+} {
   //FIXME: Use a custom zod validator here.
   if (utilities < minUtilities(space))
     return {
       isOk: false,
+      issues: ["utilities"],
       description:
         "Der Anspruch kann nicht geprüft werden: Kein plausibles Verhältnis zwischen Betriebskosten und Wohnfläche. (Je Quadratmeter müssen die Betriebskosten mindestens 1,20€ betragen)",
     };
@@ -59,17 +64,20 @@ export function calculateRent({
   if (space > maximumSpace && rentSum > maximumRent) {
     return {
       isOk: false,
+      issues: ["space", "rent"],
       description:
         "Sowohl die zulässige Wohnfläche als auch die Bruttokaltmiete werden überschritten",
     };
   } else if (space > maximumSpace) {
     return {
       isOk: false,
+      issues: ["space"],
       description: "Die zulässige Wohnfläche wird überschritten.",
     };
   } else if (rentSum > maximumRent) {
     return {
       isOk: false,
+      issues: ["rent"],
       description:
         "Der Anspruch wird überschritten: die zulässige Bruttokaltmiete wird überschritten.",
     };
