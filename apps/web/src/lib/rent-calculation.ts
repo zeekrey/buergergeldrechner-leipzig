@@ -66,7 +66,7 @@ export function calculateRent({
       isOk: false,
       issues: ["space", "rent"],
       description:
-        "Sowohl die zulässige Wohnfläche als auch die Bruttokaltmiete werden überschritten",
+        "Sowohl die zulässige Wohnfläche als auch die Bruttokaltmiete werden überschritten.",
     };
   } else if (space > maximumSpace) {
     return {
@@ -78,8 +78,7 @@ export function calculateRent({
     return {
       isOk: false,
       issues: ["rent"],
-      description:
-        "Der Anspruch wird überschritten: die zulässige Bruttokaltmiete wird überschritten.",
+      description: "Die zulässige Bruttokaltmiete wird überschritten.",
     };
   } else {
     return {
