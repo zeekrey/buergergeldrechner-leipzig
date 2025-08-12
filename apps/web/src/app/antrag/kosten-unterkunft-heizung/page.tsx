@@ -26,7 +26,6 @@ import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
   CalculatorIcon,
-  OctagonAlertIcon,
 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { produce } from "immer";
@@ -43,7 +42,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { calculateRent } from "@/lib/rent-calculation";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -51,8 +50,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { RentCalculation } from "@/app/mietpruefung/rent-calculation";
 
@@ -93,7 +90,7 @@ export default function StepSpending() {
     heating,
     hasNoSpendings,
   }: z.infer<typeof formSchema>) {
-    console.log(rent);
+    console.log("trigger step!");
 
     const newState = produce(state, (draft) => {
       if (hasNoSpendings) {
@@ -283,15 +280,10 @@ export default function StepSpending() {
                       </DialogDescription>
                     </DialogHeader>
                     <div className="flex items-center space-x-2">
-                      <RentCalculation />
+                      <RentCalculation
+                        onResult={() => console.log("Oh, there is a result.")}
+                      />
                     </div>
-                    {/* <DialogFooter className="sm:justify-start">
-                      <DialogClose asChild>
-                        <Button type="button" variant="secondary">
-                          Close
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter> */}
                   </DialogContent>
                 </>
               )}
