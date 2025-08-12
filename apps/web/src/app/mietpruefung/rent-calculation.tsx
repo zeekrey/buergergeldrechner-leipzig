@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { z } from "zod";
-import { FormEventHandler } from "react";
+import { BaseSyntheticEvent, FormEventHandler } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -60,8 +60,11 @@ export function RentCalculation({
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    // FIXME: prevent default here
+  function onSubmit(
+    data: z.infer<typeof FormSchema>,
+    event?: BaseSyntheticEvent
+  ) {
+    event?.preventDefault();
     const { isOk, description } = calculateRent(data);
 
     onResult &&
@@ -80,11 +83,7 @@ export function RentCalculation({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        onChange={onChange}
-        className="@container w-full"
-      >
+      <form onChange={onChange} className="@container w-full">
         <div className="grid grid-cols-1 @md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
@@ -184,7 +183,12 @@ export function RentCalculation({
           />
         </div>
         <div className="pt-4 flex justify-end">
-          <Button className="grow sm:grow-0 sm:w-48" size="lg" type="submit">
+          <Button
+            className="grow sm:grow-0 sm:w-48"
+            size="lg"
+            type="button"
+            onClick={form.handleSubmit(onSubmit)}
+          >
             Berechnen
             <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
           </Button>

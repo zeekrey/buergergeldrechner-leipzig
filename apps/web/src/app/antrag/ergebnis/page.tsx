@@ -26,6 +26,7 @@ import Link from "next/link";
 import { createShareable } from "./actions";
 import { toast } from "sonner";
 import { ResultSheet } from "./result-sheet";
+import { RequiredDocuments } from "./required-documents";
 
 const step = stepsConfig[9];
 
@@ -89,9 +90,10 @@ export default function StepSummary() {
       </StepTitle>
       <StepContent>
         <Tabs defaultValue="result">
-          <TabsList className="grid grid-cols-2 w-full">
+          <TabsList className="grid grid-cols-3 w-full">
             <TabsTrigger value="result">Ergebnis</TabsTrigger>
             <TabsTrigger value="calculation">Berechnung</TabsTrigger>
+            <TabsTrigger value="documents">Unterlagen</TabsTrigger>
           </TabsList>
           <TabsContent value="result">
             <Result
@@ -127,6 +129,11 @@ export default function StepSummary() {
                   </CardFooter>
                 </Card>
               </ScrollArea>
+            </div>
+          </TabsContent>
+          <TabsContent value="documents">
+            <div className="pb-8">
+              <RequiredDocuments />
             </div>
           </TabsContent>
         </Tabs>
