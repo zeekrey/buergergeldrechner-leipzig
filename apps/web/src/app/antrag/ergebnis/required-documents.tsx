@@ -62,10 +62,50 @@ export function RequiredDocuments() {
       when: "immer",
     },
     {
+      name: "EU-Bürger/innen: Anlage zum Antrag Erklärung EU Bürger",
+      description: "müssen wir noch zur Verfügung stellen + Bestätigung der Agentur für Arbeit Leipzig zur unfreiwilligen Arbeitslosigkeit (bei der AA abzufordern)",
+      when: "bei EU-Bürgern",
+    },
+    {
+      name: "bei Geflüchteten Personen",
+      description: "BAMF-Bescheid, elektronischer Aufenthaltstitel, Fiktionsbescheinigung (aller Personen in der Bedarfsgemeinschaft), Aufhebungsbescheid Asylbewerberleistungen",
+      when: "bei Geflüchteten",
+    },
+    {
       name: "Kontoauszüge",
       description:
         "Alle Konten der Bedarfsgemeinschaft: letzte 3 Monate, jeweils als ein Dokument (keine Einzelfotos/Screenshots)",
       when: "immer",
+    },
+    {
+      name: "Bei Zuzug von einem anderen Jobcenter",
+      description: "Aufhebungsbescheid SGB II - Leistungen",
+      when: "bei Zuzug",
+    },
+    {
+      name: "Nachweis stationärer Aufenthalt",
+      description: "falls erforderlich",
+      when: "ggf.",
+    },
+    {
+      name: "Studenten",
+      description: "Immatrikulations- bzw. Exmatrikulationsbescheinigung",
+      when: "bei Studierenden",
+    },
+    {
+      name: "Betreuerausweis/Vollmacht",
+      description: "falls erforderlich",
+      when: "ggf.",
+    },
+    {
+      name: "Bescheid zur Bewilligung über Leistungen zur Teilhabe am Arbeitsleben",
+      description: "falls vorhanden",
+      when: "ggf.",
+    },
+    {
+      name: "Schwerbehindertenausweis",
+      description: "falls vorhanden",
+      when: "ggf.",
     },
   ];
 
@@ -257,26 +297,8 @@ export function RequiredDocuments() {
       name: "Zustimmung Umzug (anderes Jobcenter)",
       description: "falls Kaution/Genossenschaftsanteile beantragt",
     },
-    // Aufenthalt/EU/Asyl
-    {
-      name: "EU: Erklärung EU-Bürger/in",
-      description: "Anlage zum Antrag; wird noch bereitgestellt",
-    },
-    {
-      name: "EU: Bestätigung Arbeitsagentur Leipzig",
-      description: "zur unfreiwilligen Arbeitslosigkeit",
-    },
-    { name: "Geflüchtete: BAMF-Bescheid" },
-    { name: "Geflüchtete: elektronischer Aufenthaltstitel" },
-    { name: "Geflüchtete: Fiktionsbescheinigung(en)" },
-    { name: "Geflüchtete: Aufhebungsbescheid Asylbewerberleistungen" },
-    // Sonstiges
-    { name: "Betreuerausweis/Vollmacht", description: "falls Vertretung" },
-    {
-      name: "Bescheid Teilhabe am Arbeitsleben",
-      description: "falls vorhanden",
-    },
-    { name: "Schwerbehindertenausweis", description: "falls vorhanden" },
+    // Sonstiges (moved main documents to general section)
+    { name: "Stationärer Aufenthalt - weitere Nachweise", description: "je nach individuellem Fall" },
   ];
 
   return (

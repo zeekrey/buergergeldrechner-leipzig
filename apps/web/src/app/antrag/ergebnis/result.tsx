@@ -5,6 +5,7 @@ import {
   PiggyBankIcon,
   ScaleIcon,
   UsersIcon,
+  FileTextIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,12 +15,14 @@ export function Result({
   spendings,
   allowance,
   overall,
+  onShowDocuments,
 }: {
   communitySize: number;
   income: number;
   spendings: number;
   allowance: number;
   overall: number;
+  onShowDocuments?: () => void;
 }) {
   const isPositive = overall > 0;
 
@@ -63,12 +66,18 @@ export function Result({
           </span>
         </p>
         {overall > 0 ? (
-          <Button asChild>
-            <a href="https://jobcenter.digital" className="mt-10">
-              <ExternalLinkIcon className="w-4 h-4 mr-2" />
-              Jetzt beantragen
-            </a>
-          </Button>
+          <div className="mt-10 space-y-3">
+            <Button asChild>
+              <a href="https://jobcenter.digital">
+                <ExternalLinkIcon className="w-4 h-4 mr-2" />
+                Jetzt beantragen
+              </a>
+            </Button>
+            <Button variant="secondary" onClick={onShowDocuments} className="w-full">
+              <FileTextIcon className="w-4 h-4 mr-2" />
+              Benötigte Unterlagen
+            </Button>
+          </div>
         ) : (
           <p className="mt-6 text-xs leading-5 text-gray-600 dark:text-gray-300">
             Auch wenn kein Anspruch auf Bürgergeld bestehen sollte, können Sie

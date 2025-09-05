@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { ArrowLeftCircleIcon, RotateCwIcon, ShareIcon } from "lucide-react";
@@ -34,6 +34,7 @@ export default function StepSummary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState("result");
 
   const { allowance, income, overall } = useMemo(
     () => calculateOverall(state),
@@ -52,6 +53,10 @@ export default function StepSummary() {
   const handleReset = useCallback(() => {
     setState(initialStepsState.context);
     localStorage.removeItem("state");
+  }, []);
+
+  const handleShowDocuments = useCallback(() => {
+    setActiveTab("documents");
   }, []);
 
   const onCreateShareableClick = () => {
@@ -89,7 +94,7 @@ export default function StepSummary() {
         <HelpMarkdown />
       </StepTitle>
       <StepContent>
-        <Tabs defaultValue="result">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-3 w-full">
             <TabsTrigger value="result">Ergebnis</TabsTrigger>
             <TabsTrigger value="calculation">Berechnung</TabsTrigger>
@@ -102,6 +107,7 @@ export default function StepSummary() {
               spendings={state.spendings.sum}
               allowance={allowanceSum}
               overall={overall}
+              onShowDocuments={handleShowDocuments}
             />
           </TabsContent>
           <TabsContent value="calculation" data-testid="result-calculation">
