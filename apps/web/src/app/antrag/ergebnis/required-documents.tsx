@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -16,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PrinterIcon } from "lucide-react";
+import { ExternalLinkIcon, PrinterIcon } from "lucide-react";
 import { useMemo } from "react";
 import { useStateContext } from "@/components/context";
 import { TIncome } from "@/lib/types";
@@ -76,23 +77,23 @@ export function RequiredDocuments() {
     basedOnInputs.push(
       {
         name: "Scheidungsurteil",
-        description: "falls vorhanden",
+        description: "Falls vorhanden",
         when: "Alleinstehend",
       },
       {
         name: "Erklärung getrenntlebend",
-        description: "falls zutreffend",
+        description: "Falls zutreffend",
         when: "Alleinstehend",
       },
       {
         name: "Vaterschaftsanerkennung(en)",
-        description: "falls zutreffend",
+        description: "Falls zutreffend",
         when: "Alleinstehend",
       },
       {
         name: "Unterhaltstitel",
         description:
-          "Urkunden, Urteile, schriftliche Vereinbarungen (falls vorhanden)",
+          "Urkunden, Urteile, schriftliche Vereinbarungen (Falls vorhanden)",
         when: "Alleinstehend",
       }
     );
@@ -100,7 +101,7 @@ export function RequiredDocuments() {
   if (hasPartner) {
     basedOnInputs.push({
       name: "Eheurkunde",
-      description: "falls verheiratet",
+      description: "Falls verheiratet",
       when: "Partner",
     });
   }
@@ -140,22 +141,22 @@ export function RequiredDocuments() {
       },
       {
         name: "Entgeltbescheinigungen",
-        description: "der letzten 6 Monate",
+        description: "Der letzten 6 Monate",
         when: "Erwerbstätigkeit",
       },
       {
         name: "Nachweis Kfz-Versicherung",
-        description: "aktueller Beitragsbescheid, falls relevant",
+        description: "Aktueller Beitragsbescheid, Falls relevant",
         when: "Erwerbstätigkeit",
       },
       {
         name: "Nachweis doppelte Haushaltsführung",
-        description: "z. B. Mietvertrag am Arbeitsort, falls relevant",
+        description: "Zum Beispiel Mietvertrag am Arbeitsort, Falls relevant",
         when: "Erwerbstätigkeit",
       },
       {
         name: "Nachweis Fahrkosten",
-        description: "für den Arbeitsweg, falls relevant",
+        description: "Für den Arbeitsweg, Falls relevant",
         when: "Erwerbstätigkeit",
       },
       {
@@ -165,7 +166,7 @@ export function RequiredDocuments() {
       },
       {
         name: "Nachweis Beendigung Arbeitsverhältnis",
-        description: "falls aktuell",
+        description: "Falls aktuell",
         when: "Erwerbstätigkeit",
       }
     );
@@ -182,7 +183,7 @@ export function RequiredDocuments() {
   if (incomeTypesPresent.has("ChildAllowance")) {
     basedOnInputs.push({
       name: "Kindergeldbescheid",
-      description: "oder Bescheid zur Abzweigung",
+      description: "Oder Bescheid zur Abzweigung",
       when: "Kindergeld",
     });
   }
@@ -223,31 +224,31 @@ export function RequiredDocuments() {
       ? [
           {
             name: "Mietvertrag (vollständig)",
-            description: "als ein zusammenhängendes Dokument",
+            description: "Als ein zusammenhängendes Dokument",
           },
           {
             name: "Nachweis aktuelle Miethöhe",
-            description: "z. B. letzte Mietanpassung",
+            description: "Zum Beispiel letzte Mietanpassung",
           },
         ]
       : []),
     {
       name: "Barzahlung Miete: Zahlungsnachweise",
-      description: "letzte 3 Monate",
+      description: "Letzte 3 Monate",
     },
     {
       name: "Gebührenbescheid Gemeinschaftsunterkunft",
-      description: "falls zutreffend",
+      description: "Falls zutreffend",
     },
     {
       name: "Nebenkostenabrechnung",
-      description: "aktuell; sofern Wohnung > 1 Jahr bewohnt",
+      description: "Aktuell; sofern Wohnung > 1 Jahr bewohnt",
     },
     {
       name: "Heizkostenabrechnung",
-      description: "aktuell; sofern Wohnung > 1 Jahr bewohnt",
+      description: "Aktuell; sofern Wohnung > 1 Jahr bewohnt",
     },
-    { name: "Untermietvertrag (WG)", description: "falls Untermiete" },
+    { name: "Untermietvertrag (WG)", description: "Falls Untermiete" },
     {
       name: "Aufteilung der Miete (WG)",
       description:
@@ -255,7 +256,7 @@ export function RequiredDocuments() {
     },
     {
       name: "Zustimmung Umzug (anderes Jobcenter)",
-      description: "falls Kaution/Genossenschaftsanteile beantragt",
+      description: "Falls Kaution/Genossenschaftsanteile beantragt",
     },
     // Aufenthalt/EU/Asyl
     {
@@ -264,19 +265,19 @@ export function RequiredDocuments() {
     },
     {
       name: "EU: Bestätigung Arbeitsagentur Leipzig",
-      description: "zur unfreiwilligen Arbeitslosigkeit",
+      description: "Zur unfreiwilligen Arbeitslosigkeit",
     },
     { name: "Geflüchtete: BAMF-Bescheid" },
     { name: "Geflüchtete: elektronischer Aufenthaltstitel" },
     { name: "Geflüchtete: Fiktionsbescheinigung(en)" },
     { name: "Geflüchtete: Aufhebungsbescheid Asylbewerberleistungen" },
     // Sonstiges
-    { name: "Betreuerausweis/Vollmacht", description: "falls Vertretung" },
+    { name: "Betreuerausweis/Vollmacht", description: "Falls Vertretung" },
     {
       name: "Bescheid Teilhabe am Arbeitsleben",
-      description: "falls vorhanden",
+      description: "Falls vorhanden",
     },
-    { name: "Schwerbehindertenausweis", description: "falls vorhanden" },
+    { name: "Schwerbehindertenausweis", description: "Falls vorhanden" },
   ];
 
   return (
@@ -289,35 +290,38 @@ export function RequiredDocuments() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table className="print:text-[13px]">
+          <Table className="print:text-[13px] text-xs">
             <TableHeader>
               <TableRow>
+                <TableHead
+                  className="w-[40px]"
+                  aria-label="Dokument erledigt"
+                />
                 <TableHead>Dokument</TableHead>
                 <TableHead>Beschreibung</TableHead>
-                <TableHead>Wann benötigt</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {/* Section 1 */}
               <TableRow>
                 <TableCell colSpan={3} className="bg-muted/50 font-semibold">
-                  1. Generell notwendige Dokumente
+                  Generell notwendige Dokumente
                 </TableCell>
               </TableRow>
               {generalDocs.map((d, i) => (
                 <TableRow key={`g-${i}`}>
-                  <TableCell className="font-medium">{d.name}</TableCell>
-                  <TableCell>{d.description}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {d.when ?? ""}
+                  <TableCell className="align-top">
+                    <Checkbox aria-label={`Dokument erledigt: ${d.name}`} />
                   </TableCell>
+                  <TableCell className="font-medium">{d.name}</TableCell>
+                  <TableCell>{d.description ?? "—"}</TableCell>
                 </TableRow>
               ))}
 
               {/* Section 2 */}
               <TableRow>
                 <TableCell colSpan={3} className="bg-muted/50 font-semibold">
-                  2. Dokumente auf Basis Ihrer Eingaben
+                  Dokumente auf Basis Ihrer Eingaben
                 </TableCell>
               </TableRow>
               {basedOnInputs.length === 0 ? (
@@ -330,11 +334,11 @@ export function RequiredDocuments() {
               ) : (
                 basedOnInputs.map((d, i) => (
                   <TableRow key={`b-${i}`}>
-                    <TableCell className="font-medium">{d.name}</TableCell>
-                    <TableCell>{d.description}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {d.when ?? ""}
+                    <TableCell className="align-top">
+                      <Checkbox aria-label={`Dokument erledigt: ${d.name}`} />
                     </TableCell>
+                    <TableCell className="font-medium">{d.name}</TableCell>
+                    <TableCell>{d.description ?? "—"}</TableCell>
                   </TableRow>
                 ))
               )}
@@ -342,13 +346,16 @@ export function RequiredDocuments() {
               {/* Section 3 */}
               <TableRow>
                 <TableCell colSpan={3} className="bg-muted/50 font-semibold">
-                  3. Mögliche weitere Dokumente
+                  Mögliche weitere Dokumente
                 </TableCell>
               </TableRow>
               {possibleFurtherDocs.map((d, i) => (
                 <TableRow key={`p-${i}`}>
+                  <TableCell className="align-top">
+                    <Checkbox aria-label={`Dokument erledigt: ${d.name}`} />
+                  </TableCell>
                   <TableCell className="font-medium">{d.name}</TableCell>
-                  <TableCell colSpan={2}>{d.description}</TableCell>
+                  <TableCell>{d.description ?? "—"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -360,10 +367,17 @@ export function RequiredDocuments() {
         </CardContent>
       </Card>
 
-      <div className="flex justify-end print:hidden">
+      <div className="flex print:hidden gap-4">
+        <Button asChild className="flex-1 sm:w-auto">
+          <a href="https://jobcenter.digital">
+            <ExternalLinkIcon className="w-4 h-4 mr-2" />
+            Jetzt beantragen
+          </a>
+        </Button>
+
         <Button
           variant="secondary"
-          className="w-full sm:w-auto"
+          className="sm:w-auto flex-1"
           onClick={onPrint}
         >
           <PrinterIcon className="w-4 h-4 mr-2" /> Drucken

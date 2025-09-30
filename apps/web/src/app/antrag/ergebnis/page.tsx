@@ -1,12 +1,11 @@
 "use client";
 
-import { useMemo, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { ArrowLeftCircleIcon, RotateCwIcon, ShareIcon } from "lucide-react";
 import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
 import { initialStepsState, stepsConfig } from "@/lib/machine";
-import { useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -34,6 +33,7 @@ export default function StepSummary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState("result");
 
   const { allowance, income, overall } = useMemo(
     () => calculateOverall(state),
@@ -89,7 +89,7 @@ export default function StepSummary() {
         <HelpMarkdown />
       </StepTitle>
       <StepContent>
-        <Tabs defaultValue="result">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-3 w-full">
             <TabsTrigger value="result">Ergebnis</TabsTrigger>
             <TabsTrigger value="calculation">Berechnung</TabsTrigger>
@@ -102,6 +102,7 @@ export default function StepSummary() {
               spendings={state.spendings.sum}
               allowance={allowanceSum}
               overall={overall}
+              onShowDocuments={() => setActiveTab("documents")}
             />
           </TabsContent>
           <TabsContent value="calculation" data-testid="result-calculation">
