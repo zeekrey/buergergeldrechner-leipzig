@@ -1,11 +1,11 @@
 import {
-  TStepContext,
-  TChild,
+  type TStepContext,
+  type TChild,
   diseases as DiseaseMap,
   IncomeTypEnum,
-  TAllowance,
+  type TAllowance,
 } from "./types";
-import data from "../config/data.json";
+import data from "./data.json";
 import {
   additionalChildNeedsCategory,
   flattenIncome,
@@ -428,5 +428,56 @@ export function calculateOverall(context: TStepContext) {
     allowance,
     incomeAfterAllowance,
     overall: need - incomeAfterAllowance,
+  };
+}
+
+export function calculateSalary({
+  gross,
+  net,
+  hasMinorChild,
+  isYoung,
+}: {
+  gross: number;
+  net: number;
+  hasMinorChild: boolean;
+  isYoung: boolean;
+}) {
+  if (gross < 1 || net < 1 || net > gross)
+    return {
+      allowance: 0,
+      income: 0,
+    };
+
+  let allowance = isYoung ? 556 : 100;
+
+  // Check if isYoung is true to skip the following rules.
+  if (!isYoung && gross <= 520) {
+    allowance += (gross - 100) * 0.2; // 20% for the range 100-520
+  } else if (!isYoung) {
+    allowance += (520 - 100) * 0.2; // 20% for the range 100-520
+  }
+
+  if (!isYoung && gross > 520) {
+    // This check ensures we only apply the next conditions if gross > 520
+    if (gross <= 1000) {
+      allowance += (gross - 520) * 0.3; // 30% for the range 520-1000 (or 1500 with a minor child)
+    } else {
+      allowance += (1000 - 520) * 0.3; // 30% for the range 520-1000 (or 1500 with a minor child)
+      if (gross <= (hasMinorChild ? 1500 : 1200)) {
+        allowance += (gross - 1000) * 0.1; // 10% for the range 1000-1200
+      } else {
+        allowance += ((hasMinorChild ? 1500 : 1200) - 1000) * 0.1; // 10% for the range 1000-1200
+      }
+    }
+  }
+
+  // Ensure allowance does not exceed gross
+  if (allowance > net) {
+    allowance = net;
+  }
+
+  return {
+    allowance: allowance,
+    income: net,
   };
 }

@@ -37,7 +37,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { calculateIncome } from "@/lib/calculation";
+import { calculateIncome } from "calculation";
 
 const step = stepsConfig[8];
 

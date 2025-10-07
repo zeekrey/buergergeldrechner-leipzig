@@ -77,23 +77,23 @@ export function RequiredDocuments() {
     basedOnInputs.push(
       {
         name: "Scheidungsurteil",
-        description: "Falls vorhanden",
+        description: "falls vorhanden",
         when: "Alleinstehend",
       },
       {
         name: "Erklärung getrenntlebend",
-        description: "Falls zutreffend",
+        description: "falls zutreffend",
         when: "Alleinstehend",
       },
       {
         name: "Vaterschaftsanerkennung(en)",
-        description: "Falls zutreffend",
+        description: "falls zutreffend",
         when: "Alleinstehend",
       },
       {
         name: "Unterhaltstitel",
         description:
-          "Urkunden, Urteile, schriftliche Vereinbarungen (Falls vorhanden)",
+          "Urkunden, Urteile, schriftliche Vereinbarungen (falls vorhanden)",
         when: "Alleinstehend",
       }
     );
@@ -101,7 +101,7 @@ export function RequiredDocuments() {
   if (hasPartner) {
     basedOnInputs.push({
       name: "Eheurkunde",
-      description: "Falls verheiratet",
+      description: "falls verheiratet",
       when: "Partner",
     });
   }
@@ -146,7 +146,7 @@ export function RequiredDocuments() {
       },
       {
         name: "Nachweis Kfz-Versicherung",
-        description: "Aktueller Beitragsbescheid, Falls relevant",
+        description: "Aktueller Beitragsbescheid, falls relevant",
         when: "Erwerbstätigkeit",
       },
       {
@@ -166,7 +166,7 @@ export function RequiredDocuments() {
       },
       {
         name: "Nachweis Beendigung Arbeitsverhältnis",
-        description: "Falls aktuell",
+        description: "falls aktuell",
         when: "Erwerbstätigkeit",
       }
     );
@@ -233,12 +233,12 @@ export function RequiredDocuments() {
         ]
       : []),
     {
-      name: "Barzahlung Miete: Zahlungsnachweise",
-      description: "Letzte 3 Monate",
+      name: "Bei Barzahlung Miete",
+      description: "Zahlungsnachweise der letzten 3 Monate",
     },
     {
       name: "Gebührenbescheid Gemeinschaftsunterkunft",
-      description: "Falls zutreffend",
+      description: "falls zutreffend",
     },
     {
       name: "Nebenkostenabrechnung",
@@ -248,23 +248,23 @@ export function RequiredDocuments() {
       name: "Heizkostenabrechnung",
       description: "Aktuell; sofern Wohnung > 1 Jahr bewohnt",
     },
-    { name: "Untermietvertrag (WG)", description: "Falls Untermiete" },
+    { name: "Untermietvertrag (WG)", description: "falls Untermiete" },
     {
       name: "Aufteilung der Miete (WG)",
       description:
-        "qm/Kaltmiete/Betriebs- und Heizkosten bei gemeinsamem Vertrag",
+        "qm/Kaltmiete/Betriebs- und Heizkosten bei gemeinsamem Vertrag, wird durch Jobcenter bereitgestellt",
     },
     {
       name: "Zustimmung Umzug (anderes Jobcenter)",
-      description: "Falls Kaution/Genossenschaftsanteile beantragt",
+      description: "falls Kaution/Genossenschaftsanteile beantragt",
     },
     // Aufenthalt/EU/Asyl
     {
       name: "EU: Erklärung EU-Bürger/in",
-      description: "Anlage zum Antrag; wird noch bereitgestellt",
+      description: "wird durch Jobcenter bereitgestellt",
     },
     {
-      name: "EU: Bestätigung Arbeitsagentur Leipzig",
+      name: "EU: Bestätigung Agentur für Arbeit",
       description: "Zur unfreiwilligen Arbeitslosigkeit",
     },
     { name: "Geflüchtete: BAMF-Bescheid" },
@@ -272,12 +272,12 @@ export function RequiredDocuments() {
     { name: "Geflüchtete: Fiktionsbescheinigung(en)" },
     { name: "Geflüchtete: Aufhebungsbescheid Asylbewerberleistungen" },
     // Sonstiges
-    { name: "Betreuerausweis/Vollmacht", description: "Falls Vertretung" },
+    { name: "Betreuerausweis/Vollmacht", description: "falls Vertretung" },
     {
       name: "Bescheid Teilhabe am Arbeitsleben",
-      description: "Falls vorhanden",
+      description: "falls vorhanden",
     },
-    { name: "Schwerbehindertenausweis", description: "Falls vorhanden" },
+    { name: "Schwerbehindertenausweis", description: "falls vorhanden" },
   ];
 
   return (
@@ -286,7 +286,8 @@ export function RequiredDocuments() {
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Benötigte Unterlagen</CardTitle>
           <CardDescription>
-            Übersicht der Unterlagen für Ihren persönlichen Antrag.
+            Hier finden Sie eine Übersicht, welche individuellen Dokumente für
+            Ihren Antrag erforderlich sind.
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -19,7 +19,7 @@ import { IncomeComponentProps } from "../income-dialog";
 import { useStateContext } from "@/components/context";
 import { generateId } from "@/lib/utils";
 import { z } from "zod";
-import { calculateChildBenefitTransfer } from "@/lib/calculation";
+import { calculateChildBenefitTransfer } from "calculation";
 
 type TFormData = {
   amount: number;

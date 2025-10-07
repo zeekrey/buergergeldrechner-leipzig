@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { calculateOverall } from "@/lib/calculation";
+import { calculateOverall } from "calculation";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/components/context";
 import { Result } from "./result";
@@ -90,7 +90,7 @@ export default function StepSummary() {
       </StepTitle>
       <StepContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-3 w-full">
+          <TabsList className="grid grid-cols-3 w-full print:hidden">
             <TabsTrigger value="result">Ergebnis</TabsTrigger>
             <TabsTrigger value="calculation">Berechnung</TabsTrigger>
             <TabsTrigger value="documents">Unterlagen</TabsTrigger>

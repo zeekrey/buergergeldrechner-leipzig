@@ -1,0 +1,22 @@
+{
+  "name": "calculation",
+  "version": "0.1.0",
+  "description": "Shared calculation engine for Bürgergeld calculator apps.",
+  "type": "module",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {},
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
