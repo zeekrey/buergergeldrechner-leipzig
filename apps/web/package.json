@@ -3,8 +3,8 @@
   "version": "0.5.4",
   "private": true,
   "scripts": {
-    "predev": "pnpm --filter calculation build",
-    "prebuild": "pnpm --filter calculation build",
+    "predev": "bun --filter calculation build",
+    "prebuild": "bun --filter calculation build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
