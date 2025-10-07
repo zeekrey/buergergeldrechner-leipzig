@@ -43,9 +43,6 @@ export async function POST(req: Request) {
            * Ich möchte Bürgergeld beantragen und möchte wissen wie viel von meinen Einkommen angerechnet wird. Kannst du das berechnen?
            * Mein Brutto-Einkommen: 900, Mein Netto-Einkommen: 600, Lebt ein Kind unter 18 Jahren in deinem Haushalt? Nein,  Bist du jünger als 18 Jahre? Nein
            */
-
-          console.log(gross, net, hasMinorChild, isYoung);
-
           const result = calculateSalary({
             gross,
             net,
