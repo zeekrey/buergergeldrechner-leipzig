@@ -157,36 +157,60 @@ const PersonCommon = z.object({
   id: z.string(),
   name: z.string(),
   income: z.array(ExtendedIncomeSchema),
-  age: z.optional(z.number()),
+  age: z.optional(z.number()).describe("Alter der Person."),
   attributes: z.object({
-    isPregnant: z.boolean(),
-    isSingleParent: z.boolean(),
-    hasDiseases: z.boolean(),
-    diseases: z.array(z.string()),
+    isPregnant: z.boolean().describe("Ist die Person schwanger?"),
+    isSingleParent: z
+      .boolean()
+      .describe("Ist die Person eine alleinstehende Mutter oder Vater?"),
+    hasDiseases: z
+      .boolean()
+      .describe("Hat die Person chronische Erkrankungen?"),
+    diseases: z
+      .array(z.string())
+      .describe(
+        "Wenn die Person chronische Erkrankungen hat, welche sind das genau?"
+      ),
   }),
 });
 
-const Adult = PersonCommon.merge(z.object({ type: z.literal("adult") }));
+const Adult = PersonCommon.merge(
+  z.object({ type: z.literal("adult").describe("Erwachsene Person.") })
+);
 const Child = PersonCommon.merge(
   z.object({
-    type: z.literal("child"),
-    age: z.number(),
+    type: z.literal("child").describe("Ein Kind."),
+    age: z.number().describe("Alter des Kindes."),
   })
 );
 const Person = z.discriminatedUnion("type", [Adult, Child]);
 
 export const StepContext = z.object({
   community: z.array(Person),
-  isEmployable: z.boolean(),
+  isEmployable: z
+    .boolean()
+    .describe(
+      "Gibt an ob der Antragsteller erwärbsfähig ist. Ist die Person nicht erwärbsfähig, kann sie kein Bürgergeld beantragen. In dem Fall stehen ihr andere Förderungen zu."
+    ),
   spendings: z.object({
-    rent: z.number(),
-    utilities: z.number(),
-    heating: z.number(),
-    sum: z.number(),
+    rent: z.number().describe("Die Kaltmiete. Kann 0 sein."),
+    utilities: z.number().describe("Nebenkosten ohne Heizkosten. Kann 0 sein."),
+    heating: z.number().describe("Heizkosten. Kann 0 sein."),
+    sum: z
+      .number()
+      .describe(
+        "Die Summe der Kosten für Unkerkunft und Heizung. Kann 0 sein."
+      ),
   }),
   income: z.object({
-    sum: z.number(),
-    allowance: z.optional(z.number()),
+    sum: z.number().describe("Summe des Einkommens."),
+    allowance: z.optional(
+      z
+        .number()
+        .describe(
+          "Anzurechnender Freibetrag. Wird berechnet auf Basis von Angaben zum Gehalt."
+        )
+    ),
   }),
 });
 

@@ -14,6 +14,7 @@
     "ai": "^5.0.59",
     "calculation": "workspace:*",
     "next": "15.5.4",
+    "ollama-ai-provider-v2": "^1.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "xmcp": "^0.3.1",
