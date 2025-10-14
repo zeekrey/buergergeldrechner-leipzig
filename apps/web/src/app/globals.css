@@ -187,3 +187,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Print styles for A4-friendly output */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  html,
+  body {
+    background: white !important;
+  }
+  .print:hidden {
+    display: none !important;
+  }
+  .print:shadow-none {
+    box-shadow: none !important;
+  }
+  .print:border-none {
+    border: none !important;
+  }
+  .print:prose-sm {
+    font-size: 0.9rem;
+  }
+}

@@ -6,10 +6,68 @@ import {
   calculateBaseNeed,
   calculateOverall,
   calculateIncome,
-} from "./calculation";
-import { TAdult, TChild, TStepContext } from "./types";
-import { generateId } from "./utils";
-import { calculateSalary } from "@/app/antrag/monatliches-einkommen/income-dialogs/employment-income";
+  calculateSalary,
+} from "../src/calculation";
+import { type TAdult, type TChild, type TStepContext } from "../src/types";
+import { generateId } from "../src/utils";
+
+describe("salary", () => {
+  test("900 gross, 600 net", () => {
+    expect(
+      calculateSalary({
+        gross: 900,
+        net: 600,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 298,
+      income: 600,
+    });
+  });
+
+  test("1200 gross, 950 net", () => {
+    expect(
+      calculateSalary({
+        gross: 1200,
+        net: 950,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 348,
+      income: 950,
+    });
+  });
+
+  test("2100 gross, 1700 net", () => {
+    expect(
+      calculateSalary({
+        gross: 2100,
+        net: 1700,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 348,
+      income: 1700,
+    });
+  });
+
+  test("2100 gross, 1700 net", () => {
+    expect(
+      calculateSalary({
+        gross: 2100,
+        net: 1700,
+        hasMinorChild: true,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 378,
+      income: 1700,
+    });
+  });
+});
 
 const defaultContext: TStepContext = {
   community: [],

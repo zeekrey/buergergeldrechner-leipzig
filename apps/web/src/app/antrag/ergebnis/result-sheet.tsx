@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Fragment, useMemo, forwardRef } from "react";
 import { allowanceType, incomeType, TStepContext } from "@/lib/types";
-import { calculateBaseNeed, calculateOverall } from "@/lib/calculation";
+import { calculateBaseNeed, calculateOverall } from "calculation";
 
 const Table = forwardRef<
   HTMLTableElement,

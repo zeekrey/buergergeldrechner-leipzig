@@ -1,12 +1,11 @@
 "use client";
 
-import { useMemo, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { ArrowLeftCircleIcon, RotateCwIcon, ShareIcon } from "lucide-react";
 import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
 import { initialStepsState, stepsConfig } from "@/lib/machine";
-import { useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -16,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { calculateOverall } from "@/lib/calculation";
+import { calculateOverall } from "calculation";
 import { useRouter } from "next/navigation";
 import { useStateContext } from "@/components/context";
 import { Result } from "./result";
@@ -26,6 +25,7 @@ import Link from "next/link";
 import { createShareable } from "./actions";
 import { toast } from "sonner";
 import { ResultSheet } from "./result-sheet";
+import { RequiredDocuments } from "./required-documents";
 
 const step = stepsConfig[9];
 
@@ -33,6 +33,7 @@ export default function StepSummary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState("result");
 
   const { allowance, income, overall } = useMemo(
     () => calculateOverall(state),
@@ -88,10 +89,11 @@ export default function StepSummary() {
         <HelpMarkdown />
       </StepTitle>
       <StepContent>
-        <Tabs defaultValue="result">
-          <TabsList className="grid grid-cols-2 w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid grid-cols-3 w-full print:hidden">
             <TabsTrigger value="result">Ergebnis</TabsTrigger>
             <TabsTrigger value="calculation">Berechnung</TabsTrigger>
+            <TabsTrigger value="documents">Unterlagen</TabsTrigger>
           </TabsList>
           <TabsContent value="result">
             <Result
@@ -100,6 +102,7 @@ export default function StepSummary() {
               spendings={state.spendings.sum}
               allowance={allowanceSum}
               overall={overall}
+              onShowDocuments={() => setActiveTab("documents")}
             />
           </TabsContent>
           <TabsContent value="calculation" data-testid="result-calculation">
@@ -127,6 +130,11 @@ export default function StepSummary() {
                   </CardFooter>
                 </Card>
               </ScrollArea>
+            </div>
+          </TabsContent>
+          <TabsContent value="documents">
+            <div className="pb-8">
+              <RequiredDocuments />
             </div>
           </TabsContent>
         </Tabs>

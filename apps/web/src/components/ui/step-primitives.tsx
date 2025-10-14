@@ -35,7 +35,7 @@ const StepTitle = forwardRef<HTMLDivElement, InputProps & { title: string }>(
   ({ children, ...props }, ref) => {
     return (
       <div
-        className="px-8 pt-6 flex justify-between items-center"
+        className="px-8 pt-6 flex justify-between items-center print:hidden"
         ref={ref}
         {...props}
       >
@@ -69,7 +69,11 @@ StepTitle.displayName = "StepTitle";
 const StepDescription = forwardRef<HTMLDivElement, { children: string }>(
   ({ children, ...props }, ref) => {
     return (
-      <div className="px-8 pt-4 text-muted-foreground" ref={ref} {...props}>
+      <div
+        className="px-8 pt-4 text-muted-foreground print:hidden"
+        ref={ref}
+        {...props}
+      >
         <Markdown>{children}</Markdown>
       </div>
     );

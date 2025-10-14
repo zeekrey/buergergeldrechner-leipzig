@@ -10,7 +10,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { produce } from "immer";
-import { calculateSalary } from "./employment-income";
+import { calculateSalary } from "calculation";
 import { generateId } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";

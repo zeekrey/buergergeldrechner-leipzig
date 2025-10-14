@@ -1,6 +1,6 @@
 import { Progress } from "./progress";
 import { useMemo } from "react";
-import { calculateOverall } from "@/lib/calculation";
+import { calculateOverall } from "calculation";
 import { useStateContext } from "./context";
 import { ResultSheet } from "@/app/antrag/ergebnis/result-sheet";
 import {

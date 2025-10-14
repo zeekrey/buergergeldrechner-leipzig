@@ -22,8 +22,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { useCallback } from "react";
+import {
+  ArrowLeftCircleIcon,
+  ArrowRightCircleIcon,
+  CalculatorIcon,
+} from "lucide-react";
+import { useCallback, useState } from "react";
 import { produce } from "immer";
 import {
   StepRoot,
@@ -37,6 +41,17 @@ import HelpMarkdown from "@/config/steps/kosten-unterkunft-heizung.mdx";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { calculateRent } from "@/lib/rent-calculation";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { RentCalculation } from "@/app/mietpruefung/rent-calculation";
 
 const step = stepsConfig[7];
 
@@ -50,6 +65,7 @@ const formSchema = z.object({
 export default function StepSpending() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
+  const [dialogIsOpen, setDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,7 +90,7 @@ export default function StepSpending() {
     heating,
     hasNoSpendings,
   }: z.infer<typeof formSchema>) {
-    console.log(rent);
+    console.log("trigger step!");
 
     const newState = produce(state, (draft) => {
       if (hasNoSpendings) {
@@ -96,11 +112,19 @@ export default function StepSpending() {
   }
 
   const [heating, rent, utilities] = form.watch([
-    "heating",
     "rent",
+    "heating",
     "utilities",
+    "hasNoSpendings",
   ]);
+
   const sum = Number(heating ?? 0) + Number(rent ?? 0) + Number(utilities ?? 0);
+  const { isOk, issues, description } = calculateRent({
+    rent: Number(rent ?? 0),
+    utilities: Number(utilities ?? 0) + Number(heating ?? 0),
+    communityCount: state.community.length,
+    space: 1,
+  });
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous].id}`);
@@ -113,35 +137,33 @@ export default function StepSpending() {
       </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <Form {...form}>
-        <form className="space-y-2" onSubmit={form.handleSubmit(onSubmit)}>
-          <StepContent>
+        <form
+          className="space-y-2 grow flex flex-col"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <StepContent className="flex-grow flex flex-col px-8 pt-4">
             <FormField
               control={form.control}
               name="hasNoSpendings"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormItem className="flex flex-row items-start space-x-1 rounded-md border p-4">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Mir entstehen keine Kosten für Unterkunft und Heizung
-                    </FormLabel>
-                    {/* <FormDescription>
-                      You can manage your mobile notifications in the page.
-                    </FormDescription> */}
-                  </div>
+                  <FormLabel>
+                    Mir entstehen keine Kosten für Unterkunft und Heizung
+                  </FormLabel>
                 </FormItem>
               )}
             />
-            <ScrollArea className="sm:h-[380px]">
+            <ScrollArea className="flex-grow">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px]">Position</TableHead>
+                    <TableHead className="">Position</TableHead>
                     <TableHead className="text-right">Betrag</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -150,18 +172,19 @@ export default function StepSpending() {
                     <TableCell className="font-medium">
                       Kaltmiete (Schuldzins bei Wohneigentum) in €
                     </TableCell>
-                    <TableCell className="w-[60px] text-right">
+                    <TableCell className="text-right">
                       <FormField
-                        disabled={form.getValues("hasNoSpendings")}
                         control={form.control}
                         name="rent"
                         render={({ field }) => (
                           <FormItem className="">
                             <FormControl>
                               <Input
-                                placeholder="Kaltmiete"
-                                type="number"
                                 {...field}
+                                type="number"
+                                className="w-[160px]"
+                                placeholder="Kaltmiete"
+                                disabled={form.getValues("hasNoSpendings")}
                               />
                             </FormControl>
                             <FormMessage />
@@ -171,21 +194,21 @@ export default function StepSpending() {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="w-[60px]  font-medium">
+                    <TableCell className="font-medium">
                       Nebenkosten in €
                     </TableCell>
                     <TableCell className="text-right">
                       <FormField
-                        disabled={form.getValues("hasNoSpendings")}
                         control={form.control}
                         name="utilities"
                         render={({ field }) => (
                           <FormItem className="">
                             <FormControl>
                               <Input
-                                placeholder="Nebenkosten"
-                                type="number"
                                 {...field}
+                                type="number"
+                                placeholder="Nebenkosten"
+                                disabled={form.getValues("hasNoSpendings")}
                               />
                             </FormControl>
                             <FormMessage />
@@ -200,16 +223,16 @@ export default function StepSpending() {
                     </TableCell>
                     <TableCell className="w-[60px] text-right">
                       <FormField
-                        disabled={form.getValues("hasNoSpendings")}
                         control={form.control}
                         name="heating"
                         render={({ field }) => (
                           <FormItem className="">
                             <FormControl>
                               <Input
-                                placeholder="Heizkosten"
                                 {...field}
                                 type="number"
+                                placeholder="Heizkosten"
+                                disabled={form.getValues("hasNoSpendings")}
                               />
                             </FormControl>
                             <FormMessage />
@@ -222,7 +245,7 @@ export default function StepSpending() {
                 <TableFooter>
                   <TableRow>
                     <TableCell className="font-medium">Summe</TableCell>
-                    <TableCell className="w-[60px] text-right">
+                    <TableCell className=" text-right">
                       {sum.toLocaleString("de-DE", {
                         currency: "EUR",
                         style: "currency",
@@ -233,19 +256,52 @@ export default function StepSpending() {
               </Table>
             </ScrollArea>
           </StepContent>
-          <StepNavigation>
-            <Button onClick={handleBack} size="lg" type="button">
-              <ArrowLeftCircleIcon className="w-4 h-4" />
-            </Button>
-            <Button
-              className="grow sm:grow-0 sm:w-48 ml-4"
-              size="lg"
-              type="submit"
-            >
-              Weiter
-              <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-            </Button>
-          </StepNavigation>
+          <Dialog open={dialogIsOpen} onOpenChange={setDialogOpen}>
+            <StepNavigation className="flex-col px-8 py-6 space-y-3">
+              {/* {issues?.includes("rent") && (
+                <>
+                  <DialogTrigger asChild>
+                    <Alert
+                      className=" cursor-pointer hover:shadow transition-shadow"
+                      onClick={() => console.log("click")}
+                    >
+                      <CalculatorIcon className="h-4 w-4" />
+                      <AlertTitle>
+                        Miete ist zu ggf. zu hoch. Mehr erfahren...
+                      </AlertTitle>
+                    </Alert>
+                  </DialogTrigger>
+                  <DialogContent className="md:min-w-[625px]">
+                    <DialogHeader>
+                      <DialogTitle>Bedarfsprüfung für Wohnkosten</DialogTitle>
+                      <DialogDescription>
+                        Hier können Sie die Höhe der angemessenen Kosten für
+                        Unterkunft und Heizung (KdU) prüfen.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex items-center space-x-2">
+                      <RentCalculation
+                        onResult={() => console.log("Oh, there is a result.")}
+                      />
+                    </div>
+                  </DialogContent>
+                </>
+              )} */}
+              <div className=" flex justify-between sm:gap-2">
+                <Button onClick={handleBack} size="lg" type="button">
+                  <ArrowLeftCircleIcon className="w-4 h-4" />
+                </Button>
+                <Button
+                  className="grow sm:grow-0 sm:w-48 ml-4"
+                  size="lg"
+                  type="submit"
+                >
+                  Weiter
+                  <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
+                </Button>
+              </div>
+            </StepNavigation>
+          </Dialog>
         </form>
       </Form>
     </StepRoot>
