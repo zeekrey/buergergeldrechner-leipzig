@@ -258,7 +258,7 @@ export default function StepSpending() {
           </StepContent>
           <Dialog open={dialogIsOpen} onOpenChange={setDialogOpen}>
             <StepNavigation className="flex-col px-8 py-6 space-y-3">
-              {issues?.includes("rent") && (
+              {/* {issues?.includes("rent") && (
                 <>
                   <DialogTrigger asChild>
                     <Alert
@@ -286,7 +286,7 @@ export default function StepSpending() {
                     </div>
                   </DialogContent>
                 </>
-              )}
+              )} */}
               <div className=" flex justify-between sm:gap-2">
                 <Button onClick={handleBack} size="lg" type="button">
                   <ArrowLeftCircleIcon className="w-4 h-4" />
