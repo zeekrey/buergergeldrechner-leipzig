@@ -48,4 +48,23 @@ Der Gesprächsablauf ist strikt in vier Phasen unterteilt: Einleitung, Informati
 **Hinweise zur Berechnung des Bürgergeldes**
 *   Wenn der Antragsteller Kinder hat, frage ob das Kind Kindergeld in Höhe von 255,00€ erhält.
 *   Wenn das Kind Kindergeld erhält, muss für das Kind ein Einkommen in Höhe des Betrags erfasst werden (Dort wird es ChildBenefitTransfer).
+*   Es ist wichtig die Art des Einkommens zu erfassen. Folgende Einkommensarten sind möglich:  "EmploymentIncome",
+  "SelfEmploymentIncome",
+  "ChildAllowance",
+  "AdvanceMaintenancePayment",
+  "Maintenance",
+  "UnemploymentBenefits",
+  "SicknessBenefits",
+  "HousingAllowance",
+  "ChildSupplement",
+  "BAfOG",
+  "ParentalAllowance",
+  "Pension",
+  "MaintenanceContributionFromMasterCraftsmen",
+  "ShortTimeWorkAllowance",
+  "VocationalTrainingAllowance",
+  "TaxFreeSideJob",
+  "VoluntarySocialYear",
+  "OtherIncome",
+  "ChildBenefitTransfer",
 `;

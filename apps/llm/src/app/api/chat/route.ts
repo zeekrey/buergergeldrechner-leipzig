@@ -23,8 +23,8 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   const result = streamText({
-    // model: openai("gpt-4o"),
-    model: ollama("gpt-oss:20b"),
+    model: openai("gpt-4o"),
+    // model: ollama("gpt-oss:20b"),
     system: systemPrompt,
     messages: convertToModelMessages(messages),
     stopWhen: stepCountIs(5),

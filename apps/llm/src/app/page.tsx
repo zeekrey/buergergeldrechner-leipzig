@@ -1,11 +1,24 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
+import { useChat, type UIMessage } from "@ai-sdk/react";
 import { useState } from "react";
 
 export default function Chat() {
+  const initialMessage: UIMessage[] = [
+    {
+      id: "initial-message",
+      role: "assistant",
+      parts: [
+        {
+          type: "text",
+          text: "Hallo! Ich berechne Ihren Bürgergeldanspruch. Zunächst die Frage: Sind sie erwerbsfähig?",
+        },
+      ],
+    },
+  ];
+
   const [input, setInput] = useState("");
-  const { messages, sendMessage } = useChat();
+  const { messages, sendMessage } = useChat({ messages: initialMessage });
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       {messages.map((message) => (
