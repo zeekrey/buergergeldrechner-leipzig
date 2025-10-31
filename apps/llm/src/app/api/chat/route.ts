@@ -6,15 +6,14 @@ import {
   tool,
   stepCountIs,
 } from "ai";
-import z from "zod";
-import { calculateSalary, calculateOverall, StepContext } from "calculation";
+import { calculateOverall, StepContext } from "calculation";
 import { systemPrompt } from "./system-prompt";
-import { createOllama } from "ollama-ai-provider-v2";
+// import { createOllama } from "ollama-ai-provider-v2";
 
-const ollama = createOllama({
-  // optional settings, e.g.
-  // baseURL: 'https://api.ollama.com',
-});
+// const ollama = createOllama({
+//   // optional settings, e.g.
+//   // baseURL: 'https://api.ollama.com',
+// });
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
