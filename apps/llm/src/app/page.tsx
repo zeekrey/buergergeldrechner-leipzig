@@ -11,7 +11,7 @@ export default function Chat() {
       parts: [
         {
           type: "text",
-          text: "Hallo! Ich berechne Ihren Bürgergeldanspruch. Zunächst die Frage: Sind sie erwerbsfähig?",
+          text: "Hallo! Ich berechne Ihren Bürgergeldanspruch. Zunächst die Frage: Sind Sie erwerbsfähig?",
         },
       ],
     },
