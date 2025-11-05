@@ -191,7 +191,7 @@ export default function Chat() {
     e.preventDefault();
     if (inputValue.trim() && status !== "streaming") {
       // Add vibration when message is submitted
-      navigator.vibrate(50);
+      navigator?.vibrate?.(50);
 
       e.preventDefault();
       sendMessage({ text: inputValue });
