@@ -1,4 +1,4 @@
-Berechne meinen Bürgergeldanspruch:
+Berechne meinen Grundsicherunganspruch:
 
 - Ich habe einen Partner
 - 1 Kind, 8 Jahre alt
@@ -8,7 +8,7 @@ Berechne meinen Bürgergeldanspruch:
 
 => 2.013,02 €
 
-Berechne meinen Bürgergeldanspruch:
+Berechne meinen Grundsicherunganspruch:
 
 - Alleinstehend
 - 1 Kind, 1 Jahr alt

@@ -317,7 +317,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
         {/* overall sum  */}
         <>
           <TableCell className="sm:col-span-3 bg-primary font-bold text-primary-foreground">
-            Bürgergeldanspruch
+            Grundsicherunganspruch
           </TableCell>
           <TableCell className="text-right bg-primary font-bold text-primary-foreground">
             {overall.toLocaleString("de-DE", {

@@ -43,7 +43,7 @@ export function stepsReducer(
 
 export const stepsConfig: Record<number, TStep> = {
   0: {
-    description: `Bürgergeldberechtigt, sind Personen die **erwerbsfähig** sind. Das bedeutet, dass Sie in der Lage sein müssen, mindestens **drei Stunden pro Tag arbeiten** zu können. Sollte dies nicht der Fall sein, können Sie Anspruch auf andere Hilfeleistungen haben.`,
+    description: `Grundsicherungberechtigt, sind Personen die **erwerbsfähig** sind. Das bedeutet, dass Sie in der Lage sein müssen, mindestens **drei Stunden pro Tag arbeiten** zu können. Sollte dies nicht der Fall sein, können Sie Anspruch auf andere Hilfeleistungen haben.`,
     id: "erwerbsfaehig",
     next: () => 1,
     previous: 0,
@@ -72,7 +72,7 @@ export const stepsConfig: Record<number, TStep> = {
   },
   3: {
     description:
-      "Der Bedarf auf Bürgergeld richtet sich nach der Anzahl und dem Alter der Kinder, die in Ihrem Haushalt leben.",
+      "Der Bedarf auf Grundsicherung richtet sich nach der Anzahl und dem Alter der Kinder, die in Ihrem Haushalt leben.",
     id: "kinder-anzahl",
     next: () => 5,
     previous: 2,
@@ -118,7 +118,7 @@ export const stepsConfig: Record<number, TStep> = {
   },
   9: {
     description:
-      "Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des Bürgergeldes. Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine unverbindliche Berechnung handelt.",
+      "Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des Grundsicherunges. Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine unverbindliche Berechnung handelt.",
     id: "ergebnis",
     next: () => 10,
     previous: 8,

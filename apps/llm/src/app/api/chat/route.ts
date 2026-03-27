@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     tools: {
       // calculateSalary: tool({
       //   description:
-      //     "Berechnet die Einnahmen einer Person die Bürgergeld benatragen möchte. Die anzurechnenden Einnahmen einer Person werden durch mögliche Freibeträge reduziert, sodass sich der Bürgergeldanspruch erhöhen kann.",
+      //     "Berechnet die Einnahmen einer Person die Grundsicherung benatragen möchte. Die anzurechnenden Einnahmen einer Person werden durch mögliche Freibeträge reduziert, sodass sich der Grundsicherunganspruch erhöhen kann.",
       //   inputSchema: z.object({
       //     gross: z
       //       .number()
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       //   }),
       //   execute: async ({ gross, net, hasMinorChild, isYoung }) => {
       //     /**
-      //      * Ich möchte Bürgergeld beantragen und möchte wissen wie viel von meinen Einkommen angerechnet wird. Kannst du das berechnen?
+      //      * Ich möchte Grundsicherung beantragen und möchte wissen wie viel von meinen Einkommen angerechnet wird. Kannst du das berechnen?
       //      * Mein Brutto-Einkommen: 900, Mein Netto-Einkommen: 600, Lebt ein Kind unter 18 Jahren in deinem Haushalt? Nein,  Bist du jünger als 18 Jahre? Nein
       //      */
       //     const result = calculateSalary({
@@ -64,11 +64,11 @@ export async function POST(req: Request) {
       // }),
       calculateOverall: tool({
         description:
-          "Berechnet den Bürgergeldanspruch einer Person. Um den Anspruch berechnen zu können, werden eine Reihe von Informationen benötigt. Eine Grundvorraussetzung für den Bezug von Bürgergeld ist die erwerbsfähigkeit (isEmployable). Frage diese zunächst ab. Gib den Hinweis, dass Antragsteller grundsätzlich Vermittelbar und arbeitsfähig sein müssen. Ist dies nicht der Fall, können andere Förderungen benatragt werden aber kein Bürgergeld.",
+          "Berechnet den Grundsicherunganspruch einer Person. Um den Anspruch berechnen zu können, werden eine Reihe von Informationen benötigt. Eine Grundvorraussetzung für den Bezug von Grundsicherung ist die erwerbsfähigkeit (isEmployable). Frage diese zunächst ab. Gib den Hinweis, dass Antragsteller grundsätzlich Vermittelbar und arbeitsfähig sein müssen. Ist dies nicht der Fall, können andere Förderungen benatragt werden aber kein Grundsicherung.",
         inputSchema: StepContext,
         execute: async (context) => {
           /**
-           * Ich möchte Bürgergeld beantragen und möchte wissen wie viel von meinen Einkommen angerechnet wird. Kannst du das berechnen?
+           * Ich möchte Grundsicherung beantragen und möchte wissen wie viel von meinen Einkommen angerechnet wird. Kannst du das berechnen?
            * Mein Brutto-Einkommen: 900, Mein Netto-Einkommen: 600, Lebt ein Kind unter 18 Jahren in deinem Haushalt? Nein,  Bist du jünger als 18 Jahre? Nein
            */
           const result = calculateOverall(context);

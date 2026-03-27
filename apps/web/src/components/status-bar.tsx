@@ -49,7 +49,7 @@ export function StatusBar() {
           <DrawerTitle>Ihre aktuellen Eingaben</DrawerTitle>
           <DrawerDescription>
             Bei der Darstellung handelt es sich um eine Vorabrechnung auf die es
-            keinerlei Haftung gibt. Ihren tatsächlichen Bürgergeldanspruch kann
+            keinerlei Haftung gibt. Ihren tatsächlichen Grundsicherunganspruch kann
             nur das Jobcenter prüfen.
           </DrawerDescription>
         </DrawerHeader>

@@ -4152,7 +4152,7 @@ var Child = PersonCommon.merge(exports_external.object({
 var Person = exports_external.discriminatedUnion("type", [Adult, Child]);
 var StepContext = exports_external.object({
   community: exports_external.array(Person),
-  isEmployable: exports_external.boolean().describe("Gibt an ob der Antragsteller erwärbsfähig ist. Ist die Person nicht erwärbsfähig, kann sie kein Bürgergeld beantragen. In dem Fall stehen ihr andere Förderungen zu."),
+  isEmployable: exports_external.boolean().describe("Gibt an ob der Antragsteller erwärbsfähig ist. Ist die Person nicht erwärbsfähig, kann sie kein Grundsicherung beantragen. In dem Fall stehen ihr andere Förderungen zu."),
   spendings: exports_external.object({
     rent: exports_external.number().describe("Die Kaltmiete. Kann 0 sein."),
     utilities: exports_external.number().describe("Nebenkosten ohne Heizkosten. Kann 0 sein."),

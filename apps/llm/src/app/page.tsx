@@ -36,7 +36,7 @@ export default function Chat() {
       parts: [
         {
           type: "text",
-          text: "Hallo! Ich berechne Ihren Bürgergeldanspruch. Zunächst die Frage: Sind Sie erwerbsfähig?",
+          text: "Hallo! Ich berechne Ihren Grundsicherunganspruch. Zunächst die Frage: Sind Sie erwerbsfähig?",
         },
       ],
     },
@@ -325,7 +325,7 @@ export default function Chat() {
 
           <div className="flex gap-1">
             <h1 className="text-base font-medium text-gray-800">
-              Bürgergeld KI
+              Grundsicherung KI
             </h1>
             <Badge variant="destructive" className="text-xs">
               Alpha

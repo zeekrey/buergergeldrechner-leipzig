@@ -50,7 +50,7 @@ export function HelpPopup() {
             />
           </div>
           <p className="text-muted-foreground text-sm mt-6">
-            Der Bürgergeldrechner wurde im Rahmen des Innovationswettbewerbs
+            Der Grundsicherungsrechner wurde im Rahmen des Innovationswettbewerbs
             <strong>"Smart City Challenge Leipzig"</strong>durch das Referat
             Digitale Stadt Leipzig gefördert.
           </p>

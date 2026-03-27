@@ -12,7 +12,7 @@
 - e670e78: Kleinere Anpassungen an den Hilfetexten.
 - d4bac6f: Es gibt nun die Möglichkeit Feedback abzugeben.
 - d4bac6f: Der Freibetrag für Personen unter 25 wurde aktualisiert. Außerdem wird der Freibetrag nun korrekt auf das Netto-Einkommen angerechnet.
-- d4bac6f: Wird der Bürgergeldrechner über die Startseite geöffnet, so werden bisherige Berechnungen gelöscht.
+- d4bac6f: Wird der Grundsicherungsrechner über die Startseite geöffnet, so werden bisherige Berechnungen gelöscht.
 
 ## 0.5.3
 
@@ -48,7 +48,7 @@
 
 ### Minor Changes
 
-- 8bb8c6d: Am Ende des Rechners gibt es jetzt die Möglichkeit, einen einzigartigen Link zur gemeinsamen Nutzung der Bürgergeldberechnung zu erstellen.
+- 8bb8c6d: Am Ende des Rechners gibt es jetzt die Möglichkeit, einen einzigartigen Link zur gemeinsamen Nutzung der Grundsicherungberechnung zu erstellen.
 
 ### Patch Changes
 
@@ -99,7 +99,7 @@
 
 ### Patch Changes
 
-- Es ist nun möglich den Bürgergeldrechner über die Navigationsleiste neu zu starten.
+- Es ist nun möglich den Grundsicherungsrechner über die Navigationsleiste neu zu starten.
 
 ## 0.2.2
 
@@ -126,5 +126,5 @@
 
 ### Patch Changes
 
-- 760b86b: Besteht kein Anspruch auf Bürgergeld, so wird dies nun korrekt visualisiert.
+- 760b86b: Besteht kein Anspruch auf Grundsicherung, so wird dies nun korrekt visualisiert.
 - Es ist nun möglich anzugeben, dass es keinerlei Ausgaben gibt.

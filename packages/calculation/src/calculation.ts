@@ -16,7 +16,7 @@ import { z } from "zod";
 type TAdditional = { name: string; amount: number };
 
 /**
- * "Bürgergeld" is the result of the following:
+ * "Grundsicherung" is the result of the following:
  *   Regelbedarf (base need)
  * + Mehrbedarf (additional need)
  * + Kosten der Unterkunft (spendings)
@@ -28,7 +28,7 @@ type TAdditional = { name: string; amount: number };
  *
  *   Bedarf (need)
  * - Einkommen abzgl. Freibeträge (income after allowance)
- * = Bürgergeldanspruch (overall)
+ * = Grundsicherunganspruch (overall)
  */
 
 /**

@@ -37,15 +37,15 @@ import {
 import { ResultExample } from "@/components/result-example";
 
 export const metadata: Metadata = {
-  title: "Bürgergeldrechner des Jobcenter Leipzig",
+  title: "Grundsicherungsrechner des Jobcenter Leipzig",
   description:
-    "Berechnen Sie Ihr Bürgergeld einfach und unkompliziert mit dem Bürgergeldrechner des Jobcenters Leipzig. Erfahren Sie, welche Leistungen Ihnen zustehen und erhalten Sie individuelle Unterstützung bei Ihrer Antragstellung. Nutzen Sie unseren kostenlosen Online-Rechner für eine schnelle und präzise Berechnung.",
+    "Berechnen Sie Ihr Grundsicherung einfach und unkompliziert mit dem Grundsicherungsrechner des Jobcenters Leipzig. Erfahren Sie, welche Leistungen Ihnen zustehen und erhalten Sie individuelle Unterstützung bei Ihrer Antragstellung. Nutzen Sie unseren kostenlosen Online-Rechner für eine schnelle und präzise Berechnung.",
   openGraph: {
-    title: "Bürgergeldrechner des Jobcenter Leipzig",
+    title: "Grundsicherungsrechner des Jobcenter Leipzig",
     description:
-      "Berechnen Sie Ihr Bürgergeld einfach und unkompliziert mit dem Bürgergeldrechner des Jobcenters Leipzig. Erfahren Sie, welche Leistungen Ihnen zustehen und erhalten Sie individuelle Unterstützung bei Ihrer Antragstellung. Nutzen Sie unseren kostenlosen Online-Rechner für eine schnelle und präzise Berechnung.",
+      "Berechnen Sie Ihr Grundsicherung einfach und unkompliziert mit dem Grundsicherungsrechner des Jobcenters Leipzig. Erfahren Sie, welche Leistungen Ihnen zustehen und erhalten Sie individuelle Unterstützung bei Ihrer Antragstellung. Nutzen Sie unseren kostenlosen Online-Rechner für eine schnelle und präzise Berechnung.",
     url: "https://buergergeld.io",
-    siteName: "Bürgergeldrechner des Jobcenter Leipzig",
+    siteName: "Grundsicherungsrechner des Jobcenter Leipzig",
     images: [
       {
         url: "https://www.buergergeld.dev/og.png", // Must be an absolute URL
@@ -80,7 +80,7 @@ const features = [
   },
   {
     description:
-      "Der Bürgergeldrechner berücksichtigt bereits zahlreiche Informationen, die für den Anspruch auf Bürgergeld relevant sind.",
+      "Der Grundsicherungsrechner berücksichtigt bereits zahlreiche Informationen, die für den Anspruch auf Grundsicherung relevant sind.",
     name: "Detailgenaue Berechnung",
     icon: DraftingCompassIcon,
   },
@@ -97,7 +97,7 @@ export default function HomePage() {
         >
           {/* <div className="flex lg:flex-1">
             <Link className="-m-1.5 p-1.5" href="/">
-              Bürgergeldrechner des Jobcenter Leipzig
+              Grundsicherungsrechner des Jobcenter Leipzig
             </Link>
           </div> */}
           <div className="flex lg:hidden">
@@ -114,11 +114,11 @@ export default function HomePage() {
               <DrawerContent className="text-zinc-900">
                 <DrawerHeader>
                   <DrawerTitle>
-                    Bürgergeldrechner des Jobcenter Leipzig
+                    Grundsicherungsrechner des Jobcenter Leipzig
                   </DrawerTitle>
                   <DrawerDescription>
-                    Schnell und einfach den Anspruch auf Bürgergeld mit dem
-                    Bürgergeldrechner des Jobcenters Leipzig prüfen.
+                    Schnell und einfach den Anspruch auf Grundsicherung mit dem
+                    Grundsicherungsrechner des Jobcenters Leipzig prüfen.
                   </DrawerDescription>
                 </DrawerHeader>
                 {/* <div className="p-2 flex flex-col"> */}
@@ -211,7 +211,7 @@ export default function HomePage() {
           </div>
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-900 sm:text-6xl">
-              Bürgergeld, schnell und einfach berechnen
+              Grundsicherung, schnell und einfach berechnen
             </h1>
             <p className="mt-6 text-lg leading-8 text-zinc-700">
               Ermitteln Sie Ihre möglichen Ansprüche in nur wenigen Schritten –
@@ -245,11 +245,11 @@ export default function HomePage() {
                   Einfach & sicher
                 </h2>
                 <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-                  Bürgergeld berechnen
+                  Grundsicherung berechnen
                 </p>
                 <p className="mt-6 text-lg leading-8 text-zinc-700">
-                  Der Bürgergeldrechner des Jobcenters Leipzig bietet eine
-                  einfache und sichere Möglichkeit, den eigenen Bürgergeldbedarf
+                  Der Grundsicherungsrechner des Jobcenters Leipzig bietet eine
+                  einfache und sichere Möglichkeit, den eigenen Grundsicherungbedarf
                   zu prüfen – ganz ohne Anmeldung.
                 </p>
                 <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-zinc-700 lg:max-w-none">
@@ -289,8 +289,8 @@ export default function HomePage() {
               Ergebnisse teilen
             </h2>
             <p className="mt-6 text-lg leading-8 text-zinc-700">
-              Der Bürgergeldrechner zeigt eine detailgenaue Berechnung des
-              Bürgergeldes. Zudem haben Sie die Möglichkeit das Ergebnis mit
+              Der Grundsicherungsrechner zeigt eine detailgenaue Berechnung des
+              Grundsicherunges. Zudem haben Sie die Möglichkeit das Ergebnis mit
               jemandem zu teilen.
             </p>
           </div>
@@ -390,7 +390,7 @@ export default function HomePage() {
           <div className="mx-auto max-w-4xl px-6 lg:px-8 ">
             <div className="text-center mx-auto">
               <p className="text-center text-xl font-semibold text-zinc-900 mt-2">
-                Der Bürgergeldrechner wurde im Rahmen des Innovationswettbewerbs
+                Der Grundsicherungsrechner wurde im Rahmen des Innovationswettbewerbs
                 "Smart City Challenge Leipzig" durch das Referat Digitale Stadt
                 Leipzig gefördert.
               </p>

@@ -73,7 +73,7 @@ export default async function Page({
             <ContinueButton state={data.state} />
           </div>
           <h1 className="text-2xl font-bold my-12">
-            Bürgergeldrechner des Jobcenter Leipzig
+            Grundsicherungsrechner des Jobcenter Leipzig
           </h1>
           <div className="sm:-m-4 sm:p-4 bg-zinc-100 dark:bg-zinc-800 sm:rounded-xl sm:ring-1 ring-gray-400/30">
             <div className="sm:rounded-lg sm:drop-shadow-xl">

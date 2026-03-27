@@ -1,11 +1,11 @@
-# Bürgergeldrechner
+# Grundsicherungsrechner
 
 ![License](https://img.shields.io/badge/license-GNU-blue.svg)
 
-Tiny website to determine your eligibility for the citizen's income (Bürgergeld) in Germany. 🇩🇪
+Tiny website to determine your eligibility for the citizen's income (Grundsicherung) in Germany. 🇩🇪
 
 > [!NOTE]
-> This project is part of the [Smart City Challenge Leipzig 2024](https://digitalcampus.leipzig.de/sccl-2024/) and focuses on the topic ["Bürgergeldrechner+ - Dein individueller Anspruchsrechner."](https://digitalcampus.leipzig.de/sccl-wettbewerbsbedingungen-2024/buergergeldrechner-dein-individueller-anspruchsrechner/).
+> This project is part of the [Smart City Challenge Leipzig 2024](https://digitalcampus.leipzig.de/sccl-2024/) and focuses on the topic ["Grundsicherungsrechner+ - Dein individueller Anspruchsrechner."](https://digitalcampus.leipzig.de/sccl-wettbewerbsbedingungen-2024/buergergeldrechner-dein-individueller-anspruchsrechner/).
 
 ## Contributing
 
