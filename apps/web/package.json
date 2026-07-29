@@ -1,5 +1,5 @@
 {
-  "name": "buergergeldrechner",
+  "name": "@buergergeldrechner/web",
   "version": "0.5.4",
   "private": true,
   "scripts": {
@@ -9,7 +9,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "vitest --config vitest.config.ts"
+    "typecheck": "tsc --noEmit",
+    "test": "bun run test:unit",
+    "test:unit": "vitest run --config vitest.config.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "calculation": "workspace:*",
