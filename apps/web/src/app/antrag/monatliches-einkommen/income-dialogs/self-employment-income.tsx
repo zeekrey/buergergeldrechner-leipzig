@@ -10,7 +10,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { produce } from "immer";
-import { calculateSalary } from "calculation";
+import { calculateSelfEmploymentIncome } from "calculation";
 import { generateId } from "@/lib/utils";
 import { useStateContext } from "@/components/context";
 import { IncomeComponentProps } from "../income-dialog";
@@ -50,9 +50,9 @@ export const SelfEmploymentIncome = ({
     );
 
     if (selectedPersonIndex !== -1) {
-      const { allowance, income: _income } = calculateSalary({
-        gross: Number(data.gros),
-        net: Number(data.net),
+      const { allowance, income: _income } = calculateSelfEmploymentIncome({
+        revenue: Number(data.gros),
+        expenses: Number(data.net),
         hasMinorChild: state.community.some(
           (person) => person.type === "child" && person.age < 18
         ),
@@ -167,7 +167,7 @@ export const SelfEmploymentIncome = ({
           />
         </div>
         <div className="px-0 pt-2">
-          <Alert variant="warning">
+          <Alert>
             <ShieldAlertIcon className="h-4 w-4" />
             <AlertTitle>Monatlich durchschnittliche Einnahmen</AlertTitle>
             <AlertDescription>

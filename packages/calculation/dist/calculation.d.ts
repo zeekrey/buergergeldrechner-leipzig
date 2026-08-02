@@ -82,6 +82,15 @@ export declare function calculateOverall(context: TStepContext): {
     incomeAfterAllowance: number;
     overall: number;
 };
+export declare function calculateSelfEmploymentIncome({ revenue, expenses, hasMinorChild, isYoung, }: {
+    revenue: number;
+    expenses: number;
+    hasMinorChild: boolean;
+    isYoung: boolean;
+}): {
+    allowance: number;
+    income: number;
+};
 export declare function calculateSalary({ gross, net, hasMinorChild, isYoung, }: {
     gross: number;
     net: number;

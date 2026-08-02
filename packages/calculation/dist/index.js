@@ -4503,7 +4503,7 @@ function calculateChildBenefitTransfer(context) {
 }
 function calculateAllowance(context) {
   const legitimate = context.community.filter((person) => {
-    if ((person.type === "adult" || getChildAgeGroup(person.age) === "18+") && person.income?.length > 0 && person.income?.every((income) => income.type !== "EmploymentIncome"))
+    if ((person.type === "adult" || getChildAgeGroup(person.age) === "18+") && person.income?.length > 0 && person.income?.every((income) => income.type !== "EmploymentIncome" && income.type !== "SelfEmploymentIncome"))
       return true;
   });
   const incomeAllowance = context.community.flatMap((group) => group.income.filter((income) => income.allowance).map((income) => ({
@@ -4563,6 +4563,32 @@ function calculateOverall(context) {
     overall: need - incomeAfterAllowance
   };
 }
+function calculateSelfEmploymentIncome({
+  revenue,
+  expenses,
+  hasMinorChild,
+  isYoung
+}) {
+  if (revenue < 0 || expenses < 0) {
+    return {
+      allowance: 0,
+      income: 0
+    };
+  }
+  const profit = Math.max(revenue - expenses, 0);
+  if (profit === 0) {
+    return {
+      allowance: 0,
+      income: 0
+    };
+  }
+  return calculateSalary({
+    gross: profit,
+    net: profit,
+    hasMinorChild,
+    isYoung
+  });
+}
 function calculateSalary({
   gross,
   net,
@@ -4607,6 +4633,7 @@ export {
   flattenIncome,
   diseases,
   data_default as calculationReferenceData,
+  calculateSelfEmploymentIncome,
   calculateSalary,
   calculateOverall,
   calculateIncome,

@@ -348,7 +348,11 @@ export function calculateAllowance(context: TStepContext): {
     if (
       (person.type === "adult" || getChildAgeGroup(person.age) === "18+") &&
       person.income?.length > 0 &&
-      person.income?.every((income) => income.type !== "EmploymentIncome")
+      person.income?.every(
+        (income) =>
+          income.type !== "EmploymentIncome" &&
+          income.type !== "SelfEmploymentIncome"
+      )
     )
       return true;
   });
@@ -429,6 +433,43 @@ export function calculateOverall(context: TStepContext) {
     incomeAfterAllowance,
     overall: need - incomeAfterAllowance,
   };
+}
+
+export function calculateSelfEmploymentIncome({
+  revenue,
+  expenses,
+  hasMinorChild,
+  isYoung,
+}: {
+  revenue: number;
+  expenses: number;
+  hasMinorChild: boolean;
+  isYoung: boolean;
+}) {
+  if (revenue < 0 || expenses < 0) {
+    return {
+      allowance: 0,
+      income: 0,
+    };
+  }
+
+  const profit = Math.max(revenue - expenses, 0);
+
+  if (profit === 0) {
+    return {
+      allowance: 0,
+      income: 0,
+    };
+  }
+
+  // For self-employment, both the assessable income and the allowance are
+  // based on profit (revenue minus business expenses), not on revenue.
+  return calculateSalary({
+    gross: profit,
+    net: profit,
+    hasMinorChild,
+    isYoung,
+  });
 }
 
 export function calculateSalary({

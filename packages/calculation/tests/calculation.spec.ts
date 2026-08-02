@@ -7,6 +7,7 @@ import {
   calculateOverall,
   calculateIncome,
   calculateSalary,
+  calculateSelfEmploymentIncome,
 } from "../src/calculation";
 import { type TAdult, type TChild, type TStepContext } from "../src/types";
 import { generateId } from "../src/utils";
@@ -65,6 +66,36 @@ describe("salary", () => {
     ).toEqual({
       allowance: 378,
       income: 1700,
+    });
+  });
+});
+
+describe("self-employment income", () => {
+  test("calculates income and allowance from profit", () => {
+    expect(
+      calculateSelfEmploymentIncome({
+        revenue: 1500,
+        expenses: 1000,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 180,
+      income: 500,
+    });
+  });
+
+  test("does not produce negative income when expenses exceed revenue", () => {
+    expect(
+      calculateSelfEmploymentIncome({
+        revenue: 500,
+        expenses: 1000,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 0,
+      income: 0,
     });
   });
 });
@@ -361,6 +392,45 @@ describe("calculateCommunityNeed", () => {
 });
 
 describe("calculateOverall", () => {
+  test("uses self-employment profit and does not add an insurance allowance", () => {
+    const selfEmploymentIncome = calculateSelfEmploymentIncome({
+      revenue: 1500,
+      expenses: 1000,
+      hasMinorChild: false,
+      isYoung: false,
+    });
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+          income: [
+            {
+              id: generateId(),
+              type: "SelfEmploymentIncome",
+              amount: selfEmploymentIncome.income,
+              allowance: selfEmploymentIncome.allowance,
+              gros: 1500,
+              net: 1000,
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = calculateOverall(context);
+
+    expect(result.income.sum).toBe(500);
+    expect(result.allowance).toEqual([
+      {
+        personId: defaultAdult.id,
+        type: "SelfEmploymentIncome",
+        amount: 180,
+      },
+    ]);
+    expect(result.incomeAfterAllowance).toBe(320);
+  });
+
   test("case #1", () => {
     const context: TStepContext = {
       ...defaultContext,
