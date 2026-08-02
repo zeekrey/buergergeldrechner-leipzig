@@ -1,9 +1,12 @@
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
-import { fontSans } from "@/lib/fonts";
 import { FathomAnalytics } from "@/lib/fathom";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Geist } from "next/font/google";
 
 import "./globals.css";
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata = {
   description:
@@ -13,16 +16,16 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html className="" lang="de" suppressHydrationWarning>
+    <html className={cn("font-sans", geist.variable)} lang="de" suppressHydrationWarning>
       <meta
         content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
         name="viewport"
       />
-      <body
-        className={cn("bg-muted/40 font-sans antialiased", fontSans.variable)}
-      >
-        <FathomAnalytics />
-        {children}
+      <body className="bg-muted/40 font-sans antialiased">
+        <TooltipProvider>
+          <FathomAnalytics />
+          {children}
+        </TooltipProvider>
       </body>
     </html>
   );

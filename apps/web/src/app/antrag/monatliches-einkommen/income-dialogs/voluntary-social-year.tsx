@@ -193,7 +193,7 @@ export const VoluntarySocialYear = ({
           )}
         />
         <div className="px-0 pt-2">
-          <Alert variant="warning">
+          <Alert>
             <ShieldAlertIcon className="h-4 w-4" />
             <AlertTitle>Pauschalbetrag</AlertTitle>
             <AlertDescription>

@@ -102,7 +102,7 @@ export default function StepEmployable() {
       
       </StepNote> */}
       <div className="mx-8 mb-6">
-        <Alert variant="warning">
+        <Alert>
           <ShieldAlertIcon className="h-4 w-4" />
           <AlertTitle>Nicht erwerbsfähig?</AlertTitle>
           <AlertDescription>

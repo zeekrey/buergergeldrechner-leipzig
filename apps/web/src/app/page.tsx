@@ -20,8 +20,8 @@ import {
   ShieldIcon,
   UsersIcon,
   LightbulbIcon,
-  GithubIcon,
 } from "lucide-react";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import { cn } from "@/lib/utils";
 import { StepExample } from "../components/step-example";
 import StadtLeipzigImage from "../assets/stadt-leipzig.webp";
@@ -377,7 +377,7 @@ export default function HomePage() {
                 href="https://github.com/zeekrey/buergergeldrechner-leipzig"
                 className="flex gap-2"
               >
-                <GithubIcon className="w-4 h-4" />
+                <SiGithub data-icon="inline-start" />
                 Projekt auf Github
               </a>
             </Button>
