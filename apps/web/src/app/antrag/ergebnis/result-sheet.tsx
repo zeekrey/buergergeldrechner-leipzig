@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Fragment, useMemo, forwardRef } from "react";
 import { allowanceType, incomeType, TStepContext } from "@/lib/types";
-import { calculateBaseNeed, calculateOverall } from "calculation";
+import { calculateOverall } from "calculation";
 
 const Table = forwardRef<
   HTMLTableElement,
@@ -39,14 +39,16 @@ const TableCell = forwardRef<
 ));
 
 export function ResultSheet({ state }: { state: TStepContext }) {
-  const baseNeed = useMemo(() => calculateBaseNeed(state), [state]);
   const {
+    baseNeed,
     need,
     allowance,
     additionalNeeds,
+    benefitCommunity,
     income,
     incomeAfterAllowance,
     overall,
+    spendingDetails,
   } = useMemo(() => calculateOverall(state), [state]);
 
   const allowanceSum = useMemo(
@@ -64,10 +66,10 @@ export function ResultSheet({ state }: { state: TStepContext }) {
 
   const incomeCount = useMemo(
     () =>
-      state.community.reduce((acc, curr) => {
+      benefitCommunity.reduce((acc, curr) => {
         return acc + curr.income.length;
       }, 0),
-    []
+    [benefitCommunity]
   );
 
   return (
@@ -156,7 +158,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           </>
         )}
         {/* spendings */}
-        {state.spendings.sum > 0 && (
+        {spendingDetails.sum > 0 && (
           <>
             <TableCell className="font-medium row-span-4 col-span-2 sm:col-span-1">
               Kosten für Unterkunft und Heizung
@@ -165,21 +167,21 @@ export function ResultSheet({ state }: { state: TStepContext }) {
               Kaltmiete (Schuldzins bei Wohneigentum)
             </TableCell>
             <TableCell className="text-right">
-              {state.spendings.rent.toLocaleString("de-DE", {
+              {spendingDetails.rent.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
               })}
             </TableCell>
             <TableCell className="sm:col-span-2">Nebenkosten</TableCell>
             <TableCell className="text-right">
-              {state.spendings.utilities.toLocaleString("de-DE", {
+              {spendingDetails.utilities.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
               })}
             </TableCell>
             <TableCell className="sm:col-span-2">Heizkosten</TableCell>
             <TableCell className="text-right">
-              {state.spendings.heating.toLocaleString("de-DE", {
+              {spendingDetails.heating.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
               })}
@@ -188,7 +190,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
               Summe
             </TableCell>
             <TableCell className="text-right bg-muted/30">
-              {state.spendings.sum.toLocaleString("de-DE", {
+              {spendingDetails.sum.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
               })}
@@ -216,7 +218,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
             Einkommen
           </TableCell>
         )}
-        {state.community
+        {benefitCommunity
           .filter((p) => p.income.length)
           .map((person, personIndex) => (
             <Fragment key={personIndex}>
@@ -274,7 +276,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
             <TableCell className="font-medium sm:col-span-2">
               {allowanceType[_allowance.type].label} (
               {
-                state.community.find((pers) => pers.id === _allowance.personId)
+                benefitCommunity.find((pers) => pers.id === _allowance.personId)
                   ?.name
               }
               )

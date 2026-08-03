@@ -561,7 +561,108 @@ describe("calculateOverall", () => {
 
     const { overall } = calculateOverall(context);
 
-    expect(overall).toEqual(-630);
+    expect(overall).toEqual(-660);
+  });
+
+  test("does not apply self-supporting children's income to the rest of the benefit community", () => {
+    const attributes = { ...defaultAdult.attributes };
+    const employmentIncome = (net: number) => {
+      const salary = calculateSalary({
+        gross: 3000,
+        net,
+        hasMinorChild: true,
+        isYoung: false,
+      });
+
+      return {
+        id: generateId(),
+        type: "EmploymentIncome" as const,
+        amount: salary.income,
+        allowance: salary.allowance,
+        gros: 3000,
+        net,
+      };
+    };
+    const childAllowance = () => ({
+      id: generateId(),
+      type: "ChildAllowance" as const,
+      amount: 255,
+    });
+    const selfSupportingChildIds = [generateId(), generateId()];
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          id: generateId(),
+          name: "Antragsteller",
+          type: "adult",
+          attributes,
+          income: [employmentIncome(1684)],
+        },
+        {
+          id: generateId(),
+          name: "Partner",
+          type: "adult",
+          attributes,
+          income: [],
+        },
+        {
+          id: selfSupportingChildIds[0],
+          name: "Kind 1",
+          type: "child",
+          age: 22,
+          attributes,
+          income: [employmentIncome(2241)],
+        },
+        {
+          id: selfSupportingChildIds[1],
+          name: "Kind 2",
+          type: "child",
+          age: 21,
+          attributes,
+          income: [employmentIncome(2225)],
+        },
+        {
+          id: generateId(),
+          name: "Kind 3",
+          type: "child",
+          age: 19,
+          attributes,
+          income: [childAllowance()],
+        },
+        {
+          id: generateId(),
+          name: "Kind 4",
+          type: "child",
+          age: 15,
+          attributes,
+          income: [childAllowance()],
+        },
+        {
+          id: generateId(),
+          name: "Kind 5",
+          type: "child",
+          age: 13,
+          attributes,
+          income: [childAllowance()],
+        },
+      ],
+      spendings: {
+        heating: 0,
+        rent: 3341.03,
+        sum: 3341.03,
+        utilities: 0,
+      },
+    };
+
+    const result = calculateOverall(context);
+
+    expect(result.excludedPersonIds).toEqual(selfSupportingChildIds);
+    expect(result.baseNeed.sum).toBe(2324);
+    expect(result.spendings).toBe(2386.45);
+    expect(result.income.sum).toBe(2449);
+    expect(result.incomeAfterAllowance).toBe(2071);
+    expect(result.overall).toBe(2639.45);
   });
 });
 
@@ -656,6 +757,23 @@ describe("calculateAllowance", () => {
     expect(sum).toBe(60);
   });
 
+  test("does not apply the insurance allowance to an adult child's Kindergeld", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultChild,
+          age: 19,
+          income: [
+            { id: generateId(), type: "ChildAllowance", amount: 255 },
+          ],
+        },
+      ],
+    };
+
+    expect(calculateAllowance(context)).toEqual([]);
+  });
+
   test("insurance allowance with old kid but different income type", () => {
     const context: TStepContext = {
       ...defaultContext,
@@ -696,6 +814,37 @@ describe("calculateAllowance", () => {
 });
 
 describe("calculate child benefit transfert", () => {
+  test("does not transfer employment income when the child receives no Kindergeld", () => {
+    const salary = calculateSalary({
+      gross: 3000,
+      net: 2241,
+      hasMinorChild: false,
+      isYoung: false,
+    });
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        { ...defaultAdult },
+        {
+          ...defaultChild,
+          age: 22,
+          income: [
+            {
+              id: generateId(),
+              type: "EmploymentIncome",
+              amount: salary.income,
+              allowance: salary.allowance,
+              gros: 3000,
+              net: 2241,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(calculateChildBenefitTransfer(context)).toEqual([]);
+  });
+
   test("should calculate child benefit transfert", () => {
     const context: TStepContext = {
       ...defaultContext,

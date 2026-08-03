@@ -216,7 +216,7 @@ test("Case #4 - Couple with 2 kids", async ({ page }) => {
 
   await page.waitForURL("**/ergebnis");
   await expect(page.getByTestId("result")).toContainText("Kein Anspruch");
-  await expect(page.getByRole("strong")).toContainText("-252,00 €");
+  await expect(page.getByRole("strong")).toContainText("-282,00 €");
 
   await page.getByRole("tab", { name: "Berechnung" }).click();
 

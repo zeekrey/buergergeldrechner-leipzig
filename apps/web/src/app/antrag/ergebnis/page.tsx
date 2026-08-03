@@ -35,7 +35,7 @@ export default function StepSummary() {
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("result");
 
-  const { allowance, income, overall } = useMemo(
+  const { allowance, income, overall, spendings } = useMemo(
     () => calculateOverall(state),
     [state]
   );
@@ -99,7 +99,7 @@ export default function StepSummary() {
             <Result
               communitySize={state.community.length}
               income={income.sum}
-              spendings={state.spendings.sum}
+              spendings={spendings}
               allowance={allowanceSum}
               overall={overall}
               onShowDocuments={() => setActiveTab("documents")}

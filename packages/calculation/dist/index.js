@@ -4275,6 +4275,7 @@ var additionalChildNeedsCategory = [
   }
 ];
 // src/calculation.ts
+var roundCurrency = (amount) => Math.round(amount * 100) / 100;
 function calculateBaseNeed(context) {
   const isSingle = context.community.filter((person) => person.type === "adult").length === 1;
   const community = context.community.map(({ name, type, ...rest }) => {
@@ -4486,25 +4487,33 @@ function calculateAdditionalNeeds(context) {
   };
 }
 function calculateChildBenefitTransfer(context) {
-  const rentPerPerson = Math.round(context.spendings.sum / context.community.length * 100) / 100;
-  const childBenefitTransfer = context.community.filter((pers) => pers.type === "child").reduce((acc, child) => {
-    const baseAmount = data_default.child[getChildAgeGroup(child.age)];
-    const incomeSum = child.income.reduce((_acc, curr) => {
-      return _acc + curr.amount;
-    }, 0);
-    if (incomeSum > baseAmount + rentPerPerson)
-      acc.push({
+  if (!context.community.length)
+    return [];
+  const rentPerPerson = context.spendings.sum / context.community.length;
+  const additionalNeeds = calculateAdditionalNeeds(context);
+  const allowances = calculateAllowance(context);
+  return context.community.filter((person) => person.type === "child").reduce((result, child) => {
+    const childBenefit = child.income.filter((income2) => income2.type === "ChildAllowance").reduce((sum, income2) => sum + income2.amount, 0);
+    if (childBenefit <= 0)
+      return result;
+    const income = child.income.filter((entry) => entry.type !== "ChildBenefitTransfer").reduce((sum, entry) => sum + entry.amount, 0);
+    const allowance = allowances.filter((entry) => entry.personId === child.id).reduce((sum, entry) => sum + entry.amount, 0);
+    const childAdditionalNeeds = additionalNeeds.community.find((entry) => entry.personId === child.id)?.additionals.reduce((sum, entry) => sum + entry.amount, 0) ?? 0;
+    const need = data_default.child[getChildAgeGroup(child.age)] + childAdditionalNeeds + rentPerPerson;
+    const transferableChildBenefit = Math.min(Math.max(income - allowance - need, 0), childBenefit);
+    if (transferableChildBenefit > 0) {
+      result.push({
         name: child.name,
-        amount: Math.min(incomeSum - (baseAmount + rentPerPerson), 255)
+        amount: roundCurrency(transferableChildBenefit)
       });
-    return acc;
+    }
+    return result;
   }, []);
-  return childBenefitTransfer;
 }
 function calculateAllowance(context) {
   const legitimate = context.community.filter((person) => {
-    if ((person.type === "adult" || getChildAgeGroup(person.age) === "18+") && person.income?.length > 0 && person.income?.every((income) => income.type !== "EmploymentIncome" && income.type !== "SelfEmploymentIncome"))
-      return true;
+    const relevantIncome = person.income.filter((income) => income.type !== "ChildAllowance" && income.type !== "ChildBenefitTransfer");
+    return (person.type === "adult" || getChildAgeGroup(person.age) === "18+") && relevantIncome.length > 0 && relevantIncome.every((income) => income.type !== "EmploymentIncome" && income.type !== "SelfEmploymentIncome");
   });
   const incomeAllowance = context.community.flatMap((group) => group.income.filter((income) => income.allowance).map((income) => ({
     personId: group.id,
@@ -4542,25 +4551,57 @@ function calculateIncome(context) {
   const flattenedIncome = flattenIncome(context.community);
   return flattenedIncome.reduce((acc, curr) => acc + curr.amount, 0);
 }
-function calculateOverall(context) {
+function calculateBenefitCommunity(context) {
+  if (!context.community.length) {
+    return { context, excludedPersonIds: [] };
+  }
+  const rentPerPerson = context.spendings.sum / context.community.length;
   const baseNeed = calculateBaseNeed(context);
   const additionalNeeds = calculateAdditionalNeeds(context);
-  const income = calculateIncome(context);
   const allowance = calculateAllowance(context);
-  const need = baseNeed.sum + additionalNeeds.sum + context.spendings.sum;
+  const excludedPersonIds = context.community.filter((person) => person.type === "child" && person.age < 25).filter((child) => {
+    const individualBaseNeed = baseNeed.community.find((entry) => entry.personId === child.id)?.amount ?? 0;
+    const individualAdditionalNeeds = additionalNeeds.community.find((entry) => entry.personId === child.id)?.additionals.reduce((sum, entry) => sum + entry.amount, 0) ?? 0;
+    const individualIncome = child.income.reduce((sum, entry) => sum + entry.amount, 0);
+    const individualAllowance = allowance.filter((entry) => entry.personId === child.id).reduce((sum, entry) => sum + entry.amount, 0);
+    return individualIncome - individualAllowance >= individualBaseNeed + individualAdditionalNeeds + rentPerPerson;
+  }).map((child) => child.id);
+  const community = context.community.filter((person) => !excludedPersonIds.includes(person.id));
+  const communityShare = community.length / context.community.length;
+  const spendings = {
+    rent: roundCurrency(context.spendings.rent * communityShare),
+    utilities: roundCurrency(context.spendings.utilities * communityShare),
+    heating: roundCurrency(context.spendings.heating * communityShare),
+    sum: roundCurrency(rentPerPerson * community.length)
+  };
+  return {
+    context: { ...context, community, spendings },
+    excludedPersonIds
+  };
+}
+function calculateOverall(context) {
+  const { context: benefitContext, excludedPersonIds } = calculateBenefitCommunity(context);
+  const baseNeed = calculateBaseNeed(benefitContext);
+  const additionalNeeds = calculateAdditionalNeeds(benefitContext);
+  const income = calculateIncome(benefitContext);
+  const allowance = calculateAllowance(benefitContext);
+  const need = baseNeed.sum + additionalNeeds.sum + benefitContext.spendings.sum;
   const incomeAfterAllowance = income - allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
   return {
     baseNeed,
     additionalNeeds,
-    spendings: context.spendings.sum,
+    spendings: benefitContext.spendings.sum,
+    spendingDetails: benefitContext.spendings,
     need,
     income: {
       sum: income,
-      community: flattenIncome
+      community: flattenIncome(benefitContext.community)
     },
     allowance,
     incomeAfterAllowance,
-    overall: need - incomeAfterAllowance
+    overall: need - incomeAfterAllowance,
+    benefitCommunity: benefitContext.community,
+    excludedPersonIds
   };
 }
 function calculateSelfEmploymentIncome({
@@ -4638,6 +4679,7 @@ export {
   calculateOverall,
   calculateIncome,
   calculateChildBenefitTransfer,
+  calculateBenefitCommunity,
   calculateBaseNeed,
   calculateAllowance,
   calculateAdditionalNeeds,

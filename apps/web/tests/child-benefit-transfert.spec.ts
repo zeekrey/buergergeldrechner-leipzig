@@ -61,7 +61,7 @@ test("should assign child benefit transfer", async ({ page }) => {
   await expect(page.locator("tbody")).toContainText("Antragsteller");
   await expect(page.locator("tbody")).toContainText("Kind 1");
   await page.getByRole("button", { name: "Weiter" }).click();
-  await expect(page.getByTestId("result")).toContainText("1.513,39 €");
+  await expect(page.getByTestId("result")).toContainText("1.483,39 €");
 });
 
 test("should assign child benefit transfer if changed", async ({ page }) => {

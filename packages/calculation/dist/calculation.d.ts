@@ -51,37 +51,33 @@ export declare function calculateAllowance(context: TStepContext): {
     amount: number;
 }[];
 export declare function calculateIncome(context: TStepContext): number;
-export declare function calculateOverall(context: TStepContext): {
-    baseNeed: {
-        sum: number;
-        community: {
-            name: string;
-            personId: string;
-            amount: number;
-        }[];
-    };
-    additionalNeeds: {
-        sum: number;
-        community: {
-            personId: string;
-            name: string;
-            additionals: TAdditional[];
-        }[];
-    };
+type BenefitCommunityResult = {
+    context: TStepContext;
+    excludedPersonIds: string[];
+};
+export type OverallCalculation = {
+    baseNeed: ReturnType<typeof calculateBaseNeed>;
+    additionalNeeds: ReturnType<typeof calculateAdditionalNeeds>;
     spendings: number;
+    spendingDetails: TStepContext["spendings"];
     need: number;
     income: {
         sum: number;
-        community: typeof flattenIncome;
+        community: ReturnType<typeof flattenIncome>;
     };
-    allowance: {
-        personId: string;
-        type: TAllowance;
-        amount: number;
-    }[];
+    allowance: ReturnType<typeof calculateAllowance>;
     incomeAfterAllowance: number;
     overall: number;
+    benefitCommunity: TStepContext["community"];
+    excludedPersonIds: string[];
 };
+/**
+ * Children under 25 only belong to the benefit community while their own
+ * assessable income does not cover their individual need. Their surplus may
+ * not be used to cover the needs of parents or siblings.
+ */
+export declare function calculateBenefitCommunity(context: TStepContext): BenefitCommunityResult;
+export declare function calculateOverall(context: TStepContext): OverallCalculation;
 export declare function calculateSelfEmploymentIncome({ revenue, expenses, hasMinorChild, isYoung, }: {
     revenue: number;
     expenses: number;
