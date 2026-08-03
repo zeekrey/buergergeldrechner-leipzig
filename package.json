@@ -10,8 +10,7 @@
     "lint": "bun run --filter '*' --if-present lint",
     "test": "bun run test:unit",
     "test:unit": "bun run --filter '@buergergeldrechner/web' test:unit && bun run --filter 'calculation' test",
-    "test:e2e": "bun run --filter '@buergergeldrechner/web' test:e2e",
-    "check": "bun scripts/check.ts"
+    "test:e2e": "bun run --filter '@buergergeldrechner/web' test:e2e"
   },
   "keywords": [],
   "author": "",
