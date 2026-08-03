@@ -2,6 +2,17 @@
 
 import type { FormEvent } from "react";
 
+import { produce } from "immer";
+import {
+  ArrowLeftCircleIcon,
+  ArrowRightCircleIcon,
+  BabyIcon,
+  CircleOffIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useCallback } from "react";
+
+import { useStateContext } from "@/components/context";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -11,20 +22,10 @@ import {
   StepTitle,
   StepDescription,
 } from "@/components/ui/step-primitives";
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-  BabyIcon,
-  CircleOffIcon,
-} from "lucide-react";
-import { useMemo, useCallback } from "react";
-import { produce } from "immer";
-import { stepsConfig } from "@/lib/machine";
-import { useRouter } from "next/navigation";
-import { generateId, generateMember } from "@/lib/utils";
-import { incomeType } from "@/lib/types";
-import { useStateContext } from "@/components/context";
 import HelpMarkdown from "@/config/steps/kinder.mdx";
+import { stepsConfig } from "@/lib/machine";
+import { incomeType } from "@/lib/types";
+import { generateId, generateMember } from "@/lib/utils";
 
 type RadioValue = "with-children" | "without-children";
 const step = stepsConfig[2];

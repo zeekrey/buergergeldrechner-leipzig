@@ -1,16 +1,4 @@
-import Image from "next/image";
-import { Button, buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
-import { Metadata } from "next";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import {
   ArrowRightIcon,
   DraftingCompassIcon,
@@ -21,12 +9,12 @@ import {
   UsersIcon,
   LightbulbIcon,
 } from "lucide-react";
-import { SiGithub } from "@icons-pack/react-simple-icons";
-import { cn } from "@/lib/utils";
-import { StepExample } from "../components/step-example";
-import StadtLeipzigImage from "../assets/stadt-leipzig.webp";
-import SmartCityImage from "../assets/smart-city-challenge.webp";
-import JobcenterImage from "../assets/logo.webp";
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+
+import { ResultExample } from "@/components/result-example";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -34,7 +22,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ResultExample } from "@/components/result-example";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { cn } from "@/lib/utils";
+
+import JobcenterImage from "../assets/logo.webp";
+import SmartCityImage from "../assets/smart-city-challenge.webp";
+import StadtLeipzigImage from "../assets/stadt-leipzig.webp";
+import { StepExample } from "../components/step-example";
 
 export const metadata: Metadata = {
   title: "Bürgergeldrechner des Jobcenter Leipzig",

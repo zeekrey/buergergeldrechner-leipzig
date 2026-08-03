@@ -1,15 +1,31 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import { calculateIncome } from "calculation";
+import { produce } from "immer";
 import {
   CircleHelpIcon,
   PenIcon,
   PlusCircleIcon,
   XCircleIcon,
 } from "lucide-react";
-import { IncomeDialog } from "./income-dialog";
+import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Fragment, useCallback, useMemo } from "react";
+
+import { useStateContext } from "@/components/context";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import {
+  StepRoot,
+  StepTitle,
+  StepDescription,
+} from "@/components/ui/step-primitives";
 import {
   Table,
   TableBody,
@@ -17,27 +33,13 @@ import {
   TableFooter,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import { Fragment, useCallback, useMemo } from "react";
-import { produce } from "immer";
-import { type TIncome, TPerson, incomeType } from "@/lib/types";
-import {
-  StepRoot,
-  StepTitle,
-  StepDescription,
-} from "@/components/ui/step-primitives";
-import { stepsConfig } from "@/lib/machine";
-import { useRouter } from "next/navigation";
-import { useStateContext } from "@/components/context";
 import HelpMarkdown from "@/config/steps/monatliches-einkommen.mdx";
-import { checkChildBenefitTransfert } from "./income-dialogs/default-income";
+import { stepsConfig } from "@/lib/machine";
+import { type TIncome, TPerson, incomeType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { calculateIncome } from "calculation";
+
+import { IncomeDialog } from "./income-dialog";
+import { checkChildBenefitTransfert } from "./income-dialogs/default-income";
 
 const step = stepsConfig[8];
 

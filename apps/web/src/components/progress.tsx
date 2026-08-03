@@ -1,15 +1,16 @@
 "use client";
 
-import { stepsConfig } from "@/lib/machine";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useMemo } from "react";
+
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { stepsConfig } from "@/lib/machine";
+import { cn } from "@/lib/utils";
 
 export function Progress() {
   const slug = usePathname();

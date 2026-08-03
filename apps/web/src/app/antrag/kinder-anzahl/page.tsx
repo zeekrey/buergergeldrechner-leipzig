@@ -1,6 +1,17 @@
 "use client";
 
 import type { FormEvent } from "react";
+
+import { produce } from "immer";
+import {
+  ArrowRightCircleIcon,
+  ArrowLeftCircleIcon,
+  XCircleIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useCallback } from "react";
+
+import { useStateContext } from "@/components/context";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -11,25 +22,17 @@ import {
 } from "@/components/ui/select";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import {
-  ArrowRightCircleIcon,
-  ArrowLeftCircleIcon,
-  XCircleIcon,
-} from "lucide-react";
-import { useMemo, useCallback } from "react";
-import {
   StepRoot,
   StepTitle,
   StepDescription,
 } from "@/components/ui/step-primitives";
-import { Button } from "../../../components/ui/button";
-import { produce } from "immer";
-import { TChild, TPerson } from "@/lib/types";
-import { stepsConfig } from "@/lib/machine";
-import { useRouter } from "next/navigation";
-import { generateId, generateMember } from "@/lib/utils";
-import { incomeType } from "@/lib/types";
-import { useStateContext } from "@/components/context";
 import HelpMarkdown from "@/config/steps/kinder-anzahl.mdx";
+import { stepsConfig } from "@/lib/machine";
+import { TChild, TPerson } from "@/lib/types";
+import { incomeType } from "@/lib/types";
+import { generateId, generateMember } from "@/lib/utils";
+
+import { Button } from "../../../components/ui/button";
 
 const step = stepsConfig[3];
 

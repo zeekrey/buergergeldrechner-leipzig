@@ -1,7 +1,7 @@
 "use client";
 
+import { GlobeIcon } from "lucide-react";
 import * as React from "react";
-import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,11 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { GlobeIcon } from "lucide-react";
 
 export function LanguageToggle() {
-  const { setTheme } = useTheme();
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

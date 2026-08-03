@@ -1,8 +1,9 @@
-import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
-import { FathomAnalytics } from "@/lib/fathom";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { Geist } from "next/font/google";
+import { ReactNode } from "react";
+
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { FathomAnalytics } from "@/lib/fathom";
+import { cn } from "@/lib/utils";
 
 import "./globals.css";
 

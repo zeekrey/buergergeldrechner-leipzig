@@ -2,23 +2,25 @@
 
 import type { FormEvent } from "react";
 
+import { produce } from "immer";
+import { ArrowRightCircleIcon, ShieldAlertIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect } from "react";
+
+import { useStateContext } from "@/components/context";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { ArrowRightCircleIcon, ShieldAlertIcon } from "lucide-react";
-import { useCallback, useEffect } from "react";
-import { Checkbox } from "../../../components/ui/checkbox";
 import {
   StepRoot,
   StepTitle,
   StepDescription,
 } from "@/components/ui/step-primitives";
-import { stepsConfig } from "@/lib/machine";
-import { useRouter } from "next/navigation";
-import { produce } from "immer";
-import { generateId, generateMember } from "@/lib/utils";
-import { useStateContext } from "@/components/context";
 import HelpMarkdown from "@/config/steps/erwerbsfaehig.mdx";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { stepsConfig } from "@/lib/machine";
+import { generateId, generateMember } from "@/lib/utils";
+
+import { Checkbox } from "../../../components/ui/checkbox";
 
 const step = stepsConfig[0];
 

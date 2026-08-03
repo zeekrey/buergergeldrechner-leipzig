@@ -1,10 +1,17 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { produce } from "immer";
+import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import { Dialog } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -13,6 +20,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import {
+  StepRoot,
+  StepTitle,
+  StepDescription,
+} from "@/components/ui/step-primitives";
 import {
   Table,
   TableBody,
@@ -22,36 +37,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-  CalculatorIcon,
-} from "lucide-react";
-import { useCallback, useState } from "react";
-import { produce } from "immer";
-import {
-  StepRoot,
-  StepTitle,
-  StepDescription,
-} from "@/components/ui/step-primitives";
-import { stepsConfig } from "@/lib/machine";
-import { useRouter } from "next/navigation";
-import { useStateContext } from "@/components/context";
 import HelpMarkdown from "@/config/steps/kosten-unterkunft-heizung.mdx";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { calculateRent } from "@/lib/rent-calculation";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { RentCalculation } from "@/app/mietpruefung/rent-calculation";
+import { stepsConfig } from "@/lib/machine";
 
 const step = stepsConfig[7];
 
@@ -119,13 +106,6 @@ export default function StepSpending() {
   ]);
 
   const sum = Number(heating ?? 0) + Number(rent ?? 0) + Number(utilities ?? 0);
-  const { isOk, issues, description } = calculateRent({
-    rent: Number(rent ?? 0),
-    utilities: Number(utilities ?? 0) + Number(heating ?? 0),
-    communityCount: state.community.length,
-    space: 1,
-  });
-
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous].id}`);
   }, [state]);

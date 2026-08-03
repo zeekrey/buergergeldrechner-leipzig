@@ -1,25 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { produce } from "immer";
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
-import {
-  StepRoot,
-  StepTitle,
-  StepDescription,
-} from "@/components/ui/step-primitives";
-import { stepsConfig } from "@/lib/machine";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
-import { useStateContext } from "@/components/context";
-import { produce } from "immer";
-import { Checkbox } from "@/components/ui/checkbox";
-import { diseases, diseases as DiseasesMap } from "@/lib/types";
-import HelpMarkdown from "@/config/steps/krankheiten.mdx";
-import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -28,7 +19,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import {
+  StepRoot,
+  StepTitle,
+  StepDescription,
+} from "@/components/ui/step-primitives";
+import HelpMarkdown from "@/config/steps/krankheiten.mdx";
+import { stepsConfig } from "@/lib/machine";
+import { diseases } from "@/lib/types";
 
 const step = stepsConfig[6];
 

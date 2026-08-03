@@ -1,7 +1,8 @@
-import { ImageResponse } from "next/og";
 import { neon } from "@neondatabase/serverless";
-import { TStepContext } from "@/lib/types";
 import { calculateOverall } from "calculation";
+import { ImageResponse } from "next/og";
+
+import { TStepContext } from "@/lib/types";
 
 export const runtime = "edge";
 

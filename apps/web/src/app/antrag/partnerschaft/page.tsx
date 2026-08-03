@@ -2,28 +2,29 @@
 
 import type { FormEvent } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { stepsConfig } from "@/lib/machine";
+import { produce } from "immer";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
   UserIcon,
   UsersIcon,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
-import { produce } from "immer";
+
+import { useStateContext } from "@/components/context";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import {
   StepRoot,
   StepTitle,
   StepDescription,
 } from "@/components/ui/step-primitives";
-import { useRouter } from "next/navigation";
-import { generateId, generateMember } from "@/lib/utils";
-import { useStateContext } from "@/components/context";
 import HelpMarkdown from "@/config/steps/partnerschaft.mdx";
+import { stepsConfig } from "@/lib/machine";
+import { generateId, generateMember } from "@/lib/utils";
 
 type RadioValue = "with-partner" | "without-partner";
 const step = stepsConfig[1];

@@ -1,3 +1,7 @@
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
 import {
   Dialog,
   DialogTrigger,
@@ -13,17 +17,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { IncomeTypEnum, TPerson } from "@/lib/types";
 import { type TIncome, incomeType } from "@/lib/types";
-import { EmploymentIncome } from "./income-dialogs/employment-income";
-import { useStateContext } from "@/components/context";
-import { SelfEmploymentIncome } from "./income-dialogs/self-employment-income";
+
 import { DefaultIncome } from "./income-dialogs/default-income";
+import { EmploymentIncome } from "./income-dialogs/employment-income";
 import { ParentalAllowance } from "./income-dialogs/parental-allowance";
-import { z } from "zod";
-import { VoluntarySocialYear } from "./income-dialogs/voluntary-social-year";
+import { SelfEmploymentIncome } from "./income-dialogs/self-employment-income";
 import { ShortTimeWorkIncome } from "./income-dialogs/short-time-work-income";
+import { VoluntarySocialYear } from "./income-dialogs/voluntary-social-year";
 
 const incomeTypeList = Object.entries(incomeType).map((type) => type);
 
@@ -34,11 +36,7 @@ export type IncomeComponentProps = {
   incomeType?: z.infer<typeof IncomeTypEnum>;
 };
 
-export const incomeComponentMap: {
-  [K in z.infer<typeof IncomeTypEnum>]: React.FunctionComponent<
-    IncomeComponentProps & any
-  >;
-} = {
+export const incomeComponentMap = {
   EmploymentIncome: EmploymentIncome,
   SelfEmploymentIncome: SelfEmploymentIncome,
   BAfOG: DefaultIncome,
@@ -58,7 +56,10 @@ export const incomeComponentMap: {
   VoluntarySocialYear: VoluntarySocialYear,
   OtherIncome: DefaultIncome,
   ChildBenefitTransfer: DefaultIncome,
-};
+} satisfies Record<
+  z.infer<typeof IncomeTypEnum>,
+  React.FunctionComponent<never>
+>;
 
 export const IncomeDialog = ({
   children,
@@ -70,7 +71,7 @@ export const IncomeDialog = ({
   selectedIncome?: TIncome;
 }) => {
   const [open, setOpen] = useState(false);
-  const [state, setState] = useStateContext();
+  const [state] = useStateContext();
   const [person, setPerson] = useState(selectedPerson);
   const [incomeType, setIncomeType] = useState(
     selectedIncome?.type ?? ("EmploymentIncome" as TIncome["type"])
@@ -81,7 +82,7 @@ export const IncomeDialog = ({
     setPerson(selectedPerson);
   }, [state.community]);
 
-  const IncomeComponent = incomeComponentMap[incomeType];
+  const IncomeComponent = incomeComponentMap[incomeType] as React.FunctionComponent<IncomeComponentProps>;
 
   const handlePersonChange = (personId: string) => {
     const _person = state.community.find((pers) => pers.id === personId);

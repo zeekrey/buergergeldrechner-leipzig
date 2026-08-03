@@ -1,7 +1,7 @@
-import { Progress } from "./progress";
-import { useMemo } from "react";
 import { calculateOverall } from "calculation";
-import { useStateContext } from "./context";
+import { ChevronDownIcon } from "lucide-react";
+import { useMemo } from "react";
+
 import { ResultSheet } from "@/app/antrag/ergebnis/result-sheet";
 import {
   Drawer,
@@ -12,7 +12,9 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { ChevronDownIcon } from "lucide-react";
+
+import { useStateContext } from "./context";
+import { Progress } from "./progress";
 import { ScrollArea } from "./ui/scroll-area";
 
 export function StatusBar() {

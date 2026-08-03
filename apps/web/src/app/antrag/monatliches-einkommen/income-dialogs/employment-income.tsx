@@ -1,7 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { calculateSalary } from "calculation";
+import { produce } from "immer";
 import { useForm } from "react-hook-form";
-import { EmploymentIncomeSchema, TStepContext } from "@/lib/types";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -9,15 +14,12 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { produce } from "immer";
+import { Input } from "@/components/ui/input";
+import { EmploymentIncomeSchema, TStepContext } from "@/lib/types";
 import { generateId } from "@/lib/utils";
-import { useStateContext } from "@/components/context";
+
 import { IncomeComponentProps } from "../income-dialog";
-import { z } from "zod";
-import { Checkbox } from "@/components/ui/checkbox";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { checkChildBenefitTransfert } from "./default-income";
-import { calculateSalary } from "calculation";
 
 const formSchema = z.object({
   gros: z.coerce.number(),

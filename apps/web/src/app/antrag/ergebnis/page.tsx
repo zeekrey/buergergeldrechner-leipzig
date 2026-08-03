@@ -1,11 +1,14 @@
 "use client";
 
-import { useCallback, useMemo, useState, useTransition } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import { calculateOverall } from "calculation";
 import { ArrowLeftCircleIcon, RotateCwIcon, ShareIcon } from "lucide-react";
-import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
-import { initialStepsState, stepsConfig } from "@/lib/machine";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback, useMemo, useState, useTransition } from "react";
+import { toast } from "sonner";
+
+import { useStateContext } from "@/components/context";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,18 +17,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { calculateOverall } from "calculation";
-import { useRouter } from "next/navigation";
-import { useStateContext } from "@/components/context";
-import { Result } from "./result";
-import { Button } from "@/components/ui/button";
 import HelpMarkdown from "@/config/steps/ergebnis.mdx";
-import Link from "next/link";
+import { initialStepsState, stepsConfig } from "@/lib/machine";
+
 import { createShareable } from "./actions";
-import { toast } from "sonner";
-import { ResultSheet } from "./result-sheet";
 import { RequiredDocuments } from "./required-documents";
+import { Result } from "./result";
+import { ResultSheet } from "./result-sheet";
 
 const step = stepsConfig[9];
 
@@ -66,7 +68,7 @@ export default function StepSummary() {
             title: "Ich habe einen möglichen Bürgergeldanspruch berechnet:",
             url: `${origin}/share/${data.alias}`,
           });
-        } catch (err) {
+        } catch {
           toast("Teilbarer Link wurde erstellt.", {
             description:
               "Auf Kopieren klicken um den Link in die Zwischenablage zu kopieren.",

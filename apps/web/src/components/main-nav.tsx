@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Badge } from "./ui/badge";
+
 import { siteConfig } from "@/config/site";
+
+import { Badge } from "./ui/badge";
 
 export function MainNav() {
   const [isPreview, setIsPreview] = useState(false);

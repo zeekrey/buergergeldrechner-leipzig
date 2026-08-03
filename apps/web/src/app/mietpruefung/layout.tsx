@@ -1,14 +1,15 @@
 "use client";
 
 import { ReactNode } from "react";
-import { Toaster } from "@/components/ui/sonner";
-import { initialStepsState } from "@/lib/machine";
+
 import { StateProvider } from "@/components/context";
-import { ThemeProvider } from "@/components/theme-provider";
-import { MainNav } from "@/components/main-nav";
-import { ModeToggle } from "@/components/mode-toggle";
 import { Feedback } from "@/components/feedback";
 import { HelpPopup } from "@/components/help-popup";
+import { MainNav } from "@/components/main-nav";
+import { ModeToggle } from "@/components/mode-toggle";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { initialStepsState } from "@/lib/machine";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (

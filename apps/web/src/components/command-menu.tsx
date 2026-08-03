@@ -1,6 +1,7 @@
 "use client";
 
 import { UsersIcon, RotateCcwIcon, UserIcon } from "lucide-react";
+import { CommandIcon } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
 
 import {
@@ -13,14 +14,11 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { CommandIcon } from "lucide-react";
+
 import { Button } from "./ui/button";
-import { coupleWithoutKids, singleWithoutKids } from "@/config/fixtures";
-import { useStateContext } from "./context";
 
 export function CommandMenu() {
   const [open, setOpen] = useState(false);
-  const [state, setState] = useStateContext();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {

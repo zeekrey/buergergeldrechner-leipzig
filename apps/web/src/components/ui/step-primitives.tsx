@@ -1,6 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { HelpCircleIcon } from "lucide-react";
 import { forwardRef } from "react";
+import Markdown from "react-markdown";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,11 +11,10 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import Markdown from "react-markdown";
+
 import { ScrollArea } from "./scroll-area";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+export type InputProps = React.HTMLAttributes<HTMLDivElement>;
 
 const StepRoot = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
@@ -97,7 +98,11 @@ StepContent.displayName = "StepContent";
 const StepNavigation = forwardRef<HTMLDivElement, InputProps>(
   ({ children, ...props }, ref) => {
     return (
-      <div className="px-8 py-6 flex justify-between sm:gap-2" {...props}>
+      <div
+        className="px-8 py-6 flex justify-between sm:gap-2"
+        ref={ref}
+        {...props}
+      >
         {children}
       </div>
     );

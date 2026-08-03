@@ -1,7 +1,10 @@
 "use client";
 
+import { ExternalLinkIcon, PrinterIcon } from "lucide-react";
+import { useMemo } from "react";
+
+import { useStateContext } from "@/components/context";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -9,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -17,9 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ExternalLinkIcon, PrinterIcon } from "lucide-react";
-import { useMemo } from "react";
-import { useStateContext } from "@/components/context";
 import { TIncome } from "@/lib/types";
 
 type DocRow = {
@@ -46,7 +47,7 @@ export function RequiredDocuments() {
   const isSingle = adults.length === 1;
   const hasPartner = adults.length >= 2;
   const hasChildren = children.length > 0;
-  const anyChildOver14 = children.some((c) => (c as any).age > 14);
+  const anyChildOver14 = children.some((child) => child.age > 14);
   const anyPregnant = state.community.some((p) => p.attributes?.isPregnant);
   const hasHousingCosts = (state.spendings?.sum ?? 0) > 0;
 
