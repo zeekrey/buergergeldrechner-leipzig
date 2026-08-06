@@ -5,7 +5,7 @@ type TAdditional = {
     amount: number;
 };
 /**
- * "Bürgergeld" is the result of the following:
+ * "Grundsicherungsgeld" is the result of the following:
  *   Regelbedarf (base need)
  * + Mehrbedarf (additional need)
  * + Kosten der Unterkunft (spendings)
@@ -17,7 +17,7 @@ type TAdditional = {
  *
  *   Bedarf (need)
  * - Einkommen abzgl. Freibeträge (income after allowance)
- * = Bürgergeldanspruch (overall)
+ * = Grundsicherungsanspruch (overall)
  */
 /**
  * Calculates the base need based on person type and age.

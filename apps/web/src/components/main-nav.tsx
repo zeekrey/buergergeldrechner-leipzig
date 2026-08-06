@@ -11,9 +11,7 @@ export function MainNav() {
   const [isPreview, setIsPreview] = useState(false);
 
   useEffect(() => {
-    setIsPreview(
-      ["localhost", "buergergeld.dev"].includes(window?.location.hostname)
-    );
+    setIsPreview(window.location.hostname === "localhost");
   });
 
   return (

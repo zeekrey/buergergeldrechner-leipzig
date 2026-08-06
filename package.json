@@ -1,5 +1,5 @@
 {
-  "name": "buergergeldrechner-workspace",
+  "name": "grundsicherungsrechner-workspace",
   "private": true,
   "version": "1.0.0",
   "description": "",
@@ -9,8 +9,8 @@
     "typecheck": "bun run --filter '*' --if-present typecheck",
     "lint": "bun run --filter '*' --if-present lint",
     "test": "bun run test:unit",
-    "test:unit": "bun run --filter '@buergergeldrechner/web' test:unit && bun run --filter 'calculation' test",
-    "test:e2e": "bun run --filter '@buergergeldrechner/web' test:e2e"
+    "test:unit": "bun run --filter '@grundsicherungsrechner/web' test:unit && bun run --filter 'calculation' test",
+    "test:e2e": "bun run --filter '@grundsicherungsrechner/web' test:e2e"
   },
   "keywords": [],
   "author": "",

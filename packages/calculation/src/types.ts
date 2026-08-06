@@ -190,7 +190,7 @@ export const StepContext = z.object({
   isEmployable: z
     .boolean()
     .describe(
-      "Gibt an ob der Antragsteller erwärbsfähig ist. Ist die Person nicht erwärbsfähig, kann sie kein Bürgergeld beantragen. In dem Fall stehen ihr andere Förderungen zu."
+      "Gibt an ob der Antragsteller erwärbsfähig ist. Ist die Person nicht erwärbsfähig, kann sie kein Grundsicherungsgeld beantragen. In dem Fall stehen ihr andere Förderungen zu."
     ),
   spendings: z.object({
     rent: z.number().describe("Die Kaltmiete. Kann 0 sein."),

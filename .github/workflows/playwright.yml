@@ -17,11 +17,11 @@ jobs:
         working-directory: apps/web
         run: bunx playwright install --with-deps chromium
       - name: Lint web app
-        run: bun run --filter '@buergergeldrechner/web' lint
+        run: bun run --filter '@grundsicherungsrechner/web' lint
       - name: Run calculation unit tests
         run: bun run --filter calculation test
       - name: Run web Playwright tests
-        run: bun run --filter '@buergergeldrechner/web' test:e2e
+        run: bun run --filter '@grundsicherungsrechner/web' test:e2e
       - uses: actions/upload-artifact@v4
         if: always()
         with:

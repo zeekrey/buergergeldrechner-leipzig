@@ -33,14 +33,15 @@ export function Result({
         {isPositive ? (
           <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
             Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des
-            Bürgergeldes. Ob Sie tatsächlich Anspruch haben, hängt von weiteren
-            Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine
+            Grundsicherungsgeldes. Ob Sie tatsächlich Anspruch haben, hängt von
+            weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine
             unverbindliche Berechnung handelt.
           </p>
         ) : (
           <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
-            Entsprechend Ihrer Angaben werden Sie keinen Anspruch auf Bürgergeld
-            haben. Verfügen Sie über niedriges Einkommen, dann können Sie
+            Entsprechend Ihrer Angaben werden Sie keinen Anspruch auf
+            Grundsicherungsgeld haben. Verfügen Sie über niedriges Einkommen, dann
+            können Sie
             Wohngeld beantragen. Verfügen Sie über niedriges Einkommen und haben
             Kinder in Ihrer Bedarfsgemeinschaft können Sie Kinderzuschlag
             beantragen.
@@ -81,7 +82,7 @@ export function Result({
           </div>
         ) : (
           <p className="mt-6 text-xs leading-5 text-gray-600 dark:text-gray-300">
-            Auch wenn kein Anspruch auf Bürgergeld bestehen sollte, können Sie
+            Auch wenn kein Anspruch auf Grundsicherungsgeld bestehen sollte, können Sie
             sich hier über{" "}
             <a
               href="https://www.wohngeldrechner24.de/"

@@ -34,7 +34,7 @@ export function CommandMenu() {
 
   const handleReset = useCallback(() => {
     /** Clear only our own data, instead of everything. */
-    localStorage.removeItem("buergergeld.dev");
+    localStorage.removeItem("state");
     setOpen(false);
   }, []);
 

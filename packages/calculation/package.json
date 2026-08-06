@@ -1,7 +1,7 @@
 {
   "name": "calculation",
   "version": "0.1.0",
-  "description": "Shared calculation engine for Bürgergeld calculator apps.",
+  "description": "Shared calculation engine for Grundsicherungsgeld calculator apps.",
   "type": "module",
   "module": "./dist/index.js",
   "exports": {

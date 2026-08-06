@@ -7,7 +7,7 @@ import { TStepContext } from "@/lib/types";
 export const runtime = "edge";
 
 // Image metadata
-export const alt = "Bürgergeldrechner Jobcenter Leipzig";
+export const alt = "Grundsicherungsrechner Jobcenter Leipzig";
 export const size = {
   width: 1200,
   height: 630,
@@ -79,7 +79,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div>Berechneter Bürgergeldanspruch</div>
+            <div>Berechneter Grundsicherungsanspruch</div>
             <div style={{ fontWeight: 600, fontSize: 98, color: "#18181B" }}>
               {overall.toLocaleString("de-DE", {
                 style: "currency",

@@ -65,7 +65,7 @@ export default function StepSummary() {
 
         try {
           await navigator.share({
-            title: "Ich habe einen möglichen Bürgergeldanspruch berechnet:",
+            title: "Ich habe einen möglichen Grundsicherungsanspruch berechnet:",
             url: `${origin}/share/${data.alias}`,
           });
         } catch {

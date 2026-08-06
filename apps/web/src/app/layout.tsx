@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ReactNode } from "react";
 
@@ -9,10 +10,13 @@ import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  ),
   description:
-    "Der Bürgergeldrechner der Stadt Leipzig hilft Ihnen, schnell und einfach zu berechnen, ob Sie Anspruch auf Bürgergeld haben. Nutzen Sie unser benutzerfreundliches Tool, um Ihre finanzielle Unterstützung zu prüfen und wichtige Informationen zur Antragstellung zu erhalten.",
-  title: "Bürgergeldrechner des Jobcenter Leipzig",
+    "Der Grundsicherungsrechner der Stadt Leipzig hilft Ihnen, schnell und einfach einen möglichen Anspruch auf Grundsicherungsgeld zu berechnen. Das Ergebnis ist eine unverbindliche Orientierung zur Grundsicherung für Arbeitsuchende.",
+  title: "Grundsicherungsrechner des Jobcenters Leipzig",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

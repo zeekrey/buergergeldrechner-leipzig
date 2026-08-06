@@ -18,7 +18,7 @@ type TAdditional = { name: string; amount: number };
 const roundCurrency = (amount: number) => Math.round(amount * 100) / 100;
 
 /**
- * "Bürgergeld" is the result of the following:
+ * "Grundsicherungsgeld" is the result of the following:
  *   Regelbedarf (base need)
  * + Mehrbedarf (additional need)
  * + Kosten der Unterkunft (spendings)
@@ -30,7 +30,7 @@ const roundCurrency = (amount: number) => Math.round(amount * 100) / 100;
  *
  *   Bedarf (need)
  * - Einkommen abzgl. Freibeträge (income after allowance)
- * = Bürgergeldanspruch (overall)
+ * = Grundsicherungsanspruch (overall)
  */
 
 /**

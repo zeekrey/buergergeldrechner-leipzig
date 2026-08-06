@@ -50,9 +50,9 @@ export function StatusBar() {
         <DrawerHeader className="max-w-4xl mx-auto px-3">
           <DrawerTitle>Ihre aktuellen Eingaben</DrawerTitle>
           <DrawerDescription>
-            Bei der Darstellung handelt es sich um eine Vorabrechnung auf die es
-            keinerlei Haftung gibt. Ihren tatsächlichen Bürgergeldanspruch kann
-            nur das Jobcenter prüfen.
+            Bei der Darstellung handelt es sich um eine unverbindliche
+            Vorabberechnung. Ihren tatsächlichen Anspruch auf Grundsicherungsgeld
+            kann nur das Jobcenter prüfen.
           </DrawerDescription>
         </DrawerHeader>
         <div className="max-w-4xl mx-auto ">
