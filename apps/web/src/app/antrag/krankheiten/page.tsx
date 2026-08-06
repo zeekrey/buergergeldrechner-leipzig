@@ -2,14 +2,16 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { produce } from "immer";
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useStateContext } from "@/components/context";
-import { Button } from "@/components/ui/button";
+import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -175,17 +177,8 @@ export default function StepDiseases() {
             </ScrollArea>
           </StepContent>
           <StepNavigation>
-            <Button onClick={handleBack} size="lg" type="button">
-              <ArrowLeftCircleIcon className="w-4 h-4" />
-            </Button>
-            <Button
-              className="grow sm:grow-0 sm:w-48 ml-4"
-              size="lg"
-              type="submit"
-            >
-              Weiter
-              <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-            </Button>
+            <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+            <WizardNextButton>Weiter</WizardNextButton>
           </StepNavigation>
         </form>
       </Form>

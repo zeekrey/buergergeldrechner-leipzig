@@ -3,24 +3,28 @@
 import type { FormEvent } from "react";
 
 import { produce } from "immer";
-import { ArrowRightCircleIcon, ShieldAlertIcon } from "lucide-react";
+import { BriefcaseIcon, ShieldAlertIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
 
 import { useStateContext } from "@/components/context";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import { WizardNextButton } from "@/components/questionnaire/actions";
 import {
+  QuestionnaireChoiceCard,
+  QuestionnaireChoiceGroup,
+} from "@/components/questionnaire/choice-card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  StepContent,
+  StepDescription,
+  StepNavigation,
   StepRoot,
   StepTitle,
-  StepDescription,
 } from "@/components/ui/step-primitives";
 import HelpMarkdown from "@/config/steps/erwerbsfaehig.mdx";
 import { stepsConfig } from "@/lib/machine";
 import { generateId, generateMember } from "@/lib/utils";
-
-import { Checkbox } from "../../../components/ui/checkbox";
 
 const step = stepsConfig[0];
 
@@ -32,13 +36,16 @@ export default function StepEmployable() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
 
-  const handleCheckedChange = useCallback((value: boolean) => {
-    setState(
-      produce(state, (draft) => {
-        draft.isEmployable = value;
-      })
-    );
-  }, []);
+  const handleCheckedChange = useCallback(
+    (value: boolean) => {
+      setState(
+        produce(state, (draft) => {
+          draft.isEmployable = value;
+        })
+      );
+    },
+    [setState, state]
+  );
 
   const handleSubmit = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
@@ -62,7 +69,7 @@ export default function StepEmployable() {
       const nextStep = step.next(state);
       push(`${stepsConfig[nextStep].id}`);
     },
-    [state]
+    [push, setState, state]
   );
 
   return (
@@ -72,51 +79,41 @@ export default function StepEmployable() {
       </StepTitle>
       <StepDescription>{step.description}</StepDescription>
       <form onSubmit={handleSubmit}>
-        <StepContent>
-          <div className="items-top flex space-x-2 grow px-2 py-4 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-            <Checkbox
-              id="terms1"
+        <StepContent className="flex flex-col gap-6">
+          <QuestionnaireChoiceGroup>
+            <QuestionnaireChoiceCard
               checked={state.isEmployable}
-              onCheckedChange={(value: boolean) => handleCheckedChange(value)}
-            />
-            <label
+              control={
+                <Checkbox
+                  checked={state.isEmployable}
+                  id="terms1"
+                  onCheckedChange={(value) => handleCheckedChange(value === true)}
+                />
+              }
               htmlFor="terms1"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Ja, ich bin erwerbsfähig.
-            </label>
-          </div>
+              icon={BriefcaseIcon}
+              title="Ja, ich bin erwerbsfähig."
+            />
+          </QuestionnaireChoiceGroup>
+          <Alert>
+            <ShieldAlertIcon className="size-4" />
+            <AlertTitle>Nicht erwerbsfähig?</AlertTitle>
+            <AlertDescription>
+              Sind Sie nicht erwerbsfähig, so stehen Ihnen unter Umständen andere
+              Sozialleistungen zu. Hier finden Sie eine Übersicht über möglich
+              Alternativen.{" "}
+              <a href="https://www.leipzig.de/buergerservice-und-verwaltung/aemter-und-behoerdengaenge/behoerden-und-dienstleistungen/dienstleistung/sozialhilfe-beantragen-5b5842148421a/">
+                → Sozialhilfe
+              </a>
+            </AlertDescription>
+          </Alert>
         </StepContent>
-        <StepNavigation>
-          <div />
-          <Button
-            className="grow sm:grow-0 sm:w-48 "
-            size="lg"
-            type="submit"
-            disabled={!state.isEmployable}
-          >
+        <StepNavigation className="justify-end">
+          <WizardNextButton disabled={!state.isEmployable}>
             Weiter
-            <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-          </Button>
+          </WizardNextButton>
         </StepNavigation>
       </form>
-      {/* <StepNote>
-      
-      </StepNote> */}
-      <div className="mx-8 mb-6">
-        <Alert>
-          <ShieldAlertIcon className="h-4 w-4" />
-          <AlertTitle>Nicht erwerbsfähig?</AlertTitle>
-          <AlertDescription>
-            Sind Sie nicht erwerbsfähig, so stehen Ihnen unter Umständen andere
-            Sozialleistungen zu. Hier finden Sie eine Übersicht über möglich
-            Alternativen.{" "}
-            <a href="https://www.leipzig.de/buergerservice-und-verwaltung/aemter-und-behoerdengaenge/behoerden-und-dienstleistungen/dienstleistung/sozialhilfe-beantragen-5b5842148421a/">
-              → Sozialhilfe
-            </a>
-          </AlertDescription>
-        </Alert>
-      </div>
     </StepRoot>
   );
 }

@@ -1,13 +1,14 @@
 "use client";
 
 import { calculateOverall } from "calculation";
-import { ArrowLeftCircleIcon, RotateCwIcon, ShareIcon } from "lucide-react";
+import { RotateCwIcon, ShareIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { useStateContext } from "@/components/context";
+import { WizardBackButton } from "@/components/questionnaire/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -146,22 +147,16 @@ export default function StepSummary() {
           variant="secondary"
           className="w-full"
         >
-          <ShareIcon className="w-4 h-4" /> Teilen
+          <ShareIcon data-icon="inline-start" /> Teilen
         </Button>
       </StepContent>
       <StepNavigation>
-        <Button
-          onClick={handleBack}
-          size="lg"
-          type="button"
-          variant="secondary"
-        >
-          <ArrowLeftCircleIcon className="w-4 h-4 mr-3" />
+        <WizardBackButton onClick={handleBack} variant="secondary">
           Zurück
-        </Button>
-        <Button variant="secondary" size="lg" asChild onClick={handleReset}>
+        </WizardBackButton>
+        <Button asChild onClick={handleReset} size="lg" variant="secondary">
           <Link href="/antrag/erwerbsfaehig">
-            <RotateCwIcon className="w-4 h-4 mr-2" />
+            <RotateCwIcon data-icon="inline-start" />
             Neu starten
           </Link>
         </Button>

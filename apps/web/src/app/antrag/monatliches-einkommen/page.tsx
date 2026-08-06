@@ -8,11 +8,14 @@ import {
   PlusCircleIcon,
   XCircleIcon,
 } from "lucide-react";
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment, useCallback, useMemo } from "react";
 
 import { useStateContext } from "@/components/context";
+import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -197,23 +200,10 @@ export default function StepSalary() {
         </ScrollArea>
       </StepContent>
       <StepNavigation>
-        <Button
-          onClick={handleBack}
-          size="lg"
-          type="button"
-          variant="secondary"
-        >
-          <ArrowLeftCircleIcon className="w-4 h-4" />
-        </Button>
-        <Button
-          className="grow sm:grow-0 sm:w-48 ml-4"
-          size="lg"
-          type="button"
-          onClick={handleSubmit}
-        >
+        <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+        <WizardNextButton onClick={handleSubmit} type="button">
           Weiter
-          <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-        </Button>
+        </WizardNextButton>
       </StepNavigation>
     </StepRoot>
   );

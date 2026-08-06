@@ -3,24 +3,26 @@
 import type { FormEvent } from "react";
 
 import { produce } from "immer";
-import {
-  ArrowRightCircleIcon,
-  ArrowLeftCircleIcon,
-  UserIcon,
-  UsersIcon,
-} from "lucide-react";
+import { UserIcon, UsersIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
 import { useStateContext } from "@/components/context";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
+import {
+  QuestionnaireChoiceCard,
+  QuestionnaireChoiceGroup,
+} from "@/components/questionnaire/choice-card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  StepContent,
+  StepDescription,
+  StepNavigation,
   StepRoot,
   StepTitle,
-  StepDescription,
 } from "@/components/ui/step-primitives";
 import HelpMarkdown from "@/config/steps/partnerschaft.mdx";
 import { stepsConfig } from "@/lib/machine";
@@ -69,19 +71,22 @@ export default function StepPartner() {
 
       setState(newState);
     },
-    [state]
+    [setState, state]
   );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    const nextStep = step.next(state);
-    push(`${stepsConfig[nextStep].id}`);
-  };
+      const nextStep = step.next(state);
+      push(`${stepsConfig[nextStep].id}`);
+    },
+    [push, state]
+  );
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous].id}`);
-  }, [state]);
+  }, [push]);
 
   return (
     <StepRoot id={step.id}>
@@ -92,52 +97,38 @@ export default function StepPartner() {
       <form onSubmit={handleSubmit}>
         <StepContent>
           <RadioGroup
-            className="py-6 gap-4 flex flex-col"
-            value={partner}
+            className="flex flex-col gap-3"
             onValueChange={(value: RadioValue) => handleChange(value)}
+            value={partner}
           >
-            <div>
-              <RadioGroupItem
-                className="peer sr-only"
-                id="without-partner"
-                value={"without-partner"}
-              />
-              <Label
-                className="max-w-fit flex items-center gap-2 rounded-md border-2 border-muted bg-popover py-3 px-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+            <QuestionnaireChoiceGroup>
+              <QuestionnaireChoiceCard
+                checked={partner === "without-partner"}
+                control={
+                  <RadioGroupItem
+                    id="without-partner"
+                    value="without-partner"
+                  />
+                }
                 htmlFor="without-partner"
-              >
-                <UserIcon className="h-5 w-5" />
-                Alleinstehend
-              </Label>
-            </div>
-            <div>
-              <RadioGroupItem
-                className="peer sr-only"
-                id="with-partner"
-                value={"with-partner"}
+                icon={UserIcon}
+                title="Alleinstehend"
               />
-              <Label
-                className="max-w-fit flex items-center gap-2 rounded-md border-2 border-muted bg-popover py-3 px-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              <QuestionnaireChoiceCard
+                checked={partner === "with-partner"}
+                control={
+                  <RadioGroupItem id="with-partner" value="with-partner" />
+                }
                 htmlFor="with-partner"
-              >
-                <UsersIcon className="h-5 w-5" />
-                Partnerschaft
-              </Label>
-            </div>
+                icon={UsersIcon}
+                title="Partnerschaft"
+              />
+            </QuestionnaireChoiceGroup>
           </RadioGroup>
         </StepContent>
         <StepNavigation>
-          <Button onClick={handleBack} size="lg" type="button">
-            <ArrowLeftCircleIcon className="w-4 h-4" />
-          </Button>
-          <Button
-            className="grow sm:grow-0 sm:w-48 ml-4"
-            size="lg"
-            type="submit"
-          >
-            Weiter
-            <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-          </Button>
+          <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+          <WizardNextButton>Weiter</WizardNextButton>
         </StepNavigation>
       </form>
     </StepRoot>

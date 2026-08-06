@@ -2,14 +2,16 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { produce } from "immer";
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useStateContext } from "@/components/context";
-import { Button } from "@/components/ui/button";
+import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import {
@@ -118,15 +120,15 @@ export default function StepSpending() {
       <StepDescription>{step.description}</StepDescription>
       <Form {...form}>
         <form
-          className="space-y-2 grow flex flex-col"
+          className="flex grow flex-col gap-2"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <StepContent className="flex-grow flex flex-col px-8 pt-4">
+          <StepContent className="flex grow flex-col">
             <FormField
               control={form.control}
               name="hasNoSpendings"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-1 rounded-md border p-4">
+                <FormItem className="flex flex-row items-start gap-1 rounded-md border p-4">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
@@ -237,7 +239,7 @@ export default function StepSpending() {
             </ScrollArea>
           </StepContent>
           <Dialog open={dialogIsOpen} onOpenChange={setDialogOpen}>
-            <StepNavigation className="flex-col px-8 py-6 space-y-3">
+            <StepNavigation className="flex-col items-stretch">
               {/* {issues?.includes("rent") && (
                 <>
                   <DialogTrigger asChild>
@@ -267,18 +269,9 @@ export default function StepSpending() {
                   </DialogContent>
                 </>
               )} */}
-              <div className=" flex justify-between sm:gap-2">
-                <Button onClick={handleBack} size="lg" type="button">
-                  <ArrowLeftCircleIcon className="w-4 h-4" />
-                </Button>
-                <Button
-                  className="grow sm:grow-0 sm:w-48 ml-4"
-                  size="lg"
-                  type="submit"
-                >
-                  Weiter
-                  <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-                </Button>
+              <div className="flex items-center justify-between gap-3">
+                <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+                <WizardNextButton>Weiter</WizardNextButton>
               </div>
             </StepNavigation>
           </Dialog>

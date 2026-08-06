@@ -4,16 +4,15 @@ import type { FormEvent } from "react";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { produce } from "immer";
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-  PlusCircle,
-  XCircleIcon,
-} from "lucide-react";
+import { PlusCircle, XCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 import { useStateContext } from "@/components/context";
+import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -201,17 +200,8 @@ export default function StepCommunity() {
           </ScrollArea>
         </StepContent>
         <StepNavigation>
-          <Button onClick={handleBack} size="lg" type="button">
-            <ArrowLeftCircleIcon className="w-4 h-4" />
-          </Button>
-          <Button
-            className="grow sm:grow-0 sm:w-48 ml-4"
-            size="lg"
-            type="submit"
-          >
-            Weiter
-            <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-          </Button>
+          <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+          <WizardNextButton>Weiter</WizardNextButton>
         </StepNavigation>
       </form>
     </StepRoot>

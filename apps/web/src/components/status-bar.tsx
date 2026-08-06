@@ -24,30 +24,34 @@ export function StatusBar() {
 
   return (
     <Drawer>
-      <DrawerTrigger className="w-full group">
-        <div className="px-8 pt-6">
-          <div className="flex justify-between mx-auto max-w-7xl">
-            <div className="flex flex-col justify-between">
-              <small className="text-xs text-left">Fortschritt</small>
+      <DrawerTrigger asChild>
+        <button
+          className="group w-full border-t bg-muted/20 text-left transition-colors hover:bg-muted/35"
+          type="button"
+        >
+          <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0 flex-1">
               <Progress />
             </div>
-            <div className="flex flex-col justify-center">
-              <small className="text-xs">Möglicher Anspruch</small>
-              <strong className="text-lg text-right">
-                {overall.toLocaleString("de-DE", {
-                  currency: "EUR",
-                  style: "currency",
-                })}
-              </strong>
+            <div className="flex items-center justify-between gap-4 rounded-xl border bg-background/80 px-4 py-3 shadow-xs">
+              <div className="flex flex-col gap-1">
+                <small className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Möglicher Anspruch
+                </small>
+                <strong className="text-base font-semibold sm:text-lg">
+                  {overall.toLocaleString("de-DE", {
+                    currency: "EUR",
+                    style: "currency",
+                  })}
+                </strong>
+              </div>
+              <ChevronDownIcon className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
             </div>
           </div>
-        </div>
-        <div className="flex justify-center">
-          <ChevronDownIcon className="w-4 h-4 text-muted group-hover:text-primary transition" />
-        </div>
+        </button>
       </DrawerTrigger>
       <DrawerContent className="max-h-[80%]">
-        <DrawerHeader className="max-w-4xl mx-auto px-3">
+        <DrawerHeader className="mx-auto w-full max-w-4xl px-4 sm:px-6">
           <DrawerTitle>Ihre aktuellen Eingaben</DrawerTitle>
           <DrawerDescription>
             Bei der Darstellung handelt es sich um eine unverbindliche
@@ -55,7 +59,7 @@ export function StatusBar() {
             kann nur das Jobcenter prüfen.
           </DrawerDescription>
         </DrawerHeader>
-        <div className="max-w-4xl mx-auto ">
+        <div className="mx-auto w-full max-w-4xl px-4 pb-6 sm:px-6">
           <ScrollArea className="h-[480px]">
             <ResultSheet state={state} />
           </ScrollArea>

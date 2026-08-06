@@ -3,24 +3,26 @@
 import type { FormEvent } from "react";
 
 import { produce } from "immer";
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-  BabyIcon,
-  CircleOffIcon,
-} from "lucide-react";
+import { BabyIcon, CircleOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useStateContext } from "@/components/context";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
+import {
+  QuestionnaireChoiceCard,
+  QuestionnaireChoiceGroup,
+} from "@/components/questionnaire/choice-card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  StepContent,
+  StepDescription,
+  StepNavigation,
   StepRoot,
   StepTitle,
-  StepDescription,
 } from "@/components/ui/step-primitives";
 import HelpMarkdown from "@/config/steps/kinder.mdx";
 import { stepsConfig } from "@/lib/machine";
@@ -75,19 +77,22 @@ export default function StepChildren() {
 
       setState(newState);
     },
-    [state]
+    [setState, state]
   );
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const handleSubmit = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    const nextStep = step.next(state);
-    push(`${stepsConfig[nextStep].id}`);
-  }
+      const nextStep = step.next(state);
+      push(`${stepsConfig[nextStep].id}`);
+    },
+    [push, state]
+  );
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous].id}`);
-  }, [state]);
+  }, [push]);
 
   return (
     <StepRoot id={step.id}>
@@ -98,54 +103,38 @@ export default function StepChildren() {
       <form onSubmit={handleSubmit}>
         <StepContent>
           <RadioGroup
-            className="py-6 gap-4 flex flex-col"
+            className="flex flex-col gap-3"
+            onValueChange={(value: RadioValue) => handleChange(value)}
             value={children}
-            onValueChange={(value: "with-children" | "without-children") =>
-              handleChange(value)
-            }
           >
-            <div>
-              <RadioGroupItem
-                className="peer sr-only"
-                id="with-children"
-                value="with-children"
-              />
-              <Label
-                className="max-w-[165px] flex items-center gap-2 rounded-md border-2 border-muted bg-popover py-3 px-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+            <QuestionnaireChoiceGroup>
+              <QuestionnaireChoiceCard
+                checked={children === "with-children"}
+                control={
+                  <RadioGroupItem id="with-children" value="with-children" />
+                }
                 htmlFor="with-children"
-              >
-                <BabyIcon className="h-5 w-5" />
-                Kinder
-              </Label>
-            </div>
-            <div>
-              <RadioGroupItem
-                className="peer sr-only"
-                id="without-children"
-                value="without-children"
+                icon={BabyIcon}
+                title="Kinder"
               />
-              <Label
-                className="max-w-[165px] flex items-center gap-2 rounded-md border-2 border-muted bg-popover py-3 px-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              <QuestionnaireChoiceCard
+                checked={children === "without-children"}
+                control={
+                  <RadioGroupItem
+                    id="without-children"
+                    value="without-children"
+                  />
+                }
                 htmlFor="without-children"
-              >
-                <CircleOffIcon className="h-5 w-5" />
-                Keine Kinder
-              </Label>
-            </div>
+                icon={CircleOffIcon}
+                title="Keine Kinder"
+              />
+            </QuestionnaireChoiceGroup>
           </RadioGroup>
         </StepContent>
         <StepNavigation>
-          <Button onClick={handleBack} size="lg" type="button">
-            <ArrowLeftCircleIcon className="w-4 h-4" />
-          </Button>
-          <Button
-            className="grow sm:grow-0 sm:w-48 ml-4"
-            size="lg"
-            type="submit"
-          >
-            Weiter
-            <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-          </Button>
+          <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+          <WizardNextButton>Weiter</WizardNextButton>
         </StepNavigation>
       </form>
     </StepRoot>

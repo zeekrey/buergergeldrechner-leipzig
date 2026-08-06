@@ -3,15 +3,15 @@
 import type { FormEvent } from "react";
 
 import { produce } from "immer";
-import {
-  ArrowRightCircleIcon,
-  ArrowLeftCircleIcon,
-  XCircleIcon,
-} from "lucide-react";
+import { XCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useCallback } from "react";
 
 import { useStateContext } from "@/components/context";
+import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -164,17 +164,8 @@ export default function StepChildrenCount() {
           </ScrollArea>
         </StepContent>
         <StepNavigation>
-          <Button onClick={handleBack} size="lg" type="button">
-            <ArrowLeftCircleIcon className="w-4 h-4" />
-          </Button>
-          <Button
-            className="grow sm:grow-0 sm:w-48 ml-4"
-            size="lg"
-            type="submit"
-          >
-            Weiter
-            <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-          </Button>
+          <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+          <WizardNextButton>Weiter</WizardNextButton>
         </StepNavigation>
       </form>
     </StepRoot>
