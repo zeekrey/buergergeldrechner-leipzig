@@ -10,7 +10,6 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Progress as ProgressBar } from "@/components/ui/progress";
 import { stepsConfig } from "@/lib/machine";
 import { cn } from "@/lib/utils";
 import { getApplicableStepIds } from "@/lib/wizard-progress";
@@ -54,7 +53,6 @@ export function Progress() {
           <span className="text-sm font-medium">{progressValue}%</span>
         </div>
       </div>
-      <ProgressBar className="h-2" value={progressValue} />
       <ol className="flex flex-wrap items-center gap-2">
         {allSteps.map((step, index) => {
           const isCurrent = currentSlug === step.id;
