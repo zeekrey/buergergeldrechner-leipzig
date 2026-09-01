@@ -11,9 +11,11 @@ describe("getApplicableStepIds", () => {
       "erwerbsfaehig",
       "partnerschaft",
       "kinder",
+      "alter",
       "bedarfsgemeinschaft",
       "kosten-unterkunft-heizung",
       "monatliches-einkommen",
+      "vermoegen",
       "ergebnis",
     ]);
   });
@@ -37,9 +39,11 @@ describe("getApplicableStepIds", () => {
       "partnerschaft",
       "kinder",
       "kinder-anzahl",
+      "alter",
       "bedarfsgemeinschaft",
       "kosten-unterkunft-heizung",
       "monatliches-einkommen",
+      "vermoegen",
       "ergebnis",
     ]);
   });
@@ -64,10 +68,12 @@ describe("getApplicableStepIds", () => {
       "erwerbsfaehig",
       "partnerschaft",
       "kinder",
+      "alter",
       "bedarfsgemeinschaft",
       "krankheiten",
       "kosten-unterkunft-heizung",
       "monatliches-einkommen",
+      "vermoegen",
       "ergebnis",
     ]);
   });

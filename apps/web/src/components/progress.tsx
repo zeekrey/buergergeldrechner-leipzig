@@ -60,28 +60,36 @@ export function Progress() {
           const isApplicable = applicableStepSet.has(step.id);
           const isCompleted =
             applicableIndex !== -1 && applicableIndex < currentApplicableIndex;
+          const isNavigable = isCurrent || isCompleted;
+          const indicatorClassName = cn(
+            "block rounded-full transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+            isCurrent
+              ? "h-2.5 w-8 bg-primary"
+              : isCompleted
+                ? "size-2.5 bg-primary/75"
+                : isApplicable
+                  ? "size-2.5 bg-muted-foreground/30"
+                  : "size-2.5 border border-dashed border-muted-foreground/30"
+          );
+          const accessibleLabel = `Schritt ${index + 1}: ${step.title}`;
 
           return (
             <li key={step.id}>
               <HoverCard>
                 <HoverCardTrigger asChild>
-                  <Link
-                    href={`/antrag/${step.id}`}
-                    className={cn(
-                      "block rounded-full transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-                      isCurrent
-                        ? "h-2.5 w-8 bg-primary"
-                        : isCompleted
-                          ? "size-2.5 bg-primary/75"
-                          : isApplicable
-                            ? "size-2.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                            : "size-2.5 border border-dashed border-muted-foreground/30 hover:border-muted-foreground/50"
-                    )}
-                  >
-                    <span className="sr-only">
-                      Schritt {index + 1}: {step.title}
-                    </span>
-                  </Link>
+                  {isNavigable ? (
+                    <Link
+                      aria-label={accessibleLabel}
+                      className={indicatorClassName}
+                      href={`/antrag/${step.id}`}
+                    />
+                  ) : (
+                    <span
+                      aria-label={`${accessibleLabel} (noch nicht verfügbar)`}
+                      className={indicatorClassName}
+                      role="img"
+                    />
+                  )}
                 </HoverCardTrigger>
                 <HoverCardContent className="w-auto px-3 py-2">
                   <p className="text-xs font-medium">{step.title}</p>

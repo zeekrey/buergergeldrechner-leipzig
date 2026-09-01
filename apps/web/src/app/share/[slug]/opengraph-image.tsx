@@ -2,7 +2,10 @@ import { neon } from "@neondatabase/serverless";
 import { calculateOverall } from "calculation";
 import { ImageResponse } from "next/og";
 
+import { requireCompleteAges } from "@/lib/complete-context";
 import { TStepContext } from "@/lib/types";
+
+import { getOpenGraphResult } from "./opengraph-result";
 
 export const runtime = "edge";
 
@@ -52,7 +55,13 @@ export default async function Image({ params }: { params: { slug: string } }) {
 
     const communitySize = data.community.length;
     const spendings = data.spendings.sum;
-    const { allowance, overall, income } = calculateOverall(data);
+    const { allowance, assets, overall, income, resultStatus } =
+      calculateOverall(requireCompleteAges(data));
+    const openGraphResult = getOpenGraphResult({
+      assetsRequireManualReview: assets.requiresManualReview,
+      overall,
+      resultStatus,
+    });
 
     const allowanceSum = allowance.reduce(
       (acc, curr) => acc + (curr.amount ?? 0),
@@ -79,12 +88,19 @@ export default async function Image({ params }: { params: { slug: string } }) {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div>Berechneter Grundsicherungsanspruch</div>
-            <div style={{ fontWeight: 600, fontSize: 98, color: "#18181B" }}>
-              {overall.toLocaleString("de-DE", {
-                style: "currency",
-                currency: "EUR",
-              })}
+            <div>{openGraphResult.label}</div>
+            <div
+              style={{
+                color: "#18181B",
+                fontSize:
+                  resultStatus === "manual-review" ||
+                  assets.requiresManualReview
+                    ? 72
+                    : 98,
+                fontWeight: 600,
+              }}
+            >
+              {openGraphResult.value}
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>

@@ -70,13 +70,6 @@ export const EmploymentIncome = ({
         ].income.findIndex((inc) => inc.id === income.id);
 
         newState = produce(state, (draft) => {
-          if (
-            data.isYoung &&
-            typeof draft.community[selectedPersonIndex].age === "undefined"
-          ) {
-            draft.community[selectedPersonIndex].age = 24;
-          } else draft.community[selectedPersonIndex].age = undefined;
-
           draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
             ...income,
             allowance,
@@ -91,13 +84,6 @@ export const EmploymentIncome = ({
       } else {
         /** Create income if no income to be edited was provided. */
         newState = produce(state, (draft) => {
-          if (
-            data.isYoung &&
-            typeof draft.community[selectedPersonIndex].age === "undefined"
-          ) {
-            draft.community[selectedPersonIndex].age = 24;
-          } else draft.community[selectedPersonIndex].age = undefined;
-
           draft.community[selectedPersonIndex].income.push({
             allowance,
             amount: Number(_income),

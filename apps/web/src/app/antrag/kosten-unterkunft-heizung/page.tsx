@@ -109,7 +109,7 @@ export default function StepSpending() {
 
   const sum = Number(heating ?? 0) + Number(rent ?? 0) + Number(utilities ?? 0);
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [state]);
 
   return (

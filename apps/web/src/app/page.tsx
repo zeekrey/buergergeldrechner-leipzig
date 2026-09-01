@@ -211,7 +211,7 @@ export default function HomePage() {
               className="relative bg-white flex items-center gap-1 rounded-full px-3 py-1 text-sm leading-6 text-zinc-600 ring-1 ring-zinc-900/10 hover:ring-zinc-600/20"
               href="/antrag"
             >
-              Alle Berechnungen & Sätze wurden für 2025 aktualisiert.
+              Gültig für Bewilligungszeiträume ab 1. Juli 2026.
               <ArrowRightIcon className="w-3 h-3" aria-hidden />
             </Link>
           </div>
@@ -296,8 +296,8 @@ export default function HomePage() {
             </h2>
             <p className="mt-6 text-lg leading-8 text-zinc-700">
               Der Grundsicherungsrechner zeigt eine detailgenaue Berechnung des
-              Grundsicherungsgeldes. Zudem haben Sie die Möglichkeit, das Ergebnis
-              mit jemandem zu teilen.
+              Grundsicherungsgeldes. Zudem haben Sie die Möglichkeit, das
+              Ergebnis mit jemandem zu teilen.
             </p>
           </div>
           <div className="pt-16 pb-1 overflow-hidden relative">
@@ -396,9 +396,9 @@ export default function HomePage() {
           <div className="mx-auto max-w-4xl px-6 lg:px-8 ">
             <div className="text-center mx-auto">
               <p className="text-center text-xl font-semibold text-zinc-900 mt-2">
-                Der Grundsicherungsrechner wurde im Rahmen des Innovationswettbewerbs
-                "Smart City Challenge Leipzig" durch das Referat Digitale Stadt
-                Leipzig gefördert.
+                Der Grundsicherungsrechner wurde im Rahmen des
+                Innovationswettbewerbs "Smart City Challenge Leipzig" durch das
+                Referat Digitale Stadt Leipzig gefördert.
               </p>
             </div>
             <div className="flex flex-col mt-10 items-center space-y-16 sm:space-y-0 sm:flex-row justify-center">

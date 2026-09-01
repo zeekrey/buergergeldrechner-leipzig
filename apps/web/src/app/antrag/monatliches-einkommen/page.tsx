@@ -37,6 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import HelpMarkdown from "@/config/steps/monatliches-einkommen.mdx";
+import { useCompleteContext } from "@/hooks/use-complete-context";
 import { stepsConfig } from "@/lib/machine";
 import { type TIncome, TPerson, incomeType } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -49,6 +50,7 @@ const step = stepsConfig[8];
 export default function StepSalary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
+  const completeContext = useCompleteContext(state);
 
   const handleRemove = useCallback(
     (person: TPerson, income: TIncome) => {
@@ -72,7 +74,10 @@ export default function StepSalary() {
     [state]
   );
 
-  const incomeSum = useMemo(() => calculateIncome(state), [state.community]);
+  const incomeSum = useMemo(
+    () => (completeContext ? calculateIncome(completeContext) : 0),
+    [completeContext]
+  );
 
   function handleSubmit() {
     const nextStep = step.next(state);
@@ -80,8 +85,10 @@ export default function StepSalary() {
   }
 
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [state]);
+
+  if (!completeContext) return null;
 
   return (
     <StepRoot id={step.id}>

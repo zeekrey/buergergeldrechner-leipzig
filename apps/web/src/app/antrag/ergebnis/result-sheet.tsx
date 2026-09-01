@@ -1,6 +1,7 @@
 import { calculateOverall } from "calculation";
 import { Fragment, useMemo, forwardRef } from "react";
 
+import { requireCompleteAges } from "@/lib/complete-context";
 import { allowanceType, incomeType, TStepContext } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -49,8 +50,13 @@ export function ResultSheet({ state }: { state: TStepContext }) {
     income,
     incomeAfterAllowance,
     overall,
+    resultStatus,
     spendingDetails,
-  } = useMemo(() => calculateOverall(state), [state]);
+    assets,
+  } = useMemo(
+    () => calculateOverall(requireCompleteAges(state)),
+    [state]
+  );
 
   const allowanceSum = useMemo(
     () => allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0),
@@ -317,10 +323,55 @@ export function ResultSheet({ state }: { state: TStepContext }) {
             </TableCell>
           </>
         )}
+        {assets.items.length > 0 && (
+          <>
+            <TableCell className="font-medium row-span-4 col-span-2 sm:col-span-1">
+              Vermögen
+            </TableCell>
+            <TableCell className="sm:col-span-2">
+              Zu berücksichtigendes Vermögen
+            </TableCell>
+            <TableCell className="text-right">
+              {assets.countable.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
+            </TableCell>
+            <TableCell className="sm:col-span-2">
+              Nicht berücksichtigtes Vermögen
+            </TableCell>
+            <TableCell className="text-right">
+              {assets.items
+                .reduce((sum, item) => sum + item.exempt, 0)
+                .toLocaleString("de-DE", {
+                  style: "currency",
+                  currency: "EUR",
+                })}
+            </TableCell>
+            <TableCell className="sm:col-span-2">Vermögensfreibetrag</TableCell>
+            <TableCell className="text-right">
+              {assets.allowance.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
+            </TableCell>
+            <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
+              Übersteigendes Vermögen
+            </TableCell>
+            <TableCell className="text-right bg-muted/30 font-bold">
+              {assets.excess.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
+            </TableCell>
+          </>
+        )}
         {/* overall sum  */}
         <>
           <TableCell className="sm:col-span-3 bg-primary font-bold text-primary-foreground">
-            Grundsicherungsanspruch
+            {resultStatus === "manual-review"
+              ? "Vorläufiger Bedarf – manuelle Vermögensprüfung erforderlich"
+              : "Grundsicherungsanspruch"}
           </TableCell>
           <TableCell className="text-right bg-primary font-bold text-primary-foreground">
             {overall.toLocaleString("de-DE", {

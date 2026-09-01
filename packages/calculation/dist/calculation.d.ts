@@ -1,4 +1,5 @@
 import { type TStepContext, type TAllowance } from "./types";
+import { calculateAssets } from "./assets";
 import { flattenIncome } from "./utils";
 type TAdditional = {
     name: string;
@@ -54,6 +55,7 @@ export declare function calculateIncome(context: TStepContext): number;
 type BenefitCommunityResult = {
     context: TStepContext;
     excludedPersonIds: string[];
+    requiresManualReview: boolean;
 };
 export type OverallCalculation = {
     baseNeed: ReturnType<typeof calculateBaseNeed>;
@@ -67,8 +69,11 @@ export type OverallCalculation = {
     };
     allowance: ReturnType<typeof calculateAllowance>;
     incomeAfterAllowance: number;
+    assets: ReturnType<typeof calculateAssets>;
     overall: number;
+    resultStatus: "calculated" | "manual-review";
     benefitCommunity: TStepContext["community"];
+    benefitCommunityRequiresManualReview: boolean;
     excludedPersonIds: string[];
 };
 /**

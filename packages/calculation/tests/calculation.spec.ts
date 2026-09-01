@@ -9,7 +9,7 @@ import {
   calculateSalary,
   calculateSelfEmploymentIncome,
 } from "../src/calculation";
-import { type TAdult, type TChild, type TStepContext } from "../src/types";
+import { type TAdult, type TChild, type TStepContext, emptyAssets } from "../src/types";
 import { generateId } from "../src/utils";
 
 describe("salary", () => {
@@ -113,9 +113,11 @@ const defaultContext: TStepContext = {
     sum: 750,
     utilities: 100,
   },
+  assets: emptyAssets,
 };
 
 const defaultAdult: TAdult = {
+  age: 35,
   id: generateId(),
   name: "Person",
   type: "adult",
@@ -593,6 +595,7 @@ describe("calculateOverall", () => {
       ...defaultContext,
       community: [
         {
+          age: 35,
           id: generateId(),
           name: "Antragsteller",
           type: "adult",
@@ -600,6 +603,7 @@ describe("calculateOverall", () => {
           income: [employmentIncome(1684)],
         },
         {
+          age: 35,
           id: generateId(),
           name: "Partner",
           type: "adult",
@@ -663,6 +667,88 @@ describe("calculateOverall", () => {
     expect(result.income.sum).toBe(2449);
     expect(result.incomeAfterAllowance).toBe(2071);
     expect(result.overall).toBe(2639.45);
+  });
+
+  test("returns manual review instead of zero entitlement for excess assets", () => {
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [{ ...defaultAdult, id: "adult", age: 35 }],
+      assets: {
+        ...emptyAssets,
+        items: [
+          {
+            id: "bank",
+            personId: "adult",
+            type: "BankAccount",
+            amount: 100000,
+          },
+        ],
+      },
+    });
+
+    expect(result.resultStatus).toBe("manual-review");
+    expect(result.assets.excess).toBeGreaterThan(0);
+    expect(result.overall).toBeGreaterThan(0);
+  });
+
+  test("keeps child membership indeterminate when excess assets require manual review", () => {
+    const parent = { ...defaultAdult, id: "parent", age: 35 };
+    const child = { ...defaultChild, id: "child", age: 10 };
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [parent, child],
+      spendings: { rent: 600, utilities: 0, heating: 0, sum: 600 },
+      assets: {
+        ...emptyAssets,
+        items: [
+          {
+            id: "child-bank",
+            personId: "child",
+            type: "BankAccount",
+            amount: 100000,
+          },
+        ],
+      },
+    });
+
+    expect(result.excludedPersonIds).toEqual([]);
+    expect(result.benefitCommunity.map(({ id }) => id)).toEqual([
+      "parent",
+      "child",
+    ]);
+    expect(result.assets.countable).toBe(100000);
+    expect(result.assets.items.map(({ id }) => id)).toEqual(["child-bank"]);
+    expect(result.benefitCommunityRequiresManualReview).toBe(true);
+    expect(result.resultStatus).toBe("manual-review");
+  });
+
+  test("does not give a child the applicant's employability for its vehicle assessment", () => {
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [
+        { ...defaultAdult, id: "parent", age: 35 },
+        { ...defaultChild, id: "child", age: 10 },
+      ],
+      assets: {
+        ...emptyAssets,
+        items: [
+          {
+            id: "child-car",
+            personId: "child",
+            type: "Vehicle",
+            amount: 12000,
+            remainingLoan: 0,
+          },
+        ],
+      },
+    });
+
+    expect(result.excludedPersonIds).toEqual([]);
+    expect(result.benefitCommunityRequiresManualReview).toBe(true);
+    expect(result.resultStatus).toBe("manual-review");
+    expect(result.assets.items).toEqual([
+      expect.objectContaining({ id: "child-car", countable: 12000 }),
+    ]);
   });
 });
 

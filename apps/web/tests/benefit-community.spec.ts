@@ -97,6 +97,11 @@ test("the documented seven-person household excludes self-supporting children an
       sum: 3341.03,
     },
     income: { sum: 0, allowance: 0 },
+    assets: {
+      items: [],
+      hasReceivedBenefitsForOneYear: false,
+      selfEmploymentYearsWithoutPension: 0,
+    },
   };
 
   await loadState(page, state, "/antrag/ergebnis");
@@ -146,6 +151,11 @@ test("employment income without Kindergeld never creates a Kindergeld transfer",
     isEmployable: true,
     spendings: { rent: 750, utilities: 0, heating: 0, sum: 750 },
     income: { sum: 0, allowance: 0 },
+    assets: {
+      items: [],
+      hasReceivedBenefitsForOneYear: false,
+      selfEmploymentYearsWithoutPension: 0,
+    },
   };
 
   await loadState(page, state, "/antrag/monatliches-einkommen");

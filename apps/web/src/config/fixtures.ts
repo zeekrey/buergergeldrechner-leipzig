@@ -1,5 +1,12 @@
-import { TStepContext } from "@/lib/types";
+import { emptyAssets, TStepContext } from "@/lib/types";
 import { generateId } from "@/lib/utils";
+
+const attributes = {
+  diseases: [],
+  hasDiseases: false,
+  isPregnant: false,
+  isSingleParent: false,
+};
 
 export const singleWithoutKids: TStepContext = {
   community: [
@@ -7,6 +14,8 @@ export const singleWithoutKids: TStepContext = {
       id: generateId(),
       type: "adult",
       name: "Antragsteller",
+      age: 35,
+      attributes,
       income: [
         {
           id: generateId(),
@@ -27,6 +36,7 @@ export const singleWithoutKids: TStepContext = {
     allowance: 348,
     sum: 602,
   },
+  assets: emptyAssets,
 };
 
 export const singleWithoutKidsNoNeed: TStepContext = {
@@ -35,6 +45,8 @@ export const singleWithoutKidsNoNeed: TStepContext = {
       id: generateId(),
       type: "adult",
       name: "Antragsteller",
+      age: 35,
+      attributes,
       income: [
         {
           id: generateId(),
@@ -55,6 +67,7 @@ export const singleWithoutKidsNoNeed: TStepContext = {
     allowance: 348,
     sum: 602,
   },
+  assets: emptyAssets,
 };
 
 export const coupleWithoutKids: TStepContext = {
@@ -63,11 +76,15 @@ export const coupleWithoutKids: TStepContext = {
       id: generateId(),
       type: "adult",
       name: "Antragsteller",
+      age: 35,
+      attributes,
       income: [
         {
           id: generateId(),
           type: "EmploymentIncome",
           amount: 500,
+          gros: 500,
+          net: 500,
         },
       ],
     },
@@ -75,6 +92,8 @@ export const coupleWithoutKids: TStepContext = {
       id: generateId(),
       type: "adult",
       name: "Partner",
+      age: 35,
+      attributes,
       income: [],
     },
   ],
@@ -89,6 +108,7 @@ export const coupleWithoutKids: TStepContext = {
     allowance: 348,
     sum: 1352,
   },
+  assets: emptyAssets,
 };
 
 export const coupleWithKids: TStepContext = {
@@ -97,6 +117,8 @@ export const coupleWithKids: TStepContext = {
       id: "1724096609683115",
       type: "adult",
       name: "Antragsteller",
+      age: 35,
+      attributes,
       income: [
         {
           id: generateId(),
@@ -112,13 +134,13 @@ export const coupleWithKids: TStepContext = {
       id: "1724096612132570",
       type: "adult",
       name: "Partner",
+      age: 35,
+      attributes,
       income: [
         {
           id: generateId(),
           type: "UnemploymentBenefits",
           amount: 1200,
-          gros: 0,
-          net: 0,
           allowance: 0,
         },
       ],
@@ -128,6 +150,7 @@ export const coupleWithKids: TStepContext = {
       name: "Kind 1",
       type: "child",
       age: 19,
+      attributes,
       income: [
         {
           id: generateId(),
@@ -141,6 +164,7 @@ export const coupleWithKids: TStepContext = {
       type: "child",
       name: "Kind 2",
       age: 4,
+      attributes,
       income: [
         {
           id: generateId(),
@@ -161,4 +185,5 @@ export const coupleWithKids: TStepContext = {
     allowance: 0,
     sum: 0,
   },
+  assets: emptyAssets,
 };

@@ -85,7 +85,7 @@ export default function StepDiseases() {
   }
 
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [state]);
 
   // const handleChange = (

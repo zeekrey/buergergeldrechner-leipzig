@@ -305,6 +305,181 @@ export declare const ExtendedIncomeSchema: z.ZodUnion<readonly [z.ZodObject<{
     allowance: z.ZodOptional<z.ZodNumber>;
     type: z.ZodLiteral<"ChildBenefitTransfer">;
 }, z.core.$strip>]>;
+export declare const AssetTypeEnum: z.ZodEnum<{
+    BankAccount: "BankAccount";
+    BuildingSavings: "BuildingSavings";
+    Other: "Other";
+    OtherProperty: "OtherProperty";
+    OwnerOccupiedProperty: "OwnerOccupiedProperty";
+    RetirementProvision: "RetirementProvision";
+    Securities: "Securities";
+    Vehicle: "Vehicle";
+}>;
+export type TAssetType = z.infer<typeof AssetTypeEnum>;
+export declare const BankAccountAssetSchema: z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"BankAccount">;
+}, z.core.$strip>;
+export declare const SecuritiesAssetSchema: z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"Securities">;
+}, z.core.$strip>;
+export declare const BuildingSavingsAssetSchema: z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"BuildingSavings">;
+}, z.core.$strip>;
+export declare const RetirementProvisionAssetSchema: z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"RetirementProvision">;
+}, z.core.$strip>;
+export declare const VehicleAssetSchema: z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"Vehicle">;
+    remainingLoan: z.ZodNumber;
+}, z.core.$strip>;
+export declare const OwnerOccupiedPropertyAssetSchema: z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"OwnerOccupiedProperty">;
+    livingSpace: z.ZodNumber;
+    propertyKind: z.ZodEnum<{
+        condo: "condo";
+        house: "house";
+    }>;
+    mortgages: z.ZodNumber;
+}, z.core.$strip>;
+export declare const OtherPropertyAssetSchema: z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"OtherProperty">;
+    mortgages: z.ZodNumber;
+}, z.core.$strip>;
+export declare const OtherAssetSchema: z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"Other">;
+}, z.core.$strip>;
+export declare const ExtendedAssetSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"BankAccount">;
+}, z.core.$strip>, z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"Securities">;
+}, z.core.$strip>, z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"BuildingSavings">;
+}, z.core.$strip>, z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"RetirementProvision">;
+}, z.core.$strip>, z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"Vehicle">;
+    remainingLoan: z.ZodNumber;
+}, z.core.$strip>, z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"OwnerOccupiedProperty">;
+    livingSpace: z.ZodNumber;
+    propertyKind: z.ZodEnum<{
+        condo: "condo";
+        house: "house";
+    }>;
+    mortgages: z.ZodNumber;
+}, z.core.$strip>, z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"OtherProperty">;
+    mortgages: z.ZodNumber;
+}, z.core.$strip>, z.ZodObject<{
+    id: z.ZodString;
+    personId: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodLiteral<"Other">;
+}, z.core.$strip>], "type">;
+export declare const AssetsSchema: z.ZodObject<{
+    items: z.ZodArray<z.ZodDiscriminatedUnion<[z.ZodObject<{
+        id: z.ZodString;
+        personId: z.ZodString;
+        amount: z.ZodNumber;
+        type: z.ZodLiteral<"BankAccount">;
+    }, z.core.$strip>, z.ZodObject<{
+        id: z.ZodString;
+        personId: z.ZodString;
+        amount: z.ZodNumber;
+        type: z.ZodLiteral<"Securities">;
+    }, z.core.$strip>, z.ZodObject<{
+        id: z.ZodString;
+        personId: z.ZodString;
+        amount: z.ZodNumber;
+        type: z.ZodLiteral<"BuildingSavings">;
+    }, z.core.$strip>, z.ZodObject<{
+        id: z.ZodString;
+        personId: z.ZodString;
+        amount: z.ZodNumber;
+        type: z.ZodLiteral<"RetirementProvision">;
+    }, z.core.$strip>, z.ZodObject<{
+        id: z.ZodString;
+        personId: z.ZodString;
+        amount: z.ZodNumber;
+        type: z.ZodLiteral<"Vehicle">;
+        remainingLoan: z.ZodNumber;
+    }, z.core.$strip>, z.ZodObject<{
+        id: z.ZodString;
+        personId: z.ZodString;
+        amount: z.ZodNumber;
+        type: z.ZodLiteral<"OwnerOccupiedProperty">;
+        livingSpace: z.ZodNumber;
+        propertyKind: z.ZodEnum<{
+            condo: "condo";
+            house: "house";
+        }>;
+        mortgages: z.ZodNumber;
+    }, z.core.$strip>, z.ZodObject<{
+        id: z.ZodString;
+        personId: z.ZodString;
+        amount: z.ZodNumber;
+        type: z.ZodLiteral<"OtherProperty">;
+        mortgages: z.ZodNumber;
+    }, z.core.$strip>, z.ZodObject<{
+        id: z.ZodString;
+        personId: z.ZodString;
+        amount: z.ZodNumber;
+        type: z.ZodLiteral<"Other">;
+    }, z.core.$strip>], "type">>;
+    hasReceivedBenefitsForOneYear: z.ZodBoolean;
+    selfEmploymentYearsWithoutPension: z.ZodNumber;
+}, z.core.$strip>;
+export declare const emptyAssets: z.infer<typeof AssetsSchema>;
+export declare const assetType: {
+    [key in TAssetType]: {
+        label: string;
+    };
+};
 declare const Adult: z.ZodObject<{
     id: z.ZodString;
     name: z.ZodString;
@@ -1035,6 +1210,59 @@ export declare const StepContext: z.ZodObject<{
         sum: z.ZodNumber;
         allowance: z.ZodOptional<z.ZodNumber>;
     }, z.core.$strip>;
+    assets: z.ZodObject<{
+        items: z.ZodArray<z.ZodDiscriminatedUnion<[z.ZodObject<{
+            id: z.ZodString;
+            personId: z.ZodString;
+            amount: z.ZodNumber;
+            type: z.ZodLiteral<"BankAccount">;
+        }, z.core.$strip>, z.ZodObject<{
+            id: z.ZodString;
+            personId: z.ZodString;
+            amount: z.ZodNumber;
+            type: z.ZodLiteral<"Securities">;
+        }, z.core.$strip>, z.ZodObject<{
+            id: z.ZodString;
+            personId: z.ZodString;
+            amount: z.ZodNumber;
+            type: z.ZodLiteral<"BuildingSavings">;
+        }, z.core.$strip>, z.ZodObject<{
+            id: z.ZodString;
+            personId: z.ZodString;
+            amount: z.ZodNumber;
+            type: z.ZodLiteral<"RetirementProvision">;
+        }, z.core.$strip>, z.ZodObject<{
+            id: z.ZodString;
+            personId: z.ZodString;
+            amount: z.ZodNumber;
+            type: z.ZodLiteral<"Vehicle">;
+            remainingLoan: z.ZodNumber;
+        }, z.core.$strip>, z.ZodObject<{
+            id: z.ZodString;
+            personId: z.ZodString;
+            amount: z.ZodNumber;
+            type: z.ZodLiteral<"OwnerOccupiedProperty">;
+            livingSpace: z.ZodNumber;
+            propertyKind: z.ZodEnum<{
+                condo: "condo";
+                house: "house";
+            }>;
+            mortgages: z.ZodNumber;
+        }, z.core.$strip>, z.ZodObject<{
+            id: z.ZodString;
+            personId: z.ZodString;
+            amount: z.ZodNumber;
+            type: z.ZodLiteral<"OtherProperty">;
+            mortgages: z.ZodNumber;
+        }, z.core.$strip>, z.ZodObject<{
+            id: z.ZodString;
+            personId: z.ZodString;
+            amount: z.ZodNumber;
+            type: z.ZodLiteral<"Other">;
+        }, z.core.$strip>], "type">>;
+        hasReceivedBenefitsForOneYear: z.ZodBoolean;
+        selfEmploymentYearsWithoutPension: z.ZodNumber;
+    }, z.core.$strip>;
 }, z.core.$strip>;
 export declare const StepState: z.ZodObject<{
     context: z.ZodObject<{
@@ -1288,6 +1516,59 @@ export declare const StepState: z.ZodObject<{
             sum: z.ZodNumber;
             allowance: z.ZodOptional<z.ZodNumber>;
         }, z.core.$strip>;
+        assets: z.ZodObject<{
+            items: z.ZodArray<z.ZodDiscriminatedUnion<[z.ZodObject<{
+                id: z.ZodString;
+                personId: z.ZodString;
+                amount: z.ZodNumber;
+                type: z.ZodLiteral<"BankAccount">;
+            }, z.core.$strip>, z.ZodObject<{
+                id: z.ZodString;
+                personId: z.ZodString;
+                amount: z.ZodNumber;
+                type: z.ZodLiteral<"Securities">;
+            }, z.core.$strip>, z.ZodObject<{
+                id: z.ZodString;
+                personId: z.ZodString;
+                amount: z.ZodNumber;
+                type: z.ZodLiteral<"BuildingSavings">;
+            }, z.core.$strip>, z.ZodObject<{
+                id: z.ZodString;
+                personId: z.ZodString;
+                amount: z.ZodNumber;
+                type: z.ZodLiteral<"RetirementProvision">;
+            }, z.core.$strip>, z.ZodObject<{
+                id: z.ZodString;
+                personId: z.ZodString;
+                amount: z.ZodNumber;
+                type: z.ZodLiteral<"Vehicle">;
+                remainingLoan: z.ZodNumber;
+            }, z.core.$strip>, z.ZodObject<{
+                id: z.ZodString;
+                personId: z.ZodString;
+                amount: z.ZodNumber;
+                type: z.ZodLiteral<"OwnerOccupiedProperty">;
+                livingSpace: z.ZodNumber;
+                propertyKind: z.ZodEnum<{
+                    condo: "condo";
+                    house: "house";
+                }>;
+                mortgages: z.ZodNumber;
+            }, z.core.$strip>, z.ZodObject<{
+                id: z.ZodString;
+                personId: z.ZodString;
+                amount: z.ZodNumber;
+                type: z.ZodLiteral<"OtherProperty">;
+                mortgages: z.ZodNumber;
+            }, z.core.$strip>, z.ZodObject<{
+                id: z.ZodString;
+                personId: z.ZodString;
+                amount: z.ZodNumber;
+                type: z.ZodLiteral<"Other">;
+            }, z.core.$strip>], "type">>;
+            hasReceivedBenefitsForOneYear: z.ZodBoolean;
+            selfEmploymentYearsWithoutPension: z.ZodNumber;
+        }, z.core.$strip>;
     }, z.core.$strip>;
     currentStep: z.ZodNumber;
     step: z.ZodAny;
@@ -1297,6 +1578,8 @@ export type TPerson = z.infer<typeof Person>;
 export type TChild = z.infer<typeof Child>;
 export type TAdult = z.infer<typeof Adult>;
 export type TIncome = z.infer<typeof Person>["income"][0];
+export type TAsset = z.infer<typeof ExtendedAssetSchema>;
+export type TAssets = z.infer<typeof AssetsSchema>;
 export type TStepsState = {
     context: TStepContext;
     step: TStep;

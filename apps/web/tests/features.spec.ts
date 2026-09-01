@@ -1,4 +1,15 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
+
+async function completeAges(page: Page, ages: Record<string, string>) {
+  await page.waitForURL("**/alter");
+  for (const [name, age] of Object.entries(ages)) {
+    await page
+      .getByRole("combobox", { name: `${name} – Alter in Jahren` })
+      .click();
+    await page.getByRole("option", { name: age, exact: true }).click();
+  }
+  await page.getByRole("button", { name: "Weiter" }).click();
+}
 
 test("Case #1 - single with standard income", async ({ page }) => {
   await page.goto("http://localhost:3000/antrag/erwerbsfaehig");
@@ -7,13 +18,14 @@ test("Case #1 - single with standard income", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/partnerschaft");
-  await expect(page.getByRole("strong")).toContainText("563,00 €");
+  await expect(page.getByRole("strong")).toContainText("Alter noch offen");
 
   await page.getByText("Alleinstehend").click();
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/kinder");
   await page.getByRole("button", { name: "Weiter" }).click();
+  await completeAges(page, { Antragsteller: "35" });
 
   await page.waitForURL("**/bedarfsgemeinschaft");
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -46,6 +58,9 @@ test("Case #1 - single with standard income", async ({ page }) => {
 
   await page.getByRole("button", { name: "Weiter" }).click();
 
+  await page.waitForURL("**/vermoegen");
+  await page.getByRole("button", { name: "Weiter" }).click();
+
   await page.waitForURL("**/ergebnis");
   await expect(page.getByTestId("result")).toContainText("477");
 
@@ -66,10 +81,11 @@ test("Case #2 - Couple without kids", async ({ page }) => {
 
   await page.getByText("Partnerschaft", { exact: true }).click();
 
-  await expect(page.getByRole("strong")).toContainText("1.012,00 €");
+  await expect(page.getByRole("strong")).toContainText("Alter noch offen");
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.getByText("Keine Kinder").click();
   await page.getByRole("button", { name: "Weiter" }).click();
+  await completeAges(page, { Antragsteller: "35", Partner: "35" });
 
   await page.waitForURL("**/bedarfsgemeinschaft");
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -99,6 +115,8 @@ test("Case #2 - Couple without kids", async ({ page }) => {
   await page.getByRole("button", { name: "Hinzufügen" }).click();
 
   await page.getByRole("button", { name: "Weiter" }).click();
+  await page.waitForURL("**/vermoegen");
+  await page.getByRole("button", { name: "Weiter" }).click();
   await page.waitForURL("**/ergebnis");
 
   await expect(page.getByTestId("result")).toContainText("176");
@@ -122,6 +140,11 @@ test("Case #3 - Couple with 1 kid", async ({ page }) => {
 
   await page.waitForURL("**/kinder-anzahl");
   await page.getByRole("button", { name: "Weiter" }).click();
+  await completeAges(page, {
+    Antragsteller: "35",
+    Partner: "35",
+    "Kind 1": "4",
+  });
 
   await page.waitForURL("**/bedarfsgemeinschaft");
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -149,6 +172,9 @@ test("Case #3 - Couple with 1 kid", async ({ page }) => {
   await page.getByRole("button", { name: "Hinzufügen" }).click();
   await page.getByRole("button", { name: "Weiter" }).click();
 
+  await page.waitForURL("**/vermoegen");
+  await page.getByRole("button", { name: "Weiter" }).click();
+
   await page.waitForURL("**/ergebnis");
   await expect(page.getByTestId("result")).toContainText("592");
 
@@ -170,10 +196,14 @@ test("Case #4 - Couple with 2 kids", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/kinder-anzahl");
-  await page.getByRole("combobox").click();
-  await page.getByLabel("19 Jahre").click();
   await page.getByRole("button", { name: "Kind hinzufügen" }).click();
   await page.getByRole("button", { name: "Weiter" }).click();
+  await completeAges(page, {
+    Antragsteller: "35",
+    Partner: "35",
+    "Kind 1": "19",
+    "Kind 2": "1",
+  });
 
   await page.waitForURL("**/bedarfsgemeinschaft");
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -200,7 +230,7 @@ test("Case #4 - Couple with 2 kids", async ({ page }) => {
   await page.getByRole("button", { name: "Hinzufügen" }).click();
   await page.getByRole("button", { name: "Einkommen hinzufügen" }).click();
   await page.getByRole("combobox").filter({ hasText: "Antragsteller" }).click();
-  await page.getByLabel("Partner").click();
+  await page.getByRole("option", { name: "Partner" }).click();
   await page
     .getByRole("combobox")
     .filter({ hasText: "Einkommen aus Erwerbstätigkeit" })
@@ -212,6 +242,9 @@ test("Case #4 - Couple with 2 kids", async ({ page }) => {
   // FIXME: .fill is not working here.
   await page.getByPlaceholder("€").type("1200");
   await page.getByRole("button", { name: "Hinzufügen" }).click();
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/vermoegen");
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/ergebnis");
@@ -233,13 +266,14 @@ test("Case #5 - young single with standard income", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/partnerschaft");
-  await expect(page.getByRole("strong")).toContainText("563,00 €");
+  await expect(page.getByRole("strong")).toContainText("Alter noch offen");
 
   await page.getByText("Alleinstehend").click();
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/kinder");
   await page.getByRole("button", { name: "Weiter" }).click();
+  await completeAges(page, { Antragsteller: "22" });
 
   await page.waitForURL("**/bedarfsgemeinschaft");
   await page.getByRole("button", { name: "Weiter" }).click();
@@ -268,11 +302,11 @@ test("Case #5 - young single with standard income", async ({ page }) => {
   await page.getByRole("button", { name: "Einkommen hinzufügen" }).click();
   await page.getByLabel("Brutto").fill("1200");
   await page.getByLabel("Netto").fill("950");
-  await page
-    .getByLabel("Person ist Student, Azubi oder Schüler und jünger als 25.")
-    .click();
   await page.getByRole("button", { name: "Hinzufügen" }).click();
 
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/vermoegen");
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/ergebnis");

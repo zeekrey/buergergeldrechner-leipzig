@@ -23,6 +23,7 @@ import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import HelpMarkdown from "@/config/steps/ergebnis.mdx";
+import { useCompleteContext } from "@/hooks/use-complete-context";
 import { initialStepsState, stepsConfig } from "@/lib/machine";
 
 import { createShareable } from "./actions";
@@ -30,26 +31,31 @@ import { RequiredDocuments } from "./required-documents";
 import { Result } from "./result";
 import { ResultSheet } from "./result-sheet";
 
-const step = stepsConfig[9];
+const step = stepsConfig[10];
 
 export default function StepSummary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
+  const completeContext = useCompleteContext(state);
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("result");
 
-  const { allowance, income, overall, spendings } = useMemo(
-    () => calculateOverall(state),
-    [state]
+  const calculation = useMemo(
+    () => (completeContext ? calculateOverall(completeContext) : undefined),
+    [completeContext]
   );
 
   const allowanceSum = useMemo(
-    () => allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0),
-    [allowance]
+    () =>
+      calculation?.allowance.reduce(
+        (acc, curr) => acc + (curr.amount ?? 0),
+        0
+      ) ?? 0,
+    [calculation]
   );
 
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [state]);
 
   const handleReset = useCallback(() => {
@@ -86,6 +92,10 @@ export default function StepSummary() {
     });
   };
 
+  if (!calculation) return null;
+
+  const { assets, income, overall, resultStatus, spendings } = calculation;
+
   return (
     <StepRoot id={step.id}>
       <StepTitle title={step.title}>
@@ -105,6 +115,8 @@ export default function StepSummary() {
               spendings={spendings}
               allowance={allowanceSum}
               overall={overall}
+              assetExcess={assets.excess}
+              requiresManualReview={resultStatus === "manual-review"}
               onShowDocuments={() => setActiveTab("documents")}
             />
           </TabsContent>

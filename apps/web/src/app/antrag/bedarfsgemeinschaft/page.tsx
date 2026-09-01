@@ -69,7 +69,7 @@ export default function StepCommunity() {
   }
 
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [state]);
 
   const handleRemove = useCallback(
@@ -80,6 +80,9 @@ export default function StepCommunity() {
             (pers) => pers.id === person.id
           );
           if (index !== -1) draft.community.splice(index, 1);
+          draft.assets.items = draft.assets.items.filter(
+            (asset) => asset.personId !== person.id
+          );
         })
       );
     },

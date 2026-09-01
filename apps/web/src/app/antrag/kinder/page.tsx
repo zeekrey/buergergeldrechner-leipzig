@@ -56,7 +56,7 @@ export default function StepChildren() {
               id: generateId(),
               name: "Kind 1",
               type: "child",
-              age: 1,
+              age: -1,
               income: [
                 {
                   id: generateId(),
@@ -69,8 +69,16 @@ export default function StepChildren() {
           );
         } else {
           /** without children */
+          const childIds = new Set(
+            draft.community
+              .filter((person) => person.type === "child")
+              .map((person) => person.id)
+          );
           draft.community = draft.community.filter(
             (person) => person.type !== "child"
+          );
+          draft.assets.items = draft.assets.items.filter(
+            (asset) => !childIds.has(asset.personId)
           );
         }
       });
@@ -91,7 +99,7 @@ export default function StepChildren() {
   );
 
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [push]);
 
   return (

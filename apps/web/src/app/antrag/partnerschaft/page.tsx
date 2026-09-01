@@ -65,7 +65,12 @@ export default function StepPartner() {
           const index = draft.community.findIndex(
             (person) => person.name === "Partner"
           );
-          if (index !== -1) draft.community.splice(index, 1);
+          if (index !== -1) {
+            const [removedPartner] = draft.community.splice(index, 1);
+            draft.assets.items = draft.assets.items.filter(
+              (asset) => asset.personId !== removedPartner.id
+            );
+          }
         }
       });
 
@@ -85,7 +90,7 @@ export default function StepPartner() {
   );
 
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [push]);
 
   return (

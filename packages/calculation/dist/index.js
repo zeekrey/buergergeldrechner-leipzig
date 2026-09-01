@@ -14435,11 +14435,85 @@ var ExtendedIncomeSchema = exports_external.union([
   OtherIncomeSchema,
   ChildBenefitTransferSchema
 ]);
+var AssetTypeEnum = exports_external.enum([
+  "BankAccount",
+  "Securities",
+  "BuildingSavings",
+  "RetirementProvision",
+  "Vehicle",
+  "OwnerOccupiedProperty",
+  "OtherProperty",
+  "Other"
+]);
+var AssetBaseSchema = exports_external.object({
+  id: exports_external.string(),
+  personId: exports_external.string(),
+  amount: exports_external.number().positive().describe("Verkehrswert in Euro.")
+});
+var BankAccountAssetSchema = AssetBaseSchema.extend({
+  type: exports_external.literal("BankAccount")
+});
+var SecuritiesAssetSchema = AssetBaseSchema.extend({
+  type: exports_external.literal("Securities")
+});
+var BuildingSavingsAssetSchema = AssetBaseSchema.extend({
+  type: exports_external.literal("BuildingSavings")
+});
+var RetirementProvisionAssetSchema = AssetBaseSchema.extend({
+  type: exports_external.literal("RetirementProvision")
+});
+var VehicleAssetSchema = AssetBaseSchema.extend({
+  type: exports_external.literal("Vehicle"),
+  remainingLoan: exports_external.number().nonnegative().describe("Offener Kredit auf das Fahrzeug.")
+});
+var OwnerOccupiedPropertyAssetSchema = AssetBaseSchema.extend({
+  type: exports_external.literal("OwnerOccupiedProperty"),
+  livingSpace: exports_external.number().positive().describe("Wohnfläche in Quadratmetern."),
+  propertyKind: exports_external.enum(["house", "condo"]),
+  mortgages: exports_external.number().nonnegative().describe("Dinglich gesicherte Verbindlichkeiten (Grundschuld, Hypothek).")
+});
+var OtherPropertyAssetSchema = AssetBaseSchema.extend({
+  type: exports_external.literal("OtherProperty"),
+  mortgages: exports_external.number().nonnegative().describe("Dinglich gesicherte Verbindlichkeiten (Grundschuld, Hypothek).")
+});
+var OtherAssetSchema = AssetBaseSchema.extend({
+  type: exports_external.literal("Other")
+});
+var ExtendedAssetSchema = exports_external.discriminatedUnion("type", [
+  BankAccountAssetSchema,
+  SecuritiesAssetSchema,
+  BuildingSavingsAssetSchema,
+  RetirementProvisionAssetSchema,
+  VehicleAssetSchema,
+  OwnerOccupiedPropertyAssetSchema,
+  OtherPropertyAssetSchema,
+  OtherAssetSchema
+]);
+var AssetsSchema = exports_external.object({
+  items: exports_external.array(ExtendedAssetSchema),
+  hasReceivedBenefitsForOneYear: exports_external.boolean().describe("Ob bereits seit mindestens einem Jahr Leistungen nach dem SGB II bezogen werden. Dann entfällt die Karenzzeit für selbst genutztes Wohneigentum."),
+  selfEmploymentYearsWithoutPension: exports_external.number().int().nonnegative().describe("Angefangene Jahre hauptberuflicher Selbstständigkeit ohne Beiträge zur gesetzlichen Rentenversicherung oder einer Versorgungseinrichtung.")
+});
+var emptyAssets = {
+  items: [],
+  hasReceivedBenefitsForOneYear: false,
+  selfEmploymentYearsWithoutPension: 0
+};
+var assetType = {
+  BankAccount: { label: "Konten und Bargeld" },
+  Securities: { label: "Wertpapiere, Fonds und Krypto" },
+  BuildingSavings: { label: "Bausparvertrag" },
+  RetirementProvision: { label: "Zertifizierte oder geförderte Altersvorsorge" },
+  Vehicle: { label: "Kraftfahrzeug" },
+  OwnerOccupiedProperty: { label: "Selbst genutztes Wohneigentum" },
+  OtherProperty: { label: "Andere Immobilien oder Grundstücke" },
+  Other: { label: "Sonstiges Vermögen" }
+};
 var PersonCommon = exports_external.object({
   id: exports_external.string(),
   name: exports_external.string(),
   income: exports_external.array(ExtendedIncomeSchema),
-  age: exports_external.optional(exports_external.number()).describe("Alter der Person."),
+  age: exports_external.number().int().min(0).max(120).optional().describe("Alter der Person."),
   attributes: exports_external.object({
     isPregnant: exports_external.boolean().describe("Ist die Person schwanger?"),
     isSingleParent: exports_external.boolean().describe("Ist die Person eine alleinstehende Mutter oder Vater?"),
@@ -14450,7 +14524,7 @@ var PersonCommon = exports_external.object({
 var Adult = PersonCommon.merge(exports_external.object({ type: exports_external.literal("adult").describe("Erwachsene Person.") }));
 var Child = PersonCommon.merge(exports_external.object({
   type: exports_external.literal("child").describe("Ein Kind."),
-  age: exports_external.number().describe("Alter des Kindes.")
+  age: exports_external.number().int().min(0).max(24).describe("Alter des Kindes.")
 }));
 var Person = exports_external.discriminatedUnion("type", [Adult, Child]);
 var StepContext = exports_external.object({
@@ -14465,7 +14539,8 @@ var StepContext = exports_external.object({
   income: exports_external.object({
     sum: exports_external.number().describe("Summe des Einkommens."),
     allowance: exports_external.optional(exports_external.number().describe("Anzurechnender Freibetrag. Wird berechnet auf Basis von Angaben zum Gehalt."))
-  })
+  }),
+  assets: AssetsSchema.describe("Angaben zum Vermögen der Bedarfsgemeinschaft nach § 12 SGB II.")
 });
 var StepState = exports_external.object({
   context: StepContext,
@@ -14577,6 +14652,146 @@ var additionalChildNeedsCategory = [
     percentage: 60
   }
 ];
+// src/assets.ts
+var ASSET_ALLOWANCE_BY_AGE = {
+  under30: 5000,
+  from30: 1e4,
+  from40: 12500,
+  from50: 20000
+};
+var APPROPRIATE_VEHICLE_VALUE = 15000;
+var SELF_EMPLOYMENT_RETIREMENT_ALLOWANCE_PER_YEAR = 9000;
+function getAssetAllowanceByAge(age) {
+  if (age < 30)
+    return ASSET_ALLOWANCE_BY_AGE.under30;
+  if (age < 40)
+    return ASSET_ALLOWANCE_BY_AGE.from30;
+  if (age < 50)
+    return ASSET_ALLOWANCE_BY_AGE.from40;
+  return ASSET_ALLOWANCE_BY_AGE.from50;
+}
+function getAppropriateLivingSpace(personCount, propertyKind) {
+  const base = propertyKind === "house" ? 140 : 130;
+  if (personCount <= 4)
+    return base;
+  return base + 20 * (personCount - 4);
+}
+function netVehicleValue(asset) {
+  return Math.max(0, asset.amount - asset.remainingLoan);
+}
+function countablePropertyValue(amount, mortgages) {
+  return Math.max(0, amount - mortgages);
+}
+function calculateAssets(context) {
+  const assets = context.assets;
+  const communityAllowances = context.community.map((person) => {
+    if (person.age === undefined) {
+      throw new Error(`Für ${person.name} fehlt das Alter.`);
+    }
+    return {
+      personId: person.id,
+      name: person.name,
+      age: person.age,
+      allowance: getAssetAllowanceByAge(person.age)
+    };
+  });
+  const allowanceSum = communityAllowances.reduce((sum, person) => sum + person.allowance, 0);
+  const knownEmployablePersonId = context.isEmployable ? context.community.at(0)?.id : undefined;
+  const activePersonIds = new Set(context.community.map((person) => person.id));
+  const activeItems = assets.items.filter((item) => activePersonIds.has(item.personId));
+  const vehicles = activeItems.filter((item) => item.type === "Vehicle");
+  const exemptVehicleId = knownEmployablePersonId ? vehicles.filter((item) => item.personId === knownEmployablePersonId).map((item) => ({ id: item.id, net: netVehicleValue(item) })).sort((a, b) => b.net - a.net).at(0)?.id : undefined;
+  const vehicleCountable = new Map;
+  vehicles.forEach((item) => {
+    const net = netVehicleValue(item);
+    if (item.id === exemptVehicleId) {
+      const countable2 = Math.max(0, net - APPROPRIATE_VEHICLE_VALUE);
+      vehicleCountable.set(item.id, { countable: countable2, exempt: net - countable2 });
+      return;
+    }
+    vehicleCountable.set(item.id, { countable: net, exempt: 0 });
+  });
+  const householdSize = Math.max(context.community.length, 1);
+  const karenzzeitApplies = !assets.hasReceivedBenefitsForOneYear;
+  const items = activeItems.map((item) => {
+    if (item.type === "RetirementProvision") {
+      return {
+        id: item.id,
+        personId: item.personId,
+        type: item.type,
+        countable: 0,
+        exempt: item.amount
+      };
+    }
+    if (item.type === "Vehicle") {
+      const values = vehicleCountable.get(item.id) ?? {
+        countable: 0,
+        exempt: 0
+      };
+      return {
+        id: item.id,
+        personId: item.personId,
+        type: item.type,
+        countable: values.countable,
+        exempt: values.exempt
+      };
+    }
+    if (item.type === "OwnerOccupiedProperty") {
+      const appropriate = getAppropriateLivingSpace(householdSize, item.propertyKind);
+      const net = countablePropertyValue(item.amount, item.mortgages);
+      const isAppropriate = item.livingSpace <= appropriate;
+      const exemptEntirely = karenzzeitApplies || isAppropriate;
+      return {
+        id: item.id,
+        personId: item.personId,
+        type: item.type,
+        countable: exemptEntirely ? 0 : net,
+        exempt: exemptEntirely ? net : 0
+      };
+    }
+    if (item.type === "OtherProperty") {
+      const net = countablePropertyValue(item.amount, item.mortgages);
+      return {
+        id: item.id,
+        personId: item.personId,
+        type: item.type,
+        countable: net,
+        exempt: item.amount - net
+      };
+    }
+    return {
+      id: item.id,
+      personId: item.personId,
+      type: item.type,
+      countable: item.amount,
+      exempt: 0
+    };
+  });
+  const countable = items.reduce((sum, item) => sum + item.countable, 0);
+  const allowance = allowanceSum;
+  const excess = Math.max(0, countable - allowance);
+  const manualReviewReasons = new Set;
+  if (vehicles.length > 0)
+    manualReviewReasons.add("vehicle");
+  if (assets.selfEmploymentYearsWithoutPension > 0) {
+    manualReviewReasons.add("self-employment-retirement");
+  }
+  if (activeItems.some((item) => item.type === "OwnerOccupiedProperty")) {
+    manualReviewReasons.add("owner-occupied-property");
+  }
+  if (excess > 0)
+    manualReviewReasons.add("asset-excess");
+  return {
+    countable,
+    allowance,
+    excess,
+    manualReviewReasons: [...manualReviewReasons],
+    requiresManualReview: manualReviewReasons.size > 0,
+    community: communityAllowances,
+    items
+  };
+}
+
 // src/calculation.ts
 var roundCurrency = (amount) => Math.round(amount * 100) / 100;
 function calculateBaseNeed(context) {
@@ -14856,19 +15071,47 @@ function calculateIncome(context) {
 }
 function calculateBenefitCommunity(context) {
   if (!context.community.length) {
-    return { context, excludedPersonIds: [] };
+    return {
+      context,
+      excludedPersonIds: [],
+      requiresManualReview: false
+    };
   }
   const rentPerPerson = context.spendings.sum / context.community.length;
   const baseNeed = calculateBaseNeed(context);
   const additionalNeeds = calculateAdditionalNeeds(context);
   const allowance = calculateAllowance(context);
-  const excludedPersonIds = context.community.filter((person) => person.type === "child" && person.age < 25).filter((child) => {
+  const excludedPersonIds = [];
+  let requiresManualReview = false;
+  context.community.filter((person) => person.type === "child" && person.age < 25).forEach((child) => {
     const individualBaseNeed = baseNeed.community.find((entry) => entry.personId === child.id)?.amount ?? 0;
     const individualAdditionalNeeds = additionalNeeds.community.find((entry) => entry.personId === child.id)?.additionals.reduce((sum, entry) => sum + entry.amount, 0) ?? 0;
+    const individualNeed = individualBaseNeed + individualAdditionalNeeds + rentPerPerson;
     const individualIncome = child.income.reduce((sum, entry) => sum + entry.amount, 0);
     const individualAllowance = allowance.filter((entry) => entry.personId === child.id).reduce((sum, entry) => sum + entry.amount, 0);
-    return individualIncome - individualAllowance >= individualBaseNeed + individualAdditionalNeeds + rentPerPerson;
-  }).map((child) => child.id);
+    const incomeAfterAllowance = individualIncome - individualAllowance;
+    if (incomeAfterAllowance >= individualNeed) {
+      excludedPersonIds.push(child.id);
+      return;
+    }
+    const individualAssets = calculateAssets({
+      ...context,
+      community: [child],
+      isEmployable: false,
+      assets: {
+        ...context.assets,
+        items: context.assets.items.filter((asset) => asset.personId === child.id)
+      }
+    });
+    const assetsWouldMakeChildSelfSupporting = incomeAfterAllowance + individualAssets.excess >= individualNeed;
+    if (!assetsWouldMakeChildSelfSupporting)
+      return;
+    if (individualAssets.requiresManualReview) {
+      requiresManualReview = true;
+      return;
+    }
+    excludedPersonIds.push(child.id);
+  });
   const community = context.community.filter((person) => !excludedPersonIds.includes(person.id));
   const communityShare = community.length / context.community.length;
   const spendings = {
@@ -14878,18 +15121,34 @@ function calculateBenefitCommunity(context) {
     sum: roundCurrency(rentPerPerson * community.length)
   };
   return {
-    context: { ...context, community, spendings },
-    excludedPersonIds
+    context: {
+      ...context,
+      community,
+      spendings,
+      assets: {
+        ...context.assets,
+        items: context.assets.items.filter((asset) => !excludedPersonIds.includes(asset.personId))
+      }
+    },
+    excludedPersonIds,
+    requiresManualReview
   };
 }
 function calculateOverall(context) {
-  const { context: benefitContext, excludedPersonIds } = calculateBenefitCommunity(context);
+  const {
+    context: benefitContext,
+    excludedPersonIds,
+    requiresManualReview: benefitCommunityRequiresManualReview
+  } = calculateBenefitCommunity(context);
   const baseNeed = calculateBaseNeed(benefitContext);
   const additionalNeeds = calculateAdditionalNeeds(benefitContext);
   const income = calculateIncome(benefitContext);
   const allowance = calculateAllowance(benefitContext);
   const need = baseNeed.sum + additionalNeeds.sum + benefitContext.spendings.sum;
   const incomeAfterAllowance = income - allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
+  const assets = calculateAssets(benefitContext);
+  const overall = need - incomeAfterAllowance;
+  const resultStatus = assets.requiresManualReview || benefitCommunityRequiresManualReview ? "manual-review" : "calculated";
   return {
     baseNeed,
     additionalNeeds,
@@ -14902,8 +15161,11 @@ function calculateOverall(context) {
     },
     allowance,
     incomeAfterAllowance,
-    overall: need - incomeAfterAllowance,
+    assets,
+    overall,
+    resultStatus,
     benefitCommunity: benefitContext.community,
+    benefitCommunityRequiresManualReview,
     excludedPersonIds
   };
 }
@@ -14973,8 +15235,11 @@ function calculateSalary({
 export {
   incomeType,
   getChildAgeGroup,
+  getAssetAllowanceByAge,
+  getAppropriateLivingSpace,
   generateId,
   flattenIncome,
+  emptyAssets,
   diseases,
   data_default as calculationReferenceData,
   calculateSelfEmploymentIncome,
@@ -14984,12 +15249,15 @@ export {
   calculateChildBenefitTransfer,
   calculateBenefitCommunity,
   calculateBaseNeed,
+  calculateAssets,
   calculateAllowance,
   calculateAdditionalNeeds,
+  assetType,
   allowanceType,
   additionalChildNeedsCategory,
   VoluntarySocialYearSchema,
   VocationalTrainingAllowanceSchema,
+  VehicleAssetSchema,
   UnemploymentBenefitsSchema,
   TaxFreeSideJobSchema,
   StepState,
@@ -14997,19 +15265,32 @@ export {
   SicknessBenefitsSchema,
   ShortTimeWorkAllowanceSchema,
   SelfEmploymentIncomeSchema,
+  SecuritiesAssetSchema,
+  SELF_EMPLOYMENT_RETIREMENT_ALLOWANCE_PER_YEAR,
+  RetirementProvisionAssetSchema,
   PensionSchema,
   ParentalAllowanceSchema,
+  OwnerOccupiedPropertyAssetSchema,
+  OtherPropertyAssetSchema,
   OtherIncomeSchema,
+  OtherAssetSchema,
   MaintenanceSchema,
   MaintenanceContributionFromMasterCraftsmenSchema,
   IncomeTypEnum,
   IncomeBaseSchema,
   HousingAllowanceSchema,
   ExtendedIncomeSchema,
+  ExtendedAssetSchema,
   EmploymentIncomeSchema,
   ChildSupplementSchema,
   ChildBenefitTransferSchema,
   ChildAllowanceSchema,
+  BuildingSavingsAssetSchema,
+  BankAccountAssetSchema,
   BAfOGSchema,
-  AdvanceMaintenancePaymentSchema
+  AssetsSchema,
+  AssetTypeEnum,
+  AdvanceMaintenancePaymentSchema,
+  ASSET_ALLOWANCE_BY_AGE,
+  APPROPRIATE_VEHICLE_VALUE
 };

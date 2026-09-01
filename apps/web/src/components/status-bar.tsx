@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { hasCompleteAges } from "@/lib/complete-context";
 
 import { useStateContext } from "./context";
 import { Progress } from "./progress";
@@ -20,7 +21,10 @@ import { ScrollArea } from "./ui/scroll-area";
 export function StatusBar() {
   const [state] = useStateContext();
 
-  const { overall } = useMemo(() => calculateOverall(state), [state]);
+  const calculation = useMemo(
+    () => (hasCompleteAges(state) ? calculateOverall(state) : undefined),
+    [state]
+  );
 
   return (
     <Drawer>
@@ -39,10 +43,14 @@ export function StatusBar() {
                   Möglicher Anspruch
                 </small>
                 <strong className="text-base font-semibold sm:text-lg">
-                  {overall.toLocaleString("de-DE", {
-                    currency: "EUR",
-                    style: "currency",
-                  })}
+                  {calculation?.resultStatus === "manual-review"
+                    ? "Prüfung erforderlich"
+                    : calculation
+                      ? calculation.overall.toLocaleString("de-DE", {
+                          currency: "EUR",
+                          style: "currency",
+                        })
+                      : "Alter noch offen"}
                 </strong>
               </div>
               <ChevronDownIcon className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
@@ -61,7 +69,14 @@ export function StatusBar() {
         </DrawerHeader>
         <div className="mx-auto w-full max-w-4xl px-4 pb-6 sm:px-6">
           <ScrollArea className="h-[480px]">
-            <ResultSheet state={state} />
+            {calculation ? (
+              <ResultSheet state={state} />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Tragen Sie zuerst das Alter aller Personen ein, damit eine
+                Berechnung möglich ist.
+              </p>
+            )}
           </ScrollArea>
         </div>
         <DrawerFooter />

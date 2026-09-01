@@ -5,6 +5,7 @@ import {
   IncomeTypEnum,
   type TAllowance,
 } from "./types";
+import { calculateAssets } from "./assets";
 import data from "./data.json";
 import {
   additionalChildNeedsCategory,
@@ -435,6 +436,7 @@ export function calculateIncome(context: TStepContext) {
 type BenefitCommunityResult = {
   context: TStepContext;
   excludedPersonIds: string[];
+  requiresManualReview: boolean;
 };
 
 export type OverallCalculation = {
@@ -449,8 +451,11 @@ export type OverallCalculation = {
   };
   allowance: ReturnType<typeof calculateAllowance>;
   incomeAfterAllowance: number;
+  assets: ReturnType<typeof calculateAssets>;
   overall: number;
+  resultStatus: "calculated" | "manual-review";
   benefitCommunity: TStepContext["community"];
+  benefitCommunityRequiresManualReview: boolean;
   excludedPersonIds: string[];
 };
 
@@ -463,7 +468,11 @@ export function calculateBenefitCommunity(
   context: TStepContext
 ): BenefitCommunityResult {
   if (!context.community.length) {
-    return { context, excludedPersonIds: [] as string[] };
+    return {
+      context,
+      excludedPersonIds: [] as string[],
+      requiresManualReview: false,
+    };
   }
 
   const rentPerPerson = context.spendings.sum / context.community.length;
@@ -471,9 +480,12 @@ export function calculateBenefitCommunity(
   const additionalNeeds = calculateAdditionalNeeds(context);
   const allowance = calculateAllowance(context);
 
-  const excludedPersonIds = context.community
+  const excludedPersonIds: string[] = [];
+  let requiresManualReview = false;
+
+  context.community
     .filter((person) => person.type === "child" && person.age < 25)
-    .filter((child) => {
+    .forEach((child) => {
       const individualBaseNeed =
         baseNeed.community.find((entry) => entry.personId === child.id)
           ?.amount ?? 0;
@@ -481,6 +493,8 @@ export function calculateBenefitCommunity(
         additionalNeeds.community
           .find((entry) => entry.personId === child.id)
           ?.additionals.reduce((sum, entry) => sum + entry.amount, 0) ?? 0;
+      const individualNeed =
+        individualBaseNeed + individualAdditionalNeeds + rentPerPerson;
       const individualIncome = child.income.reduce(
         (sum, entry) => sum + entry.amount,
         0
@@ -488,13 +502,34 @@ export function calculateBenefitCommunity(
       const individualAllowance = allowance
         .filter((entry) => entry.personId === child.id)
         .reduce((sum, entry) => sum + entry.amount, 0);
+      const incomeAfterAllowance = individualIncome - individualAllowance;
 
-      return (
-        individualIncome - individualAllowance >=
-        individualBaseNeed + individualAdditionalNeeds + rentPerPerson
-      );
-    })
-    .map((child) => child.id);
+      if (incomeAfterAllowance >= individualNeed) {
+        excludedPersonIds.push(child.id);
+        return;
+      }
+
+      const individualAssets = calculateAssets({
+        ...context,
+        community: [child],
+        isEmployable: false,
+        assets: {
+          ...context.assets,
+          items: context.assets.items.filter(
+            (asset) => asset.personId === child.id
+          ),
+        },
+      });
+      const assetsWouldMakeChildSelfSupporting =
+        incomeAfterAllowance + individualAssets.excess >= individualNeed;
+
+      if (!assetsWouldMakeChildSelfSupporting) return;
+      if (individualAssets.requiresManualReview) {
+        requiresManualReview = true;
+        return;
+      }
+      excludedPersonIds.push(child.id);
+    });
 
   const community = context.community.filter(
     (person) => !excludedPersonIds.includes(person.id)
@@ -508,16 +543,30 @@ export function calculateBenefitCommunity(
   };
 
   return {
-    context: { ...context, community, spendings },
+    context: {
+      ...context,
+      community,
+      spendings,
+      assets: {
+        ...context.assets,
+        items: context.assets.items.filter(
+          (asset) => !excludedPersonIds.includes(asset.personId)
+        ),
+      },
+    },
     excludedPersonIds,
+    requiresManualReview,
   };
 }
 
 export function calculateOverall(
   context: TStepContext
 ): OverallCalculation {
-  const { context: benefitContext, excludedPersonIds } =
-    calculateBenefitCommunity(context);
+  const {
+    context: benefitContext,
+    excludedPersonIds,
+    requiresManualReview: benefitCommunityRequiresManualReview,
+  } = calculateBenefitCommunity(context);
   const baseNeed = calculateBaseNeed(benefitContext);
   const additionalNeeds = calculateAdditionalNeeds(benefitContext);
   const income = calculateIncome(benefitContext);
@@ -527,6 +576,12 @@ export function calculateOverall(
     baseNeed.sum + additionalNeeds.sum + benefitContext.spendings.sum;
   const incomeAfterAllowance =
     income - allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
+  const assets = calculateAssets(benefitContext);
+  const overall = need - incomeAfterAllowance;
+  const resultStatus =
+    assets.requiresManualReview || benefitCommunityRequiresManualReview
+      ? "manual-review"
+      : "calculated";
 
   return {
     baseNeed,
@@ -540,8 +595,11 @@ export function calculateOverall(
     },
     allowance,
     incomeAfterAllowance,
-    overall: need - incomeAfterAllowance,
+    assets,
+    overall,
+    resultStatus,
     benefitCommunity: benefitContext.community,
+    benefitCommunityRequiresManualReview,
     excludedPersonIds,
   };
 }
