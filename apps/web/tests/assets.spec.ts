@@ -308,9 +308,8 @@ test("counts bank deposits above the age-based asset allowance", async ({
 
   await expect(page.getByRole("heading")).toContainText("Welches Vermögen");
   await expect(page.getByText("Konten und Bargeld")).toBeVisible();
-  await expect(
-    page.getByText("Manuelle Vermögensprüfung erforderlich")
-  ).toBeVisible();
+  await expect(page.getByText("Anrechenbares Vermögen")).toBeVisible();
+  await expect(page.getByText("15.000,00 €")).toBeVisible();
 
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.waitForURL("**/ergebnis");
@@ -358,7 +357,6 @@ test("keeps an appropriate car outside the countable assets", async ({
   await loadState(page, state, "/antrag/vermoegen");
 
   await expect(page.getByText("12.000,00 € frei")).toBeVisible();
-  await expect(
-    page.getByText("Manuelle Vermögensprüfung erforderlich")
-  ).toBeVisible();
+  await expect(page.getByText("Anrechenbares Vermögen")).toBeVisible();
+  await expect(page.getByText("0,00 €", { exact: true })).toBeVisible();
 });

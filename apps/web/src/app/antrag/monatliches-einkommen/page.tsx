@@ -3,6 +3,7 @@
 import { calculateIncome } from "calculation";
 import { produce } from "immer";
 import {
+  BanknoteIcon,
   CircleHelpIcon,
   PenIcon,
   PlusCircleIcon,
@@ -18,24 +19,26 @@ import {
 } from "@/components/questionnaire/actions";
 import { Button } from "@/components/ui/button";
 import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import {
+  StepContent,
+  StepDescription,
+  StepNavigation,
   StepRoot,
   StepTitle,
-  StepDescription,
 } from "@/components/ui/step-primitives";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import HelpMarkdown from "@/config/steps/monatliches-einkommen.mdx";
 import { useCompleteContext } from "@/hooks/use-complete-context";
 import { stepsConfig } from "@/lib/machine";
@@ -46,6 +49,13 @@ import { IncomeDialog } from "./income-dialog";
 import { checkChildBenefitTransfert } from "./income-dialogs/default-income";
 
 const step = stepsConfig[8];
+
+function formatEuro(value: number) {
+  return value.toLocaleString("de-DE", {
+    currency: "EUR",
+    style: "currency",
+  });
+}
 
 export default function StepSalary() {
   const { push } = useRouter();
@@ -79,6 +89,8 @@ export default function StepSalary() {
     [completeContext]
   );
 
+  const hasIncome = state.community.some((person) => person.income.length > 0);
+
   function handleSubmit() {
     const nextStep = step.next(state);
     push(`${stepsConfig[nextStep].id}`);
@@ -91,120 +103,131 @@ export default function StepSalary() {
   if (!completeContext) return null;
 
   return (
-    <StepRoot id={step.id}>
+    <StepRoot className="grow-0" id={step.id}>
       <StepTitle title={step.title}>
         <HelpMarkdown />
       </StepTitle>
       <StepDescription>{step.description}</StepDescription>
-      <StepContent>
-        <ScrollArea className="sm:h-[380px] w-full">
-          <Table>
-            {/* <TableHeader>
-              <TableRow>
-                <TableHead>Person</TableHead>
-                <TableHead className="w-[320px]">Einkommensart</TableHead>
-                <TableHead className="w-[180px]">Betrag (Freibetrag)</TableHead>
-                <TableHead className="text-center">Aktionen</TableHead>
-              </TableRow>
-            </TableHeader> */}
-            <TableBody>
-              {state.community
-                .filter((p) => p.income.length)
-                .map((person) => (
-                  <Fragment key={person.id}>
-                    <TableRow>
-                      <TableCell colSpan={3} className="font-semibold bg-muted">
-                        {person.name}
-                      </TableCell>
-                    </TableRow>
-                    {person.income?.map((income) => (
-                      <TableRow key={income.id}>
-                        <TableCell
-                          className={cn({
-                            "opacity-50":
-                              income.type === "ChildBenefitTransfer",
-                          })}
-                        >
-                          {incomeType[income.type].label}
-                        </TableCell>
-                        <TableCell
-                          className={cn({
-                            "opacity-50":
-                              income.type === "ChildBenefitTransfer",
-                          })}
-                        >
-                          {income.amount.toLocaleString("de-DE", {
-                            style: "currency",
-                            currency: "EUR",
-                          })}{" "}
-                          {typeof income.allowance !== "undefined" &&
-                            income.allowance > 0 &&
-                            `(${income.allowance?.toLocaleString("de-DE", {
-                              style: "currency",
-                              currency: "EUR",
-                            })})`}
-                        </TableCell>
-                        <TableCell className="flex justify-center">
-                          {income.type === "ChildBenefitTransfer" ? (
-                            <Popover>
-                              <PopoverTrigger>
-                                <CircleHelpIcon className="w-4 h-4 opacity-50 mx-auto" />
-                              </PopoverTrigger>
-                              <PopoverContent className="text-sm">
-                                Ein Kindergeldübertrag wird automatisch
-                                hinzugefügt und kann nicht verändert werden.
-                              </PopoverContent>
-                            </Popover>
-                          ) : (
-                            <>
-                              <IncomeDialog
-                                selectedPerson={person}
-                                selectedIncome={income}
-                              >
-                                <Button variant="ghost" type="button">
-                                  <PenIcon className="w-4 h-4" />
-                                </Button>
-                              </IncomeDialog>
-                              <Button
-                                variant="ghost"
-                                type="button"
-                                onClick={() => handleRemove(person, income)}
-                              >
-                                <XCircleIcon className="w-4 h-4" />
-                              </Button>
-                            </>
-                          )}
-                        </TableCell>
-                      </TableRow>
+      <StepContent className="flex grow-0 flex-col gap-6 pb-0">
+        <div className="flex min-h-0 flex-col">
+          <div className={hasIncome ? "max-h-[280px] overflow-y-auto" : undefined}>
+            {hasIncome ? (
+              <Table>
+                <TableBody>
+                  {state.community
+                    .filter((person) => person.income.length)
+                    .map((person) => (
+                      <Fragment key={person.id}>
+                        <TableRow>
+                          <TableCell
+                            className="bg-muted font-semibold"
+                            colSpan={3}
+                          >
+                            {person.name}
+                          </TableCell>
+                        </TableRow>
+                        {person.income.map((income) => (
+                          <TableRow key={income.id}>
+                            <TableCell
+                              className={cn({
+                                "opacity-50":
+                                  income.type === "ChildBenefitTransfer",
+                              })}
+                            >
+                              {incomeType[income.type].label}
+                            </TableCell>
+                            <TableCell
+                              className={cn({
+                                "opacity-50":
+                                  income.type === "ChildBenefitTransfer",
+                              })}
+                            >
+                              {formatEuro(income.amount)}
+                              {typeof income.allowance !== "undefined" &&
+                              income.allowance > 0
+                                ? ` (${formatEuro(income.allowance)})`
+                                : null}
+                            </TableCell>
+                            <TableCell className="flex justify-center">
+                              {income.type === "ChildBenefitTransfer" ? (
+                                <Popover>
+                                  <PopoverTrigger>
+                                    <CircleHelpIcon className="mx-auto opacity-50" />
+                                  </PopoverTrigger>
+                                  <PopoverContent className="text-sm">
+                                    Ein Kindergeldübertrag wird automatisch
+                                    hinzugefügt und kann nicht verändert werden.
+                                  </PopoverContent>
+                                </Popover>
+                              ) : (
+                                <>
+                                  <IncomeDialog
+                                    selectedIncome={income}
+                                    selectedPerson={person}
+                                  >
+                                    <Button
+                                      aria-label={`${incomeType[income.type].label} bearbeiten`}
+                                      type="button"
+                                      variant="ghost"
+                                    >
+                                      <PenIcon />
+                                    </Button>
+                                  </IncomeDialog>
+                                  <Button
+                                    aria-label={`${incomeType[income.type].label} entfernen`}
+                                    onClick={() => handleRemove(person, income)}
+                                    type="button"
+                                    variant="ghost"
+                                  >
+                                    <XCircleIcon />
+                                  </Button>
+                                </>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </Fragment>
                     ))}
-                  </Fragment>
-                ))}
-              <TableRow>
-                <TableCell className="text-center" colSpan={3}>
+                </TableBody>
+              </Table>
+            ) : (
+              <Empty className="border border-dashed">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <BanknoteIcon />
+                  </EmptyMedia>
+                  <EmptyTitle>Kein Einkommen angegeben</EmptyTitle>
+                  <EmptyDescription>
+                    Erwerbseinkommen, Kindergeld oder andere Einnahmen können
+                    Sie hinzufügen.
+                  </EmptyDescription>
+                </EmptyHeader>
+                <EmptyContent>
                   <IncomeDialog>
-                    <Button variant="secondary" type="button">
-                      <PlusCircleIcon className="w-4 h-4 mr-2" />
+                    <Button type="button" variant="secondary">
+                      <PlusCircleIcon data-icon="inline-start" />
                       Einkommen hinzufügen
                     </Button>
                   </IncomeDialog>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={2} className="font-bold">
-                  Gesamteinkommen
-                </TableCell>
-                <TableCell className="text-right">
-                  {incomeSum.toLocaleString("de-DE", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </ScrollArea>
+                </EmptyContent>
+              </Empty>
+            )}
+          </div>
+          {hasIncome ? (
+            <div className="flex justify-center py-3">
+              <IncomeDialog>
+                <Button type="button" variant="secondary">
+                  <PlusCircleIcon data-icon="inline-start" />
+                  Einkommen hinzufügen
+                </Button>
+              </IncomeDialog>
+            </div>
+          ) : null}
+          <div className="flex items-center justify-between gap-4 border-t bg-card py-3 font-bold">
+            <span>Gesamteinkommen</span>
+            <span>{formatEuro(incomeSum)}</span>
+          </div>
+        </div>
       </StepContent>
       <StepNavigation>
         <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
