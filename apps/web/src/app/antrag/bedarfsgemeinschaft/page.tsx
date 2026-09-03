@@ -2,9 +2,31 @@
 
 import type { FormEvent } from "react";
 
+import { CheckedState } from "@radix-ui/react-checkbox";
+import { produce } from "immer";
+import { PlusCircle, XCircleIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+
+import { useStateContext } from "@/components/context";
+import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import {
+  StepRoot,
+  StepTitle,
+  StepDescription,
+} from "@/components/ui/step-primitives";
 import {
   Table,
   TableBody,
@@ -13,30 +35,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-  PlusCircle,
-  XCircleIcon,
-} from "lucide-react";
-import {
-  StepRoot,
-  StepTitle,
-  StepDescription,
-} from "@/components/ui/step-primitives";
 import { stepsConfig } from "@/lib/machine";
-import { useRouter } from "next/navigation";
-import { useCallback } from "react";
-import { useStateContext } from "@/components/context";
 import { TChild, TPerson } from "@/lib/types";
-import { produce } from "immer";
-import { CheckedState } from "@radix-ui/react-checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import HelpMarkdown from "../../../config/steps/bedarfsgemeinschaft.mdx";
 
 const step = stepsConfig[5];
@@ -68,7 +69,7 @@ export default function StepCommunity() {
   }
 
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [state]);
 
   const handleRemove = useCallback(
@@ -79,6 +80,9 @@ export default function StepCommunity() {
             (pers) => pers.id === person.id
           );
           if (index !== -1) draft.community.splice(index, 1);
+          draft.assets.items = draft.assets.items.filter(
+            (asset) => asset.personId !== person.id
+          );
         })
       );
     },
@@ -199,17 +203,8 @@ export default function StepCommunity() {
           </ScrollArea>
         </StepContent>
         <StepNavigation>
-          <Button onClick={handleBack} size="lg" type="button">
-            <ArrowLeftCircleIcon className="w-4 h-4" />
-          </Button>
-          <Button
-            className="grow sm:grow-0 sm:w-48 ml-4"
-            size="lg"
-            type="submit"
-          >
-            Weiter
-            <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-          </Button>
+          <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+          <WizardNextButton>Weiter</WizardNextButton>
         </StepNavigation>
       </form>
     </StepRoot>

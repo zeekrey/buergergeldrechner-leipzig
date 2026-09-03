@@ -1,7 +1,9 @@
-import { cn } from "@/lib/utils";
+import { calculateOverall } from "calculation";
 import { Fragment, useMemo, forwardRef } from "react";
+
+import { requireCompleteAges } from "@/lib/complete-context";
 import { allowanceType, incomeType, TStepContext } from "@/lib/types";
-import { calculateBaseNeed, calculateOverall } from "calculation";
+import { cn } from "@/lib/utils";
 
 const Table = forwardRef<
   HTMLTableElement,
@@ -39,15 +41,22 @@ const TableCell = forwardRef<
 ));
 
 export function ResultSheet({ state }: { state: TStepContext }) {
-  const baseNeed = useMemo(() => calculateBaseNeed(state), [state]);
   const {
+    baseNeed,
     need,
     allowance,
     additionalNeeds,
+    benefitCommunity,
     income,
     incomeAfterAllowance,
     overall,
-  } = useMemo(() => calculateOverall(state), [state]);
+    resultStatus,
+    spendingDetails,
+    assets,
+  } = useMemo(
+    () => calculateOverall(requireCompleteAges(state)),
+    [state]
+  );
 
   const allowanceSum = useMemo(
     () => allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0),
@@ -64,10 +73,10 @@ export function ResultSheet({ state }: { state: TStepContext }) {
 
   const incomeCount = useMemo(
     () =>
-      state.community.reduce((acc, curr) => {
+      benefitCommunity.reduce((acc, curr) => {
         return acc + curr.income.length;
       }, 0),
-    []
+    [benefitCommunity]
   );
 
   return (
@@ -156,7 +165,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
           </>
         )}
         {/* spendings */}
-        {state.spendings.sum > 0 && (
+        {spendingDetails.sum > 0 && (
           <>
             <TableCell className="font-medium row-span-4 col-span-2 sm:col-span-1">
               Kosten für Unterkunft und Heizung
@@ -165,21 +174,21 @@ export function ResultSheet({ state }: { state: TStepContext }) {
               Kaltmiete (Schuldzins bei Wohneigentum)
             </TableCell>
             <TableCell className="text-right">
-              {state.spendings.rent.toLocaleString("de-DE", {
+              {spendingDetails.rent.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
               })}
             </TableCell>
             <TableCell className="sm:col-span-2">Nebenkosten</TableCell>
             <TableCell className="text-right">
-              {state.spendings.utilities.toLocaleString("de-DE", {
+              {spendingDetails.utilities.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
               })}
             </TableCell>
             <TableCell className="sm:col-span-2">Heizkosten</TableCell>
             <TableCell className="text-right">
-              {state.spendings.heating.toLocaleString("de-DE", {
+              {spendingDetails.heating.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
               })}
@@ -188,7 +197,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
               Summe
             </TableCell>
             <TableCell className="text-right bg-muted/30">
-              {state.spendings.sum.toLocaleString("de-DE", {
+              {spendingDetails.sum.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
               })}
@@ -216,7 +225,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
             Einkommen
           </TableCell>
         )}
-        {state.community
+        {benefitCommunity
           .filter((p) => p.income.length)
           .map((person, personIndex) => (
             <Fragment key={personIndex}>
@@ -274,7 +283,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
             <TableCell className="font-medium sm:col-span-2">
               {allowanceType[_allowance.type].label} (
               {
-                state.community.find((pers) => pers.id === _allowance.personId)
+                benefitCommunity.find((pers) => pers.id === _allowance.personId)
                   ?.name
               }
               )
@@ -314,10 +323,55 @@ export function ResultSheet({ state }: { state: TStepContext }) {
             </TableCell>
           </>
         )}
+        {assets.items.length > 0 && (
+          <>
+            <TableCell className="font-medium row-span-4 col-span-2 sm:col-span-1">
+              Vermögen
+            </TableCell>
+            <TableCell className="sm:col-span-2">
+              Zu berücksichtigendes Vermögen
+            </TableCell>
+            <TableCell className="text-right">
+              {assets.countable.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
+            </TableCell>
+            <TableCell className="sm:col-span-2">
+              Nicht berücksichtigtes Vermögen
+            </TableCell>
+            <TableCell className="text-right">
+              {assets.items
+                .reduce((sum, item) => sum + item.exempt, 0)
+                .toLocaleString("de-DE", {
+                  style: "currency",
+                  currency: "EUR",
+                })}
+            </TableCell>
+            <TableCell className="sm:col-span-2">Vermögensfreibetrag</TableCell>
+            <TableCell className="text-right">
+              {assets.allowance.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
+            </TableCell>
+            <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
+              Übersteigendes Vermögen
+            </TableCell>
+            <TableCell className="text-right bg-muted/30 font-bold">
+              {assets.excess.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
+            </TableCell>
+          </>
+        )}
         {/* overall sum  */}
         <>
           <TableCell className="sm:col-span-3 bg-primary font-bold text-primary-foreground">
-            Bürgergeldanspruch
+            {resultStatus === "manual-review"
+              ? "Vorläufiger Bedarf – manuelle Vermögensprüfung erforderlich"
+              : "Grundsicherungsanspruch"}
           </TableCell>
           <TableCell className="text-right bg-primary font-bold text-primary-foreground">
             {overall.toLocaleString("de-DE", {

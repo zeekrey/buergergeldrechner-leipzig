@@ -1,4 +1,4 @@
-import { TStepsState, TStep } from "./types";
+import { emptyAssets, TStepsState, TStep } from "./types";
 
 export function stepsReducer(
   state: TStepsState,
@@ -21,7 +21,7 @@ export function stepsReducer(
     case "previous": {
       const { currentStep } = state;
 
-      const previousStep = stepsConfig[currentStep].previous;
+      const previousStep = stepsConfig[currentStep].previous(state.context);
 
       return {
         ...state,
@@ -43,10 +43,10 @@ export function stepsReducer(
 
 export const stepsConfig: Record<number, TStep> = {
   0: {
-    description: `Bürgergeldberechtigt, sind Personen die **erwerbsfähig** sind. Das bedeutet, dass Sie in der Lage sein müssen, mindestens **drei Stunden pro Tag arbeiten** zu können. Sollte dies nicht der Fall sein, können Sie Anspruch auf andere Hilfeleistungen haben.`,
+    description: `Anspruch auf Grundsicherungsgeld haben grundsätzlich Personen, die **erwerbsfähig** sind. Das bedeutet, dass Sie in der Lage sein müssen, mindestens **drei Stunden pro Tag zu arbeiten**. Sollte dies nicht der Fall sein, können Sie Anspruch auf andere Hilfeleistungen haben.`,
     id: "erwerbsfaehig",
     next: () => 1,
-    previous: 0,
+    previous: () => 0,
     title: "Sind Sie erwerbsfähig?",
   },
   1: {
@@ -54,7 +54,7 @@ export const stepsConfig: Record<number, TStep> = {
       "Es ist zunächst wichtig zu wissen, ob Sie in einer Partnerschaft leben. Partnerschaften sind zum Beispiel Ehe, eingetragene Lebenspartnerschaften oder auch nichteheliche Lebensgemeinschaften die in einer gemeinsamen Wohnung leben.",
     id: "partnerschaft",
     next: () => 2,
-    previous: 0,
+    previous: () => 0,
     title: "Leben Sie in einer Partnerschaft?",
   },
   2: {
@@ -65,18 +65,27 @@ export const stepsConfig: Record<number, TStep> = {
       if (ctx.community.some(({ type }) => type === "child")) {
         return 3;
       }
-      return 5;
+      return 4;
     },
-    previous: 1,
+    previous: () => 1,
     title: "Leben Kinder in Ihrem Haushalt?",
   },
   3: {
     description:
-      "Der Bedarf auf Bürgergeld richtet sich nach der Anzahl und dem Alter der Kinder, die in Ihrem Haushalt leben.",
+      "Die Höhe des Grundsicherungsbedarfs richtet sich unter anderem nach der Anzahl und dem Alter der Kinder, die in Ihrem Haushalt leben.",
     id: "kinder-anzahl",
-    next: () => 5,
-    previous: 2,
+    next: () => 4,
+    previous: () => 2,
     title: "Wie viele Kinder leben in Ihrem Haushalt?",
+  },
+  4: {
+    description:
+      "Bitte geben Sie das Alter jeder Person in Ihrer Bedarfsgemeinschaft in vollständigen Jahren an. Das Alter bestimmt unter anderem Regelbedarf und Vermögensfreibetrag.",
+    id: "alter",
+    next: () => 5,
+    previous: (ctx) =>
+      ctx.community.some(({ type }) => type === "child") ? 3 : 2,
+    title: "Wie alt sind die Personen in Ihrer Bedarfsgemeinschaft?",
   },
   5: {
     description: `
@@ -88,7 +97,7 @@ export const stepsConfig: Record<number, TStep> = {
         return 6;
       else return 7;
     },
-    previous: 3,
+    previous: () => 4,
     title: "Ihre Bedarfsgemeinschaft",
   },
   6: {
@@ -97,7 +106,7 @@ export const stepsConfig: Record<number, TStep> = {
   `,
     id: "krankheiten",
     next: () => 7,
-    previous: 5,
+    previous: () => 5,
     title: "Krankheiten",
   },
   7: {
@@ -105,7 +114,8 @@ export const stepsConfig: Record<number, TStep> = {
       "Tragen Sie hier bitte Ihre aktuelle monatliche Kaltmiete (oder Schuldzins bei Wohneigentum), monatlichen Neben- und monatlichen Heizkosten ein.",
     id: "kosten-unterkunft-heizung",
     next: () => 8,
-    previous: 6,
+    previous: (ctx) =>
+      ctx.community.some(({ attributes }) => attributes?.hasDiseases) ? 6 : 5,
     title: "Kosten für Unterkunft und Heizung",
   },
   8: {
@@ -113,15 +123,23 @@ export const stepsConfig: Record<number, TStep> = {
       "Für die Berechnung des Anspruchs geben Sie bitte das Einkommen aller erwerbstätigen Personen ein. Es gibt verschiedene Arten von Einkommen. Unter Einkommen hinzufügen stehen die Arten von Einkommen zur Verfügung. Bitte geben Sie alle Einkommen an, welche die Bedarfsgemeinschaft hat.",
     id: "monatliches-einkommen",
     next: () => 9,
-    previous: 7,
+    previous: () => 7,
     title: "Erfassung des Einkommens",
   },
   9: {
     description:
-      "Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des Bürgergeldes. Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine unverbindliche Berechnung handelt.",
-    id: "ergebnis",
+      "Die Vermögensregeln dieser Berechnung gelten für Bewilligungszeiträume ab dem 1. Juli 2026. Zum Vermögen gehören vor allem Geld, Wertpapiere, Fahrzeuge und Immobilien. Angemessener Hausrat wird nicht berücksichtigt.",
+    id: "vermoegen",
     next: () => 10,
-    previous: 8,
+    previous: () => 8,
+    title: "Welches Vermögen haben Sie?",
+  },
+  10: {
+    description:
+      "Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des Grundsicherungsgeldes. Ob Sie tatsächlich Anspruch haben, hängt von weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine unverbindliche Berechnung handelt.",
+    id: "ergebnis",
+    next: () => 11,
+    previous: () => 9,
     title: "Ihr Berechnungsergebnis",
   },
 };
@@ -140,6 +158,7 @@ export const initialStepsState: TStepsState = {
       allowance: 0,
       sum: 0,
     },
+    assets: emptyAssets,
   },
   currentStep: 0,
   step: stepsConfig[0],

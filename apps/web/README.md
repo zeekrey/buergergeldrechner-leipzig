@@ -1,8 +1,14 @@
-Hierbei handelt es sich um ein Projekt im Rahmen der [Smart City Challange](https://digitalcampus.leipzig.de/sccl-2024/) Leipzig 2024 zum Themen ["Bürgergeldrechner+ - Dein individueller Anspruchsrechner"](https://digitalcampus.leipzig.de/sccl-wettbewerbsbedingungen-2024/buergergeldrechner-dein-individueller-anspruchsrechner/).
+# Webanwendung Grundsicherungsrechner
+
+Die Anwendung entstand im Rahmen der [Smart City Challenge Leipzig 2024](https://digitalcampus.leipzig.de/sccl-2024/) und wird als Grundsicherungsrechner weiterentwickelt.
+
+## Fachliche Terminologie
+
+Gemäß den [Informationen des Bundesministeriums für Arbeit und Soziales](https://www.bmas.de/DE/Service/Gesetze-und-Gesetzesvorhaben/FAQ-Gesetz-zur-Umgestaltung-der-Grundsicherung-fuer-Arbeitsuchende/faq-gesetz-zur-umgestaltung-der-grundsicherung-fuer-arbeitsuchende-art.html) bezeichnet **Grundsicherung für Arbeitsuchende** das Leistungssystem und **Grundsicherungsgeld** die Geldleistung. Die Webanwendung heißt entsprechend **Grundsicherungsrechner**. Das berechnete Ergebnis ist unverbindlich; den tatsächlichen Anspruch stellt das zuständige Jobcenter fest.
 
 ## Anforderungen
 
-> Wie gelingt es, mit wenigen Eingaben einen möglichst genauen Anspruch auf Bürgergeld zu berechnen und damit Orientierung für Grundsicherungssuchende zu schaffen ?
+> Wie gelingt es, mit wenigen Eingaben einen möglichen Anspruch auf Grundsicherungsgeld möglichst genau zu schätzen und damit Orientierung für Grundsicherungssuchende zu schaffen?
 
 ### Fachliche Anforderungen
 
@@ -36,7 +42,7 @@ Hierbei handelt es sich um ein Projekt im Rahmen der [Smart City Challange](http
 
 ## Architektur
 
-Der Bürgergeldanspruch richtet sich maßgeblich nach der Bedarfsgemeinschaft, deren Eigenschaften sowie Einkommen und Ausgaben. Daher wird im ersten Teil des Rechners die Bedarfsgemeinschaft beschrieben. Das Ergebnis ist beispielsweise folgendes Objekt:
+Der Anspruch auf Grundsicherungsgeld richtet sich maßgeblich nach der Bedarfsgemeinschaft, deren Eigenschaften sowie Einkommen und Ausgaben. Daher wird im ersten Teil des Rechners die Bedarfsgemeinschaft beschrieben. Das Ergebnis ist beispielsweise folgendes Objekt:
 
 Alleinstehende Person
 
@@ -102,7 +108,7 @@ Freibetrag-Summe    -113
 Resteinkommen       52
 ```
 
-Resteinkommen ist das "zu berücksichtigendes Einkommen". Der Bürgergeldbedarf wird um diesen Betrag verringert.
+Das Resteinkommen ist das „zu berücksichtigende Einkommen“. Der Grundsicherungsbedarf wird um diesen Betrag verringert.
 
 ## Einkommensarten und deren Freibeträge
 

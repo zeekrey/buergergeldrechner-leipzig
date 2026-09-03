@@ -1,10 +1,19 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { produce } from "immer";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
+import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import { Dialog } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -13,6 +22,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import {
+  StepRoot,
+  StepTitle,
+  StepDescription,
+} from "@/components/ui/step-primitives";
 import {
   Table,
   TableBody,
@@ -22,36 +39,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-  CalculatorIcon,
-} from "lucide-react";
-import { useCallback, useState } from "react";
-import { produce } from "immer";
-import {
-  StepRoot,
-  StepTitle,
-  StepDescription,
-} from "@/components/ui/step-primitives";
-import { stepsConfig } from "@/lib/machine";
-import { useRouter } from "next/navigation";
-import { useStateContext } from "@/components/context";
 import HelpMarkdown from "@/config/steps/kosten-unterkunft-heizung.mdx";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { calculateRent } from "@/lib/rent-calculation";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { RentCalculation } from "@/app/mietpruefung/rent-calculation";
+import { stepsConfig } from "@/lib/machine";
 
 const step = stepsConfig[7];
 
@@ -119,15 +108,8 @@ export default function StepSpending() {
   ]);
 
   const sum = Number(heating ?? 0) + Number(rent ?? 0) + Number(utilities ?? 0);
-  const { isOk, issues, description } = calculateRent({
-    rent: Number(rent ?? 0),
-    utilities: Number(utilities ?? 0) + Number(heating ?? 0),
-    communityCount: state.community.length,
-    space: 1,
-  });
-
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [state]);
 
   return (
@@ -138,15 +120,15 @@ export default function StepSpending() {
       <StepDescription>{step.description}</StepDescription>
       <Form {...form}>
         <form
-          className="space-y-2 grow flex flex-col"
+          className="flex grow flex-col gap-2"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <StepContent className="flex-grow flex flex-col px-8 pt-4">
+          <StepContent className="flex grow flex-col">
             <FormField
               control={form.control}
               name="hasNoSpendings"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-1 rounded-md border p-4">
+                <FormItem className="flex flex-row items-start gap-1 rounded-md border p-4">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
@@ -257,7 +239,7 @@ export default function StepSpending() {
             </ScrollArea>
           </StepContent>
           <Dialog open={dialogIsOpen} onOpenChange={setDialogOpen}>
-            <StepNavigation className="flex-col px-8 py-6 space-y-3">
+            <StepNavigation className="flex-col items-stretch">
               {/* {issues?.includes("rent") && (
                 <>
                   <DialogTrigger asChild>
@@ -287,18 +269,9 @@ export default function StepSpending() {
                   </DialogContent>
                 </>
               )} */}
-              <div className=" flex justify-between sm:gap-2">
-                <Button onClick={handleBack} size="lg" type="button">
-                  <ArrowLeftCircleIcon className="w-4 h-4" />
-                </Button>
-                <Button
-                  className="grow sm:grow-0 sm:w-48 ml-4"
-                  size="lg"
-                  type="submit"
-                >
-                  Weiter
-                  <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-                </Button>
+              <div className="flex items-center justify-between gap-3">
+                <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+                <WizardNextButton>Weiter</WizardNextButton>
               </div>
             </StepNavigation>
           </Dialog>

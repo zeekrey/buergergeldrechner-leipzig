@@ -1,12 +1,14 @@
-import { Button } from "@/components/ui/button";
 import {
   ExternalLinkIcon,
   HandCoinsIcon,
+  LandmarkIcon,
   PiggyBankIcon,
   ScaleIcon,
   UsersIcon,
   FileTextIcon,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function Result({
@@ -15,6 +17,8 @@ export function Result({
   spendings,
   allowance,
   overall,
+  assetExcess = 0,
+  requiresManualReview = false,
   onShowDocuments,
 }: {
   communitySize: number;
@@ -22,24 +26,43 @@ export function Result({
   spendings: number;
   allowance: number;
   overall: number;
+  assetExcess?: number;
+  requiresManualReview?: boolean;
   onShowDocuments?: () => void;
 }) {
   const isPositive = overall > 0;
+  const blockedByAssets = assetExcess > 0;
+  const canApply = isPositive || requiresManualReview;
 
   return (
     <div className="py-6 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-5">
       <div className="flex items-center">
-        {isPositive ? (
+        {requiresManualReview ? (
+          <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
+            Ihre Vermögensangaben erfordern eine individuelle Prüfung durch das
+            Jobcenter. Verfügbarkeit, besondere Härten, geschützte Zwecke sowie
+            Fahrzeuge und Wohneigentum können nicht abschließend automatisiert
+            beurteilt werden. Stellen Sie deshalb trotz des vorläufigen
+            Ergebnisses einen Antrag.
+          </p>
+        ) : isPositive ? (
           <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
             Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des
-            Bürgergeldes. Ob Sie tatsächlich Anspruch haben, hängt von weiteren
-            Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine
+            Grundsicherungsgeldes. Ob Sie tatsächlich Anspruch haben, hängt von
+            weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine
             unverbindliche Berechnung handelt.
+          </p>
+        ) : blockedByAssets ? (
+          <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
+            Ihr zu berücksichtigendes Vermögen liegt über den Freibeträgen nach
+            § 12 SGB II. In diesem Fall besteht in der Regel keine
+            Hilfebedürftigkeit.
           </p>
         ) : (
           <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
-            Entsprechend Ihrer Angaben werden Sie keinen Anspruch auf Bürgergeld
-            haben. Verfügen Sie über niedriges Einkommen, dann können Sie
+            Entsprechend Ihrer Angaben werden Sie keinen Anspruch auf
+            Grundsicherungsgeld haben. Verfügen Sie über niedriges Einkommen, dann
+            können Sie
             Wohngeld beantragen. Verfügen Sie über niedriges Einkommen und haben
             Kinder in Ihrer Bedarfsgemeinschaft können Sie Kinderzuschlag
             beantragen.
@@ -49,7 +72,10 @@ export function Result({
       <div
         className={cn(
           "row-span-2 rounded-2xl bg-green-50 dark:bg-green-800 px-8 text-center ring-1 ring-inset ring-green-200 dark:ring-green-500 flex flex-col justify-center lg:py-16",
-          { "ring-yellow-400 bg-yellow-50": !isPositive }
+          {
+            "ring-yellow-400 bg-yellow-50":
+              !isPositive || requiresManualReview,
+          }
         )}
       >
         <p className="flex items-baseline justify-center gap-x-2">
@@ -57,15 +83,17 @@ export function Result({
             className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white"
             data-testid="result"
           >
-            {isPositive
-              ? overall.toLocaleString("de-DE", {
-                  currency: "EUR",
-                  style: "currency",
-                })
-              : "Kein Anspruch"}
+            {requiresManualReview
+              ? "Manuelle Prüfung erforderlich"
+              : isPositive
+                ? overall.toLocaleString("de-DE", {
+                    currency: "EUR",
+                    style: "currency",
+                  })
+                : "Kein Anspruch"}
           </span>
         </p>
-        {overall > 0 ? (
+        {canApply ? (
           <div className="flex flex-col gap-4 justify-end mt-10">
             <Button variant="outline" type="button" onClick={onShowDocuments}>
               <FileTextIcon className="w-4 h-4 mr-2" />
@@ -80,7 +108,7 @@ export function Result({
           </div>
         ) : (
           <p className="mt-6 text-xs leading-5 text-gray-600 dark:text-gray-300">
-            Auch wenn kein Anspruch auf Bürgergeld bestehen sollte, können Sie
+            Auch wenn kein Anspruch auf Grundsicherungsgeld bestehen sollte, können Sie
             sich hier über{" "}
             <a
               href="https://www.wohngeldrechner24.de/"
@@ -149,6 +177,18 @@ export function Result({
               currency: "EUR",
             })}{" "}
             Freibeträge
+          </li>
+          <li className="flex gap-x-3">
+            <LandmarkIcon
+              aria-hidden="true"
+              className="h-6 w-5 flex-none text-primary"
+            />
+            {assetExcess > 0
+              ? `${assetExcess.toLocaleString("de-DE", {
+                  style: "currency",
+                  currency: "EUR",
+                })} Vermögen über dem Freibetrag`
+              : "Vermögen innerhalb der Freibeträge"}
           </li>
         </ul>
       </div>

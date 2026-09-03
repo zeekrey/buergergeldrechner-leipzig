@@ -1,22 +1,23 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { produce } from "immer";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ParentalAllowanceSchema, TStepContext } from "@/lib/types";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { produce } from "immer";
-import { generateId } from "@/lib/utils";
-import { useStateContext } from "@/components/context";
-import { IncomeComponentProps } from "../income-dialog";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { z } from "zod";
+import { ParentalAllowanceSchema, TStepContext } from "@/lib/types";
+import { generateId } from "@/lib/utils";
+
+import { IncomeComponentProps } from "../income-dialog";
 import { checkChildBenefitTransfert } from "./default-income";
 
 type TFormData = {
@@ -27,15 +28,8 @@ type TFormData = {
 
 export const parentalAllowanceCalculation = (props: TFormData) => {
   const { claim, officialAllowance, type } = props;
-  let allowance = 0;
-
-  if (type === "normal") {
-    allowance =
-      Number(officialAllowance) > 300 ? 300 : Number(officialAllowance);
-  } else {
-    allowance =
-      Number(officialAllowance) > 150 ? 150 : Number(officialAllowance);
-  }
+  const maximumAllowance = type === "normal" ? 300 : 150;
+  const allowance = Math.min(Number(officialAllowance), maximumAllowance);
   const amount = Number(claim) - allowance;
 
   return {
@@ -119,8 +113,7 @@ export const ParentalAllowance = ({
     },
   });
 
-  const onSubmit: SubmitHandler<TFormData> = (data, event) => {
-    // event.preventDefault();
+  const onSubmit: SubmitHandler<TFormData> = (data) => {
 
     const selectedPersonIndex = state.community.findIndex(
       (per) => per.id === person.id

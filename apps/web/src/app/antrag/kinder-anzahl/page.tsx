@@ -1,35 +1,31 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import {
-  ArrowRightCircleIcon,
-  ArrowLeftCircleIcon,
-  XCircleIcon,
-} from "lucide-react";
+
+import { produce } from "immer";
+import { XCircleIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useMemo, useCallback } from "react";
+
+import { useStateContext } from "@/components/context";
+import {
+  WizardBackButton,
+  WizardNextButton,
+} from "@/components/questionnaire/actions";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
 import {
   StepRoot,
   StepTitle,
   StepDescription,
 } from "@/components/ui/step-primitives";
-import { Button } from "../../../components/ui/button";
-import { produce } from "immer";
-import { TChild, TPerson } from "@/lib/types";
-import { stepsConfig } from "@/lib/machine";
-import { useRouter } from "next/navigation";
-import { generateId, generateMember } from "@/lib/utils";
-import { incomeType } from "@/lib/types";
-import { useStateContext } from "@/components/context";
 import HelpMarkdown from "@/config/steps/kinder-anzahl.mdx";
+import { stepsConfig } from "@/lib/machine";
+import { TPerson } from "@/lib/types";
+import { incomeType } from "@/lib/types";
+import { generateId, generateMember } from "@/lib/utils";
+
+import { Button } from "../../../components/ui/button";
 
 const step = stepsConfig[3];
 
@@ -58,17 +54,8 @@ export default function StepChildrenCount() {
     push(`${stepsConfig[nextStep].id}`);
   };
 
-  const handleChange = (age: TChild["age"], id: TPerson["id"]) => {
-    const newState = produce(state, (draft) => {
-      const index = draft.community.findIndex((person) => person.id === id);
-      if (index !== -1) (draft.community[index] as TChild).age = age;
-    });
-
-    setState(newState);
-  };
-
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [state]);
 
   const addChildren = () => {
@@ -78,7 +65,7 @@ export default function StepChildrenCount() {
           id: generateId(),
           type: "child",
           name: `Kind ${children.length + 1}`,
-          age: 1,
+          age: -1,
           income: [
             {
               id: generateId(),
@@ -98,6 +85,9 @@ export default function StepChildrenCount() {
     const newState = produce(state, (draft) => {
       const index = draft.community.findIndex((person) => person.id === id);
       if (index !== -1) draft.community.splice(index, 1);
+      draft.assets.items = draft.assets.items.filter(
+        (asset) => asset.personId !== id
+      );
     });
 
     setState(newState);
@@ -112,39 +102,18 @@ export default function StepChildrenCount() {
       <form onSubmit={handleSubmit}>
         <StepContent>
           <ScrollArea className="sm:h-[200px]">
-            {children.map((child, index) => (
-              <div className="items-center gap-3 flex py-1" key={index}>
-                <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
+            {children.map((child) => (
+              <div className="flex items-center gap-3 py-1" key={child.id}>
+                <div className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm">
                   {child.name}
                 </div>
-                <Select
-                  value={child.age.toString()}
-                  onValueChange={(value) =>
-                    handleChange(Number(value), child.id)
-                  }
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Altersgruppe" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 24 }, (_, i) => i + 1).map(
-                      (value) => (
-                        <SelectItem
-                          key={value.toString()}
-                          value={value.toString()}
-                        >
-                          {value} {value < 2 ? "Jahr" : "Jahre"}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
                 <Button
+                  aria-label={`${child.name} entfernen`}
                   onClick={() => removeChildren(child.id)}
                   variant="outline"
                   type="button"
                 >
-                  <XCircleIcon className="w-4 h-4" />
+                  <XCircleIcon />
                 </Button>
               </div>
             ))}
@@ -161,17 +130,8 @@ export default function StepChildrenCount() {
           </ScrollArea>
         </StepContent>
         <StepNavigation>
-          <Button onClick={handleBack} size="lg" type="button">
-            <ArrowLeftCircleIcon className="w-4 h-4" />
-          </Button>
-          <Button
-            className="grow sm:grow-0 sm:w-48 ml-4"
-            size="lg"
-            type="submit"
-          >
-            Weiter
-            <ArrowRightCircleIcon className="w-4 h-4 ml-3" />
-          </Button>
+          <WizardBackButton onClick={handleBack}>Zurück</WizardBackButton>
+          <WizardNextButton>Weiter</WizardNextButton>
         </StepNavigation>
       </form>
     </StepRoot>

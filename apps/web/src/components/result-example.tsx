@@ -1,11 +1,12 @@
 import { ResultSheet } from "@/app/antrag/ergebnis/result-sheet";
-import { TStepContext } from "@/lib/types";
+import { emptyAssets, TStepContext } from "@/lib/types";
 
 const exampleResult: TStepContext = {
   community: [
     {
       id: "1733937640824382",
       name: "Antragsteller",
+      age: 35,
       income: [
         {
           id: "1738016730781580",
@@ -27,6 +28,7 @@ const exampleResult: TStepContext = {
     {
       id: "1735250980608142",
       name: "Partner",
+      age: 35,
       income: [],
       attributes: {
         isPregnant: true,
@@ -60,6 +62,7 @@ const exampleResult: TStepContext = {
   isEmployable: true,
   spendings: { rent: 380, utilities: 120, heating: 50, sum: 550 },
   income: { sum: 0, allowance: 0 },
+  assets: emptyAssets,
 };
 
 export function ResultExample() {

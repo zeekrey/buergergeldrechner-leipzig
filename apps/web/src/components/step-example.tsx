@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  ArrowRightCircleIcon,
+  ArrowLeftCircleIcon,
+  XCircleIcon,
+} from "lucide-react";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -9,16 +17,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import {
-  ArrowRightCircleIcon,
-  ArrowLeftCircleIcon,
-  XCircleIcon,
-} from "lucide-react";
-import { useState } from "react";
 import { StepTitle, StepDescription } from "@/components/ui/step-primitives";
-import { Button } from "@/components/ui/button";
-import { stepsConfig } from "@/lib/machine";
 import HelpMarkdown from "@/config/steps/kinder-anzahl.mdx";
+import { stepsConfig } from "@/lib/machine";
 
 const step = stepsConfig[3];
 
