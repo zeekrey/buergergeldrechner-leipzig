@@ -36,7 +36,7 @@ export function WizardNextButton({
 }: WizardActionButtonProps) {
   return (
     <Button
-      className={cn("w-full sm:w-auto sm:min-w-40", className)}
+      className={cn("min-w-0 flex-1 sm:min-w-40 sm:flex-none", className)}
       size="lg"
       type={type}
       {...props}

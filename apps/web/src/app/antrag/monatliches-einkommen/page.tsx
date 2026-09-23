@@ -104,7 +104,7 @@ export default function StepSalary() {
 
   return (
     <StepRoot className="grow-0" id={step.id}>
-      <StepTitle title={step.title}>
+      <StepTitle preview={step.description} title={step.title}>
         <HelpMarkdown />
       </StepTitle>
       <StepDescription>{step.description}</StepDescription>

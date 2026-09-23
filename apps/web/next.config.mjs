@@ -1,12 +1,21 @@
 /** @type {import('next').NextConfig} */
 import createMDX from '@next/mdx'
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import pkg from './package.json' with { type: "json" };
+
+const appRoot = path.dirname(fileURLToPath(import.meta.url));
+const repositoryRoot = path.resolve(appRoot, "../..");
 
 const nextConfig = {
     env: {
         APP_VERSION: pkg.version
     },
+    outputFileTracingIncludes: {
+        '/api/chat': ['../../knowledge/**/*.md'],
+    },
+    outputFileTracingRoot: repositoryRoot,
     pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
     serverExternalPackages: ['resend'],
     turbopack: {

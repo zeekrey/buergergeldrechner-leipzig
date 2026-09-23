@@ -98,7 +98,7 @@ export default function StepSummary() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle title={step.title}>
+      <StepTitle preview={step.description} title={step.title}>
         <HelpMarkdown />
       </StepTitle>
       <StepContent>

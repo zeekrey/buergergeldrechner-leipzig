@@ -2,6 +2,14 @@
 
 Die Anwendung entstand im Rahmen der [Smart City Challenge Leipzig 2024](https://digitalcampus.leipzig.de/sccl-2024/) und wird als Grundsicherungsrechner weiterentwickelt.
 
+## Chat-Konfiguration
+
+Der Chat im Hilfedialog der einzelnen Rechnerfragen nutzt das Vercel-AI-Gateway-Modell `openai/gpt-5.6-luna`. Dafür muss `AI_GATEWAY_API_KEY` als serverseitige Umgebungsvariable lokal (zum Beispiel in `.env.local`) und in den Vercel-Projekteinstellungen gesetzt werden. Es gibt keinen Fallback auf ein anderes Modell oder einen anderen Anbieter.
+
+Die Antworten werden aus den Markdown-Dateien im Verzeichnis `knowledge/` belegt. Diese Dateien werden beim Deployment in das Server-Artefakt der Chat-Route aufgenommen.
+
+Für eine öffentliche Bereitstellung muss für `POST /api/chat` zusätzlich ein deployment-weites Rate-Limit in der Vercel Firewall oder einer vergleichbaren gemeinsam genutzten Infrastruktur konfiguriert werden. Im Projekt ist derzeit kein serverless-tauglicher gemeinsamer Rate-Limit-Speicher vorhanden; ein prozesslokaler In-Memory-Limiter wäre auf Vercel nicht verlässlich. Die Route begrenzt unabhängig davon Anfragen auf 32 KB, 20 Nachrichten und insgesamt 12.000 Eingabezeichen sowie Antworten auf 1.200 Tokens und 30 Sekunden Laufzeit.
+
 ## Fachliche Terminologie
 
 Gemäß den [Informationen des Bundesministeriums für Arbeit und Soziales](https://www.bmas.de/DE/Service/Gesetze-und-Gesetzesvorhaben/FAQ-Gesetz-zur-Umgestaltung-der-Grundsicherung-fuer-Arbeitsuchende/faq-gesetz-zur-umgestaltung-der-grundsicherung-fuer-arbeitsuchende-art.html) bezeichnet **Grundsicherung für Arbeitsuchende** das Leistungssystem und **Grundsicherungsgeld** die Geldleistung. Die Webanwendung heißt entsprechend **Grundsicherungsrechner**. Das berechnete Ergebnis ist unverbindlich; den tatsächlichen Anspruch stellt das zuständige Jobcenter fest.

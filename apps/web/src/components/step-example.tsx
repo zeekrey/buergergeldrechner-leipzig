@@ -54,7 +54,7 @@ export function StepExample() {
 
   return (
     <div className="sm:border sm:shadow-xs rounded-lg w-full flex flex-col min-h-96 bg-background pt-14 sm:pt-0">
-      <StepTitle title={step.title}>
+      <StepTitle preview={step.description} title={step.title}>
         <HelpMarkdown />
       </StepTitle>
       <StepDescription>{step.description}</StepDescription>

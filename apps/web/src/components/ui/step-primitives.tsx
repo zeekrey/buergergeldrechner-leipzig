@@ -2,6 +2,13 @@ import { CircleHelpIcon } from "lucide-react";
 import { forwardRef } from "react";
 import Markdown from "react-markdown";
 
+import { QuestionChat } from "@/components/question-chat";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,13 +45,13 @@ StepRoot.displayName = "StepRoot";
 
 const StepTitle = forwardRef<
   HTMLDivElement,
-  StepPrimitiveProps & { title: string }
->(({ children, className, title, ...props }, ref) => {
+  StepPrimitiveProps & { preview: string; title: string }
+>(({ children, className, preview, title, ...props }, ref) => {
   return (
     <div
       className={cn(
         "grid auto-rows-min items-start gap-1 px-(--step-spacing) pt-(--step-spacing) print:hidden",
-        children ? "grid-cols-[1fr_auto] gap-x-4" : undefined,
+        "grid-cols-[1fr_auto] gap-x-4",
         className
       )}
       ref={ref}
@@ -53,31 +60,55 @@ const StepTitle = forwardRef<
       <h2 className="text-xl font-semibold tracking-tight text-balance sm:text-2xl">
         {title}
       </h2>
-      {children ? (
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              aria-label="Hilfe"
-              className="rounded-full"
-              size="icon-sm"
-              variant="ghost"
-            >
-              <CircleHelpIcon />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Über diese Frage</DialogTitle>
-              <DialogDescription>
-                Zusätzliche Hintergrundinformationen zur aktuellen Frage.
-              </DialogDescription>
-            </DialogHeader>
-            <ScrollArea className="h-[500px] prose prose-sm max-w-none dark:prose-invert">
-              {children}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            aria-label="Hilfe"
+            className="rounded-full"
+            size="icon-sm"
+            variant="ghost"
+          >
+            <CircleHelpIcon />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="flex h-[min(92dvh,52rem)] sm:max-w-2xl flex-col gap-0 overflow-hidden p-0">
+          <DialogHeader className="shrink-0 border-b p-4 pr-12">
+            <DialogTitle>Hilfe zur aktuellen Frage</DialogTitle>
+            <DialogDescription>
+              Lesen Sie die vorhandenen Hinweise oder stellen Sie Ihre eigene
+              Frage.
+            </DialogDescription>
+          </DialogHeader>
+          {children ? (
+            <ScrollArea className="max-h-[35%] shrink-0 border-b px-4">
+              <Accordion type="single" collapsible>
+                <AccordionItem value="question-help">
+                  <AccordionTrigger className="items-center hover:no-underline">
+                    <span className="flex min-w-0 flex-1 flex-col gap-1 pr-4">
+                      <span>{title}</span>
+                      <span className="line-clamp-2 font-normal leading-5 text-muted-foreground">
+                        <Markdown
+                          components={{
+                            p: ({ children: previewChildren }) => (
+                              <>{previewChildren}</>
+                            ),
+                          }}
+                        >
+                          {preview.trim()}
+                        </Markdown>
+                      </span>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="prose prose-sm max-w-none dark:prose-invert">
+                    {children}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </ScrollArea>
-          </DialogContent>
-        </Dialog>
-      ) : null}
+          ) : null}
+          <QuestionChat questionTitle={title} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 });

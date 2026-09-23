@@ -59,7 +59,7 @@ export default function StepAges() {
 
   return (
     <StepRoot id={step.id}>
-      <StepTitle title={step.title} />
+      <StepTitle preview={step.description} title={step.title} />
       <StepDescription>{step.description}</StepDescription>
       <form onSubmit={handleSubmit}>
         <StepContent>
