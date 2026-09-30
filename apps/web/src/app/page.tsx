@@ -3,7 +3,6 @@ import {
   ArrowRightIcon,
   DraftingCompassIcon,
   LockIcon,
-  MenuIcon,
   ShapesIcon,
   ShieldIcon,
   UsersIcon,
@@ -13,6 +12,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+import { HomeMobileMenu } from "@/components/home-mobile-menu";
 import { ResultExample } from "@/components/result-example";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -22,15 +22,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 
 import JobcenterImage from "../assets/logo.webp";
@@ -106,50 +97,7 @@ export default function HomePage() {
             </Link>
           </div> */}
           <div className="flex lg:hidden">
-            <Drawer>
-              <DrawerTrigger asChild>
-                <button
-                  className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-zinc-700"
-                  type="button"
-                >
-                  <span className="sr-only">Menü öffnen</span>
-                  <MenuIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </DrawerTrigger>
-              <DrawerContent className="text-zinc-900">
-                <DrawerHeader>
-                  <DrawerTitle>
-                    Grundsicherungsrechner des Jobcenters Leipzig
-                  </DrawerTitle>
-                  <DrawerDescription>
-                    Schnell und einfach einen möglichen Anspruch auf
-                    Grundsicherungsgeld mit dem Grundsicherungsrechner des
-                    Jobcenters Leipzig prüfen.
-                  </DrawerDescription>
-                </DrawerHeader>
-                {/* <div className="p-2 flex flex-col"> */}
-                {/* nav */}
-                {/* {navigation.map((item) => (
-                    <Link
-                      className="text-sm font-semibold leading-6 text-zinc-900 border-b border-zinc-900/10 pb-3 mb-3 flex items-center justify-between"
-                      href={item.href}
-                      key={item.name}
-                    >
-                      {item.name}
-                      <ArrowRightIcon
-                        className="w-3 h-3 ml-1"
-                        aria-hidden="true"
-                      />
-                    </Link>
-                  ))} */}
-                {/* </div> */}
-                <DrawerFooter>
-                  <Button asChild>
-                    <Link href="/antrag">Berechnen</Link>
-                  </Button>
-                </DrawerFooter>
-              </DrawerContent>
-            </Drawer>
+            <HomeMobileMenu />
           </div>
           {/* <div className="hidden lg:flex lg:gap-x-12"> */}
           {/* {navigation.map((item) => (
