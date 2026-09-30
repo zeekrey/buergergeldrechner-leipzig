@@ -300,9 +300,9 @@ export default function HomePage() {
               Ergebnis mit jemandem zu teilen.
             </p>
           </div>
-          <div className="pt-16 pb-1 overflow-hidden relative">
-            <div className="px-6 mx-auto max-w-3xl">
-              <div className="p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30">
+          <div className="-mx-4 sm:mx-0 pt-16 pb-1 overflow-hidden relative">
+            <div className="mx-auto max-w-3xl">
+              <div className="p-2 sm:p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30">
                 <div className="rounded-lg drop-shadow-xl overflow-hidden">
                   <ResultExample />
                 </div>
