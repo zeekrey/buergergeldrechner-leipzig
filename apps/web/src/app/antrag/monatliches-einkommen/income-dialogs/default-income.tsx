@@ -1,12 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { calculateChildBenefitTransfer } from "calculation";
+import { produce, WritableDraft } from "immer";
 import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  ChildAllowanceSchema,
-  IncomeBaseSchema,
-  IncomeTypEnum,
-  TStepContext,
-} from "@/lib/types";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,12 +12,14 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { produce, WritableDraft } from "immer";
-import { IncomeComponentProps } from "../income-dialog";
-import { useStateContext } from "@/components/context";
+import { Input } from "@/components/ui/input";
+import {
+  IncomeBaseSchema,
+  TStepContext,
+} from "@/lib/types";
 import { generateId } from "@/lib/utils";
-import { z } from "zod";
-import { calculateChildBenefitTransfer } from "calculation";
+
+import { IncomeComponentProps } from "../income-dialog";
 
 type TFormData = {
   amount: number;
@@ -95,8 +95,7 @@ export const DefaultIncome = ({
     },
   });
 
-  const onSubmit: SubmitHandler<TFormData> = (data, event) => {
-    // event.preventDefault();
+  const onSubmit: SubmitHandler<TFormData> = (data) => {
 
     const selectedPersonIndex = state.community.findIndex(
       (per) => per.id === person.id

@@ -1,10 +1,12 @@
-import { TStepContext } from "@/lib/types";
-import { Card } from "@/components/ui/card";
 import { neon } from "@neondatabase/serverless";
+
+import { ResultSheet } from "@/app/antrag/ergebnis/result-sheet";
 import { HelpPopup } from "@/components/help-popup";
 import { ModeToggle } from "@/components/mode-toggle";
-import { ResultSheet } from "@/app/antrag/ergebnis/result-sheet";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Card } from "@/components/ui/card";
+import { TStepContext } from "@/lib/types";
+
 import { ContinueButton } from "./continue";
 
 async function getData(
@@ -73,7 +75,7 @@ export default async function Page({
             <ContinueButton state={data.state} />
           </div>
           <h1 className="text-2xl font-bold my-12">
-            Bürgergeldrechner des Jobcenter Leipzig
+            Grundsicherungsrechner des Jobcenters Leipzig
           </h1>
           <div className="sm:-m-4 sm:p-4 bg-zinc-100 dark:bg-zinc-800 sm:rounded-xl sm:ring-1 ring-gray-400/30">
             <div className="sm:rounded-lg sm:drop-shadow-xl">

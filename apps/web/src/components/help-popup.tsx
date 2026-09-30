@@ -1,14 +1,15 @@
 "use client";
 
+import { InfoIcon } from "lucide-react";
+import Image from "next/image";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "./ui/sheet";
+
 import LogoImage from "../assets/logo.webp";
 import SmartCityImage from "../assets/smart-city-challenge.webp";
 import StadtImage from "../assets/stadt-leipzig.webp";
-import { InfoIcon } from "lucide-react";
-import Image from "next/image";
+import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "./ui/sheet";
 
 export function HelpPopup() {
   return (
@@ -50,8 +51,8 @@ export function HelpPopup() {
             />
           </div>
           <p className="text-muted-foreground text-sm mt-6">
-            Der Bürgergeldrechner wurde im Rahmen des Innovationswettbewerbs
-            <strong>"Smart City Challenge Leipzig"</strong>durch das Referat
+            Der Grundsicherungsrechner wurde im Rahmen des Innovationswettbewerbs{" "}
+            <strong>„Smart City Challenge Leipzig“</strong> durch das Referat
             Digitale Stadt Leipzig gefördert.
           </p>
         </div>

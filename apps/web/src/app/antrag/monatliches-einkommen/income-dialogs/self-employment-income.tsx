@@ -1,7 +1,13 @@
+import { calculateSelfEmploymentIncome } from "calculation";
+import { produce } from "immer";
+import { ShieldAlertIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { SelfEmploymentIncomeSchema, TStepContext } from "@/lib/types";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -9,22 +15,18 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { produce } from "immer";
-import { calculateSalary } from "calculation";
+import { Input } from "@/components/ui/input";
+import { SelfEmploymentIncomeSchema, TStepContext } from "@/lib/types";
 import { generateId } from "@/lib/utils";
-import { useStateContext } from "@/components/context";
-import { IncomeComponentProps } from "../income-dialog";
-import { z } from "zod";
-import { checkChildBenefitTransfert } from "./default-income";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ShieldAlertIcon } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 
-const formSchema = z.object({
-  gros: z.coerce.number(),
-  net: z.coerce.number(),
-  isYoung: z.boolean(),
-});
+import { IncomeComponentProps } from "../income-dialog";
+import { checkChildBenefitTransfert } from "./default-income";
+
+type TFormData = {
+  gros: number;
+  net: number;
+  isYoung: boolean;
+};
 
 export const SelfEmploymentIncome = ({
   person,
@@ -35,7 +37,7 @@ export const SelfEmploymentIncome = ({
 }) => {
   const [state, setState] = useStateContext();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<TFormData>({
     defaultValues: {
       isYoung:
         typeof person?.age !== "undefined" && person.age < 25 ? true : false,
@@ -44,15 +46,15 @@ export const SelfEmploymentIncome = ({
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(data: TFormData) {
     const selectedPersonIndex = state.community.findIndex(
       (per) => per.id === person.id
     );
 
     if (selectedPersonIndex !== -1) {
-      const { allowance, income: _income } = calculateSalary({
-        gross: Number(data.gros),
-        net: Number(data.net),
+      const { allowance, income: _income } = calculateSelfEmploymentIncome({
+        revenue: Number(data.gros),
+        expenses: Number(data.net),
         hasMinorChild: state.community.some(
           (person) => person.type === "child" && person.age < 18
         ),
@@ -167,7 +169,7 @@ export const SelfEmploymentIncome = ({
           />
         </div>
         <div className="px-0 pt-2">
-          <Alert variant="warning">
+          <Alert>
             <ShieldAlertIcon className="h-4 w-4" />
             <AlertTitle>Monatlich durchschnittliche Einnahmen</AlertTitle>
             <AlertDescription>

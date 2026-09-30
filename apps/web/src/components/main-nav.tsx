@@ -2,16 +2,16 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Badge } from "./ui/badge";
+
 import { siteConfig } from "@/config/site";
+
+import { Badge } from "./ui/badge";
 
 export function MainNav() {
   const [isPreview, setIsPreview] = useState(false);
 
   useEffect(() => {
-    setIsPreview(
-      ["localhost", "buergergeld.dev"].includes(window?.location.hostname)
-    );
+    setIsPreview(window.location.hostname === "localhost");
   });
 
   return (

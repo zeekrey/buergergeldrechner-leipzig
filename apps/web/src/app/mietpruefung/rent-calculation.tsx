@@ -1,5 +1,12 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRightCircleIcon } from "lucide-react";
+import { BaseSyntheticEvent, FormEventHandler } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,14 +16,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
-import { BaseSyntheticEvent, FormEventHandler } from "react";
-import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ArrowRightCircleIcon } from "lucide-react";
 import { calculateRent } from "@/lib/rent-calculation";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 const FormSchema = z.object({
   communityCount: z.coerce
@@ -67,16 +68,15 @@ export function RentCalculation({
     event?.preventDefault();
     const { isOk, description } = calculateRent(data);
 
-    onResult &&
-      onResult({
-        title: isOk
-          ? "Der Anspruch wird nicht überschritten."
-          : "Der Anspruch wird überschritten",
-        description,
-      });
+    onResult?.({
+      title: isOk
+        ? "Der Anspruch wird nicht überschritten."
+        : "Der Anspruch wird überschritten",
+      description,
+    });
   }
 
-  const onChange: FormEventHandler<HTMLFormElement> = (event) => {
+  const onChange: FormEventHandler<HTMLFormElement> = () => {
     const { rent, utilities } = form.getValues();
     form.setValue("rentSum", Number(rent) + Number(utilities));
   };

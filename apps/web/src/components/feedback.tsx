@@ -1,21 +1,16 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
 import {
   BugIcon,
   FileQuestionIcon,
   LifeBuoyIcon,
   MessageCircleQuestionIcon,
 } from "lucide-react";
-import { Button } from "./ui/button";
 import { useState, useTransition } from "react";
-import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
-import { Textarea } from "./ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
+
 import {
   Form,
   FormControl,
@@ -24,9 +19,16 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { sendEmail } from "@/lib/actions";
 import { cn } from "@/lib/utils";
+
+import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
 
 type TFeedbackImprovement = "issue" | "improvement" | "other";
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { StepContext, TStepContext } from "@/lib/types";
 import {
   useState,
   useEffect,
@@ -11,17 +10,20 @@ import {
   useCallback,
 } from "react";
 
-// FIXME:
-// @ts-ignore
-export const StateContext = createContext<TStepContext>(null);
+import { StepContext, TStepContext } from "@/lib/types";
 
-// FIXME:
+export const StateContext = createContext<TStepContext>(null!);
+
 export const SetStateContext =
-  // @ts-ignore
-  createContext<Dispatch<SetStateAction<TStepContext>>>(null);
+  createContext<Dispatch<SetStateAction<TStepContext>>>(null!);
+export const StateHydratedContext = createContext(false);
 
 export function useStateContext() {
   return [useContext(StateContext), useContext(SetStateContext)] as const;
+}
+
+export function useStateHydrated() {
+  return useContext(StateHydratedContext);
 }
 
 export function StateProvider({
@@ -32,12 +34,20 @@ export function StateProvider({
   initialState: TStepContext;
 }) {
   const [state, setState] = useState<TStepContext>(initialState);
+  const [hydrated, setHydrated] = useState(false);
 
   /** Store the state in localstorage whenever the setState method is called. */
-  const setStateWithLocalStorageSync = useCallback((_state: TStepContext) => {
-    localStorage.setItem("state", JSON.stringify(_state));
-    setState(_state);
-  }, []);
+  const setStateWithLocalStorageSync = useCallback(
+    (action: SetStateAction<TStepContext>) => {
+      setState((currentState) => {
+        const nextState =
+          typeof action === "function" ? action(currentState) : action;
+        localStorage.setItem("state", JSON.stringify(nextState));
+        return nextState;
+      });
+    },
+    []
+  );
 
   /** Sync the runtime state with the localstorage.  */
   useEffect(() => {
@@ -57,14 +67,15 @@ export function StateProvider({
         console.warn(error.issues);
       }
     }
+    setHydrated(true);
   }, [setState]);
 
   return (
     <StateContext.Provider value={state}>
-      {/* FIXME: */}
-      {/* @ts-ignore */}
       <SetStateContext.Provider value={setStateWithLocalStorageSync}>
-        {children}
+        <StateHydratedContext.Provider value={hydrated}>
+          {children}
+        </StateHydratedContext.Provider>
       </SetStateContext.Provider>
     </StateContext.Provider>
   );

@@ -1,7 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { produce } from "immer";
+import { ShieldAlertIcon } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { TStepContext, VoluntarySocialYearSchema } from "@/lib/types";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -9,15 +14,12 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { produce } from "immer";
-import { IncomeComponentProps } from "../income-dialog";
-import { useStateContext } from "@/components/context";
+import { Input } from "@/components/ui/input";
+import { TStepContext, VoluntarySocialYearSchema } from "@/lib/types";
 import { generateId } from "@/lib/utils";
-import { z } from "zod";
+
+import { IncomeComponentProps } from "../income-dialog";
 import { checkChildBenefitTransfert as checkChildBenefitTransfer } from "./default-income";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ShieldAlertIcon } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 
 type TFormData = {
   amount: number;
@@ -103,7 +105,7 @@ export const VoluntarySocialYear = ({
     },
   });
 
-  const onSubmit: SubmitHandler<TFormData> = (data, event) => {
+  const onSubmit: SubmitHandler<TFormData> = (data) => {
     const selectedPersonIndex = state.community.findIndex(
       (per) => per.id === person.id
     );
@@ -193,7 +195,7 @@ export const VoluntarySocialYear = ({
           )}
         />
         <div className="px-0 pt-2">
-          <Alert variant="warning">
+          <Alert>
             <ShieldAlertIcon className="h-4 w-4" />
             <AlertTitle>Pauschalbetrag</AlertTitle>
             <AlertDescription>
