@@ -18,6 +18,7 @@ export function Result({
   allowance,
   overall,
   assetExcess = 0,
+  housingCostReduction = 0,
   requiresManualReview = false,
   onShowDocuments,
 }: {
@@ -27,12 +28,13 @@ export function Result({
   allowance: number;
   overall: number;
   assetExcess?: number;
+  housingCostReduction?: number;
   requiresManualReview?: boolean;
   onShowDocuments?: () => void;
 }) {
   const isPositive = overall > 0;
   const blockedByAssets = assetExcess > 0;
-  const canApply = isPositive || requiresManualReview;
+  const canApply = isPositive || requiresManualReview || housingCostReduction > 0;
 
   return (
     <div className="py-6 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-5">
@@ -51,6 +53,13 @@ export function Result({
             Grundsicherungsgeldes. Ob Sie tatsächlich Anspruch haben, hängt von
             weiteren Faktoren ab. Bitte beachten Sie, dass es sich hierbei um eine
             unverbindliche Berechnung handelt.
+          </p>
+        ) : housingCostReduction > 0 && !blockedByAssets ? (
+          <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
+            Nach dieser Beispielrechnung ergibt sich kein Anspruch. Da die
+            Unterkunftskosten begrenzt wurden, können individuelle Ausnahmen das
+            Ergebnis verändern. Das Jobcenter prüft Ihren Anspruch nach einer
+            Antragstellung.
           </p>
         ) : blockedByAssets ? (
           <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
@@ -90,7 +99,9 @@ export function Result({
                     currency: "EUR",
                     style: "currency",
                   })
-                : "Kein Anspruch"}
+                : housingCostReduction > 0
+                  ? "Kein Anspruch berechnet"
+                  : "Kein Anspruch"}
           </span>
         </p>
         {canApply ? (

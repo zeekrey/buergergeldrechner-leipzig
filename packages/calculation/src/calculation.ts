@@ -444,6 +444,8 @@ export type OverallCalculation = {
   additionalNeeds: ReturnType<typeof calculateAdditionalNeeds>;
   spendings: number;
   spendingDetails: TStepContext["spendings"];
+  housingCostLimit: number | null;
+  housingCostReduction: number;
   need: number;
   income: {
     sum: number;
@@ -458,6 +460,29 @@ export type OverallCalculation = {
   benefitCommunityRequiresManualReview: boolean;
   excludedPersonIds: string[];
 };
+
+// Leipzig's 150% gross cold rent limits for benefit periods from 1 July 2026.
+const housingCostLimits = [536.43, 699.45, 903.9, 1034.51, 1203.72];
+
+export function calculateHousingCosts(context: TStepContext) {
+  const children = context.community.filter((person) => person.type === "child");
+  const exempt = children.some((child) => child.age < 18) ||
+    (children.length > 0 && context.community.some((person) =>
+      person.income.some((income) => income.type === "ChildAllowance" && income.amount > 0)
+    ));
+  const size = context.community.length;
+  const limit = exempt || size === 0 ? null : size <= 5
+    ? housingCostLimits[size - 1]
+    : roundCurrency(housingCostLimits[4] + (size - 5) * 126.72);
+  const grossColdRent = roundCurrency(context.spendings.rent + context.spendings.utilities);
+  const reduction = limit === null ? 0 : roundCurrency(Math.max(0, grossColdRent - limit));
+
+  return {
+    limit,
+    reduction,
+    sum: roundCurrency(grossColdRent - reduction + context.spendings.heating),
+  };
+}
 
 /**
  * Children under 25 only belong to the benefit community while their own
@@ -571,9 +596,10 @@ export function calculateOverall(
   const additionalNeeds = calculateAdditionalNeeds(benefitContext);
   const income = calculateIncome(benefitContext);
   const allowance = calculateAllowance(benefitContext);
+  const housingCosts = calculateHousingCosts(benefitContext);
 
   const need =
-    baseNeed.sum + additionalNeeds.sum + benefitContext.spendings.sum;
+    baseNeed.sum + additionalNeeds.sum + housingCosts.sum;
   const incomeAfterAllowance =
     income - allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
   const assets = calculateAssets(benefitContext);
@@ -586,8 +612,10 @@ export function calculateOverall(
   return {
     baseNeed,
     additionalNeeds,
-    spendings: benefitContext.spendings.sum,
-    spendingDetails: benefitContext.spendings,
+    spendings: housingCosts.sum,
+    spendingDetails: { ...benefitContext.spendings, sum: housingCosts.sum },
+    housingCostLimit: housingCosts.limit,
+    housingCostReduction: housingCosts.reduction,
     need,
     income: {
       sum: income,

@@ -6,6 +6,7 @@ import {
   calculateBaseNeed,
   calculateOverall,
   calculateIncome,
+  calculateHousingCosts,
   calculateSalary,
   calculateSelfEmploymentIncome,
 } from "../src/calculation";
@@ -143,6 +144,64 @@ const defaultChild: TChild = {
   },
   income: [],
 };
+
+describe("housing cost limit", () => {
+  const context = (community: TStepContext["community"], rent = 2000): TStepContext => ({
+    ...defaultContext,
+    community,
+    spendings: { rent, utilities: 100, heating: 150, sum: rent + 250 },
+  });
+
+  test.each([
+    [1, 536.43], [2, 699.45], [3, 903.9], [4, 1034.51],
+    [5, 1203.72], [6, 1330.44], [7, 1457.16],
+  ])("limits gross cold rent for %i community members", (size, limit) => {
+    const community = [defaultAdult, ...Array.from({ length: size - 1 }, (_, i) => ({
+      ...defaultChild, id: `child-${i}`,
+    }))];
+    expect(calculateHousingCosts(context(community))).toEqual({
+      limit, reduction: Math.round((2100 - limit) * 100) / 100, sum: limit + 150,
+    });
+  });
+
+  test("a childless couple uses the two-person limit", () => {
+    const result = calculateOverall(context([defaultAdult, { ...defaultAdult, id: "partner" }]));
+    expect(result.spendings).toBe(849.45);
+    expect(result.housingCostReduction).toBe(1400.55);
+    expect(result.need).toBe(result.baseNeed.sum + result.additionalNeeds.sum + 849.45);
+  });
+
+  test.each([436.43, 436.42, 436.44])("compares combined rent and utilities at the boundary (%f)", (rent) => {
+    const result = calculateHousingCosts(context([defaultAdult], rent));
+    expect(result.sum).toBe(Math.round((Math.min(rent + 100, 536.43) + 150) * 100) / 100);
+  });
+
+  test("minor child exempts the community, including mixed-age children", () => {
+    const result = calculateHousingCosts(context([defaultAdult, defaultChild, { ...defaultChild, id: "minor", age: 17 }]));
+    expect(result).toEqual({ limit: null, reduction: 0, sum: 2250 });
+  });
+
+  test.each(["child", "adult"] as const)("child benefit recorded for %s exempts a community with children", (recipient) => {
+    const benefit = { id: "benefit", type: "ChildAllowance" as const, amount: 255 };
+    const adult = { ...defaultAdult, income: recipient === "adult" ? [benefit] : [] };
+    const child = { ...defaultChild, income: recipient === "child" ? [benefit] : [] };
+    expect(calculateHousingCosts(context([adult, child])).limit).toBeNull();
+  });
+
+  test("zero child benefit does not exempt, and benefit without a child does not exempt", () => {
+    const benefit = { id: "benefit", type: "ChildAllowance" as const, amount: 0 };
+    expect(calculateHousingCosts(context([defaultAdult, { ...defaultChild, income: [benefit] }])).limit).toBe(699.45);
+    expect(calculateHousingCosts(context([{ ...defaultAdult, income: [{ ...benefit, amount: 255 }] }])).limit).toBe(536.43);
+  });
+
+  test("uses the remaining benefit community and its proportional housing costs", () => {
+    const child = { ...defaultChild, income: [{ id: "income", type: "OtherIncome" as const, amount: 3000 }] };
+    const result = calculateOverall(context([defaultAdult, child]));
+    expect(result.excludedPersonIds).toContain(child.id);
+    expect(result.housingCostLimit).toBe(536.43);
+    expect(result.spendings).toBe(611.43);
+  });
+});
 
 describe("calculateAdditionalNeeds", () => {
   test("single, is pregnant", () => {
