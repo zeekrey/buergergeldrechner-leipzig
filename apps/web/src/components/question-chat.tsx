@@ -14,14 +14,7 @@ import ReactMarkdown from "react-markdown";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Empty,
   EmptyDescription,
@@ -54,7 +47,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { prepareChatRequest } from "@/lib/chat/transport";
 
 const MAX_INPUT_CHARACTERS = 4_000;
-export function QuestionChat({ questionTitle }: { questionTitle: string }) {
+export function QuestionChat() {
   const transport = useMemo(
     () =>
       new DefaultChatTransport({

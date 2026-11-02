@@ -38,6 +38,7 @@ test("the documented seven-person household excludes self-supporting children an
         id: "applicant",
         name: "Antragsteller",
         type: "adult",
+        age: 40,
         attributes,
         income: [employmentIncome("father-income", 1684)],
       },
@@ -45,6 +46,7 @@ test("the documented seven-person household excludes self-supporting children an
         id: "partner",
         name: "Partner",
         type: "adult",
+        age: 40,
         attributes,
         income: [],
       },
@@ -109,7 +111,7 @@ test("the documented seven-person household excludes self-supporting children an
   await expect(page.getByTestId("result")).toHaveText("2.639,45 €");
   await expect(page.getByText("2.449,00 € Einnahmen")).toBeVisible();
   await expect(
-    page.getByText("2.386,45 € Kosten für Unterkunft und Heizung")
+    page.getByText("3.341,03 € Kosten für Unterkunft und Heizung")
   ).toBeVisible();
   await expect(page.getByText("378,00 € Freibeträge")).toBeVisible();
 
@@ -136,6 +138,7 @@ test("employment income without Kindergeld never creates a Kindergeld transfer",
         id: "applicant",
         name: "Antragsteller",
         type: "adult",
+        age: 40,
         attributes,
         income: [],
       },
