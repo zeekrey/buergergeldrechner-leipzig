@@ -12,6 +12,16 @@ test("should selected diseases", async ({ page }) => {
   await page.waitForURL("**/kinder");
 
   await page.getByRole("button", { name: "Weiter" }).click();
+  await page.waitForURL("**/alter");
+  await page
+    .getByRole("combobox", { name: "Antragsteller – Alter in Jahren" })
+    .click();
+  await page.getByRole("option", { name: "35", exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "Partner – Alter in Jahren" })
+    .click();
+  await page.getByRole("option", { name: "35", exact: true }).click();
+  await page.getByRole("button", { name: "Weiter" }).click();
   await page.waitForURL("**/bedarfsgemeinschaft");
 
   await page
@@ -41,6 +51,8 @@ test("should selected diseases", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.waitForURL("**/monatliches-einkommen");
 
+  await page.getByRole("button", { name: "Weiter" }).click();
+  await page.waitForURL("**/vermoegen");
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.getByRole("tab", { name: "Berechnung" }).click();
 

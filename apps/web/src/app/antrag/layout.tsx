@@ -1,11 +1,12 @@
 "use client";
 
 import { ReactNode } from "react";
+
+import { StateProvider } from "@/components/context";
 import { SiteHeader } from "@/components/header";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { initialStepsState } from "@/lib/machine";
-import { StateProvider } from "@/components/context";
-import { ThemeProvider } from "@/components/theme-provider";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (

@@ -1,8 +1,9 @@
 import { MainNav } from "@/components/main-nav";
 import { ModeToggle } from "@/components/mode-toggle";
+
+import { Feedback } from "./feedback";
 import { HelpPopup } from "./help-popup";
 import { StatusBar } from "./status-bar";
-import { Feedback } from "./feedback";
 
 export function SiteHeader() {
   return (

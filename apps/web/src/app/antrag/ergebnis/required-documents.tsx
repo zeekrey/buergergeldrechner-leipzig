@@ -1,7 +1,10 @@
 "use client";
 
+import { ExternalLinkIcon, PrinterIcon } from "lucide-react";
+import { useMemo } from "react";
+
+import { useStateContext } from "@/components/context";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -9,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -17,10 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ExternalLinkIcon, PrinterIcon } from "lucide-react";
-import { useMemo } from "react";
-import { useStateContext } from "@/components/context";
-import { TIncome } from "@/lib/types";
+import { TAsset, TIncome } from "@/lib/types";
 
 type DocRow = {
   name: string;
@@ -46,13 +47,18 @@ export function RequiredDocuments() {
   const isSingle = adults.length === 1;
   const hasPartner = adults.length >= 2;
   const hasChildren = children.length > 0;
-  const anyChildOver14 = children.some((c) => (c as any).age > 14);
+  const anyChildOver14 = children.some((child) => child.age > 14);
   const anyPregnant = state.community.some((p) => p.attributes?.isPregnant);
   const hasHousingCosts = (state.spendings?.sum ?? 0) > 0;
 
   const incomeTypesPresent = useMemo(() => {
     const all: TIncome[] = state.community.flatMap((p) => p.income || []);
     const types = new Set(all.map((i) => i.type));
+    return types;
+  }, [state]);
+
+  const assetTypesPresent = useMemo(() => {
+    const types = new Set(state.assets.items.map((asset: TAsset) => asset.type));
     return types;
   }, [state]);
 
@@ -218,7 +224,48 @@ export function RequiredDocuments() {
     });
   }
 
+  if (assetTypesPresent.has("Securities")) {
+    basedOnInputs.push({
+      name: "Depotnachweise",
+      description:
+        "Aktueller Depotauszug sowie Jahres-, Ertrags-, Steuer- und Transaktionsnachweise",
+      when: "Wertpapiere",
+    });
+  }
+  if (assetTypesPresent.has("Vehicle")) {
+    basedOnInputs.push({
+      name: "Fahrzeugnachweise",
+      description:
+        "Zulassungsbescheinigung Teil I, Kilometerstand sowie Nachweis über Verbindlichkeiten und aktuellen Kreditstand",
+      when: "Kraftfahrzeug",
+    });
+  }
+  if (
+    assetTypesPresent.has("OwnerOccupiedProperty") ||
+    assetTypesPresent.has("OtherProperty")
+  ) {
+    basedOnInputs.push({
+      name: "Immobiliennachweise",
+      description:
+        "Grundbuchauszug, Verkehrswert, Wohnflächenberechnung oder Bauplan, Gebäudeversicherung, Finanzierungsnachweise sowie ggf. Nießbrauch- oder Wohnrechtsvertrag",
+      when: "Immobilie",
+    });
+  }
+  if (assetTypesPresent.has("BuildingSavings")) {
+    basedOnInputs.push({
+      name: "Bescheinigung der Bausparkasse",
+      description:
+        "Mit angespartem Guthaben und Zinsen des vergangenen Jahres",
+      when: "Bausparvertrag",
+    });
+  }
+
   const possibleFurtherDocs: DocRow[] = [
+    {
+      name: "Nachweis geschützte Altersvorsorge",
+      description:
+        "Falls vorhanden: Police oder jährliche Anbieterbescheinigung zur Zertifizierung oder Förderung",
+    },
     // Wohnen/Kosten der Unterkunft – generisch
     ...(hasHousingCosts
       ? [

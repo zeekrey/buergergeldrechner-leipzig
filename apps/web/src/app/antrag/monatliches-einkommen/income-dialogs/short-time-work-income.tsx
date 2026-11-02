@@ -1,26 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { calculateSalary } from "calculation";
+import { produce } from "immer";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { WandSparklesIcon } from "lucide-react";
-import {
-  EmploymentIncomeSchema,
-  ShortTimeWorkAllowanceSchema,
-  TStepContext,
-} from "@/lib/types";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { produce } from "immer";
-import { calculateSalary } from "calculation";
+import { Input } from "@/components/ui/input";
+import { ShortTimeWorkAllowanceSchema, TStepContext } from "@/lib/types";
 import { generateId } from "@/lib/utils";
-import { useStateContext } from "@/components/context";
+
 import { IncomeComponentProps } from "../income-dialog";
-import { z } from "zod";
 import { checkChildBenefitTransfert } from "./default-income";
 
 type TFormData = {
@@ -33,7 +29,6 @@ export const ShortTimeWorkIncome = ({
   person,
   income,
   setOpen,
-  incomeType,
 }: IncomeComponentProps & {
   income: z.infer<typeof ShortTimeWorkAllowanceSchema>;
 }) => {
@@ -46,8 +41,7 @@ export const ShortTimeWorkIncome = ({
     },
   });
 
-  const onSubmit: SubmitHandler<TFormData> = (data, event) => {
-    // event.preventDefault();
+  const onSubmit: SubmitHandler<TFormData> = (data) => {
 
     const selectedPersonIndex = state.community.findIndex(
       (per) => per.id === person.id

@@ -1,18 +1,10 @@
 import type { Story } from "@ladle/react";
+
 import { initialStepsState } from "@/lib/machine";
-import { EmploymentIncome } from "../employment-income";
-import { TIncome, TIncomeType, TPerson } from "@/lib/types";
+import { TIncomeType, TPerson } from "@/lib/types";
 import { generateId } from "@/lib/utils";
 
-const income: TIncome = {
-  id: generateId(),
-  allowance: 0,
-  amount: 0,
-  claim: 0,
-  officialAllowance: 1,
-  parentalAllowanceType: "normal",
-  type: "ParentalAllowance",
-};
+import { EmploymentIncome } from "../employment-income";
 
 const person: TPerson = {
   id: generateId(),

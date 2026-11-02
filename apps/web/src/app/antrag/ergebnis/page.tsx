@@ -1,11 +1,15 @@
 "use client";
 
+import { calculateOverall } from "calculation";
+import { RotateCwIcon, ShareIcon } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState, useTransition } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
-import { ArrowLeftCircleIcon, RotateCwIcon, ShareIcon } from "lucide-react";
-import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
-import { initialStepsState, stepsConfig } from "@/lib/machine";
+import { toast } from "sonner";
+
+import { useStateContext } from "@/components/context";
+import { WizardBackButton } from "@/components/questionnaire/actions";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,39 +18,44 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { StepContent, StepNavigation } from "@/components/ui/step-primitives";
+import { StepRoot, StepTitle } from "@/components/ui/step-primitives";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { calculateOverall } from "calculation";
-import { useRouter } from "next/navigation";
-import { useStateContext } from "@/components/context";
-import { Result } from "./result";
-import { Button } from "@/components/ui/button";
 import HelpMarkdown from "@/config/steps/ergebnis.mdx";
-import Link from "next/link";
-import { createShareable } from "./actions";
-import { toast } from "sonner";
-import { ResultSheet } from "./result-sheet";
-import { RequiredDocuments } from "./required-documents";
+import { useCompleteContext } from "@/hooks/use-complete-context";
+import { initialStepsState, stepsConfig } from "@/lib/machine";
 
-const step = stepsConfig[9];
+import { createShareable } from "./actions";
+import { RequiredDocuments } from "./required-documents";
+import { Result } from "./result";
+import { ResultSheet } from "./result-sheet";
+
+const step = stepsConfig[10];
 
 export default function StepSummary() {
   const { push } = useRouter();
   const [state, setState] = useStateContext();
+  const completeContext = useCompleteContext(state);
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("result");
 
-  const { allowance, income, overall } = useMemo(
-    () => calculateOverall(state),
-    [state]
+  const calculation = useMemo(
+    () => (completeContext ? calculateOverall(completeContext) : undefined),
+    [completeContext]
   );
 
   const allowanceSum = useMemo(
-    () => allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0),
-    [allowance]
+    () =>
+      calculation?.allowance.reduce(
+        (acc, curr) => acc + (curr.amount ?? 0),
+        0
+      ) ?? 0,
+    [calculation]
   );
 
   const handleBack = useCallback(() => {
-    push(`${stepsConfig[step.previous].id}`);
+    push(`${stepsConfig[step.previous(state)].id}`);
   }, [state]);
 
   const handleReset = useCallback(() => {
@@ -63,10 +72,10 @@ export default function StepSummary() {
 
         try {
           await navigator.share({
-            title: "Ich habe einen möglichen Bürgergeldanspruch berechnet:",
+            title: "Ich habe einen möglichen Grundsicherungsanspruch berechnet:",
             url: `${origin}/share/${data.alias}`,
           });
-        } catch (err) {
+        } catch {
           toast("Teilbarer Link wurde erstellt.", {
             description:
               "Auf Kopieren klicken um den Link in die Zwischenablage zu kopieren.",
@@ -83,9 +92,13 @@ export default function StepSummary() {
     });
   };
 
+  if (!calculation) return null;
+
+  const { assets, income, overall, resultStatus, housingCostReduction } = calculation;
+
   return (
     <StepRoot id={step.id}>
-      <StepTitle title={step.title}>
+      <StepTitle preview={step.description} title={step.title}>
         <HelpMarkdown />
       </StepTitle>
       <StepContent>
@@ -102,8 +115,44 @@ export default function StepSummary() {
               spendings={state.spendings.sum}
               allowance={allowanceSum}
               overall={overall}
+              assetExcess={assets.excess}
+              housingCostReduction={housingCostReduction}
+              requiresManualReview={resultStatus === "manual-review"}
               onShowDocuments={() => setActiveTab("documents")}
             />
+            {housingCostReduction > 0 && (
+              <div className="mb-5 rounded-lg border bg-muted/30 p-4 text-sm">
+                <h3 className="font-semibold">Berücksichtigte Unterkunftskosten</h3>
+                <p className="mt-2">
+                  Die Bruttokaltmiete wurde in dieser Beispielrechnung um{" "}
+                  {housingCostReduction.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}{" "}
+                  begrenzt. Im Einzelfall können höhere Kosten berücksichtigt werden,
+                  etwa bei unabweisbaren Aufwendungen oder bei Kindern in der
+                  Bedarfsgemeinschaft. Das Jobcenter prüft dies nach Antragstellung.
+                  Sind Heizkosten in den Nebenkosten enthalten, kann die Berechnung
+                  die Bruttokaltmiete nicht genau von den Heizkosten abgrenzen.
+                </p>
+              </div>
+            )}
+            <div className="mb-5 rounded-lg border bg-muted/30 p-4 text-sm">
+              <h3 className="font-semibold">Mietpreisbremse</h3>
+              <p className="mt-2">
+                Seit 01.07.2026 ist bei der Berechnung der angemessenen Bedarfe für
+                Unterkunft und Heizung eine Mietpreisbegrenzung zu berücksichtigen.
+              </p>
+              <p className="mt-2">
+                In der Stadt Leipzig gilt die Mietpreisbegrenzung nach Maßgabe der
+                Mietpreisbegrenzungsverordnung des Freistaates Sachsen. Diese sieht
+                in Gebieten mit angespanntem Wohnungsmarkt vor, dass bei
+                Wiedervermietung von Wohnraum die zulässige Miete grundsätzlich auf
+                die ortsübliche Vergleichsmiete zuzüglich der gesetzlich zulässigen
+                Zuschläge begrenzt ist (Mietpreisbremse gemäß §§ 556d ff. BGB).
+              </p>
+              <p className="mt-2">
+                Die Prüfung erfolgt mit Antragstellung auf Grundsicherungsgeld. Sie
+                erhalten dann weitere Informationen nach Bedarf.
+              </p>
+            </div>
           </TabsContent>
           <TabsContent value="calculation" data-testid="result-calculation">
             <div className="pb-8">
@@ -144,22 +193,16 @@ export default function StepSummary() {
           variant="secondary"
           className="w-full"
         >
-          <ShareIcon className="w-4 h-4" /> Teilen
+          <ShareIcon data-icon="inline-start" /> Teilen
         </Button>
       </StepContent>
       <StepNavigation>
-        <Button
-          onClick={handleBack}
-          size="lg"
-          type="button"
-          variant="secondary"
-        >
-          <ArrowLeftCircleIcon className="w-4 h-4 mr-3" />
+        <WizardBackButton onClick={handleBack} variant="secondary">
           Zurück
-        </Button>
-        <Button variant="secondary" size="lg" asChild onClick={handleReset}>
+        </WizardBackButton>
+        <Button asChild onClick={handleReset} size="lg" variant="secondary">
           <Link href="/antrag/erwerbsfaehig">
-            <RotateCwIcon className="w-4 h-4 mr-2" />
+            <RotateCwIcon data-icon="inline-start" />
             Neu starten
           </Link>
         </Button>

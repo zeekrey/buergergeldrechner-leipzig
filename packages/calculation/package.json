@@ -1,11 +1,12 @@
 {
   "name": "calculation",
   "version": "0.1.0",
-  "description": "Shared calculation engine for Bürgergeld calculator apps.",
+  "description": "Shared calculation engine for Grundsicherungsgeld calculator apps.",
   "type": "module",
   "module": "./dist/index.js",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
@@ -13,12 +14,15 @@
     "dist"
   ],
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist --target node --format esm"
+    "build": "bun build ./src/index.ts --outdir ./dist --target node --format esm && tsc --project ./tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
-    "zod": "^3.24.2"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
   }
 }

@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Bürgergeldrechner",
+  name: "Grundsicherungsrechner",
   links: {
     github: "/",
     twitter: "/",

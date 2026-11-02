@@ -5,6 +5,9 @@ import perfectionist from "eslint-plugin-perfectionist";
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
+    {
+        ignores: ['.next/**', 'playwright-report/**', 'test-results/**'],
+    },
     eslint.configs.recommended,
     {
         plugins: {

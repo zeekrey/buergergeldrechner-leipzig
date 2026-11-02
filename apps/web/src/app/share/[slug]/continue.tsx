@@ -1,8 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { TStepContext } from "@/lib/types";
-import { useRouter } from "next/navigation";
 
 export function ContinueButton({ state }: { state: TStepContext }) {
   const router = useRouter();

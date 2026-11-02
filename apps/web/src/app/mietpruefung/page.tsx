@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { CalculatorIcon } from "lucide-react";
-import { RentCalculation } from "./rent-calculation";
+import { useState } from "react";
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
@@ -12,6 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+import { RentCalculation } from "./rent-calculation";
 
 export default function StepDiseases() {
   const [result, setResult] = useState<

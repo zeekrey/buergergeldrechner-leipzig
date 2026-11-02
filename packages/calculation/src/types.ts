@@ -153,11 +153,124 @@ export const ExtendedIncomeSchema = z.union([
   ChildBenefitTransferSchema,
 ]);
 
+export const AssetTypeEnum = z.enum([
+  "BankAccount",
+  "Securities",
+  "BuildingSavings",
+  "RetirementProvision",
+  "Vehicle",
+  "OwnerOccupiedProperty",
+  "OtherProperty",
+  "Other",
+]);
+
+export type TAssetType = z.infer<typeof AssetTypeEnum>;
+
+const AssetBaseSchema = z.object({
+  id: z.string(),
+  personId: z.string(),
+  amount: z.number().positive().describe("Verkehrswert in Euro."),
+});
+
+export const BankAccountAssetSchema = AssetBaseSchema.extend({
+  type: z.literal("BankAccount"),
+});
+export const SecuritiesAssetSchema = AssetBaseSchema.extend({
+  type: z.literal("Securities"),
+});
+export const BuildingSavingsAssetSchema = AssetBaseSchema.extend({
+  type: z.literal("BuildingSavings"),
+});
+export const RetirementProvisionAssetSchema = AssetBaseSchema.extend({
+  type: z.literal("RetirementProvision"),
+});
+export const VehicleAssetSchema = AssetBaseSchema.extend({
+  type: z.literal("Vehicle"),
+  remainingLoan: z
+    .number()
+    .nonnegative()
+    .describe("Offener Kredit auf das Fahrzeug."),
+});
+export const OwnerOccupiedPropertyAssetSchema = AssetBaseSchema.extend({
+  type: z.literal("OwnerOccupiedProperty"),
+  livingSpace: z
+    .number()
+    .positive()
+    .describe("Wohnfläche in Quadratmetern."),
+  propertyKind: z.enum(["house", "condo"]),
+  mortgages: z
+    .number()
+    .nonnegative()
+    .describe("Dinglich gesicherte Verbindlichkeiten (Grundschuld, Hypothek)."),
+});
+export const OtherPropertyAssetSchema = AssetBaseSchema.extend({
+  type: z.literal("OtherProperty"),
+  mortgages: z
+    .number()
+    .nonnegative()
+    .describe("Dinglich gesicherte Verbindlichkeiten (Grundschuld, Hypothek)."),
+});
+export const OtherAssetSchema = AssetBaseSchema.extend({
+  type: z.literal("Other"),
+});
+
+export const ExtendedAssetSchema = z.discriminatedUnion("type", [
+  BankAccountAssetSchema,
+  SecuritiesAssetSchema,
+  BuildingSavingsAssetSchema,
+  RetirementProvisionAssetSchema,
+  VehicleAssetSchema,
+  OwnerOccupiedPropertyAssetSchema,
+  OtherPropertyAssetSchema,
+  OtherAssetSchema,
+]);
+
+export const AssetsSchema = z.object({
+  items: z.array(ExtendedAssetSchema),
+  hasReceivedBenefitsForOneYear: z
+    .boolean()
+    .describe(
+      "Ob bereits seit mindestens einem Jahr Leistungen nach dem SGB II bezogen werden. Dann entfällt die Karenzzeit für selbst genutztes Wohneigentum."
+    ),
+  selfEmploymentYearsWithoutPension: z
+    .number()
+    .int()
+    .nonnegative()
+    .describe(
+      "Angefangene Jahre hauptberuflicher Selbstständigkeit ohne Beiträge zur gesetzlichen Rentenversicherung oder einer Versorgungseinrichtung."
+    ),
+});
+
+export const emptyAssets: z.infer<typeof AssetsSchema> = {
+  items: [],
+  hasReceivedBenefitsForOneYear: false,
+  selfEmploymentYearsWithoutPension: 0,
+};
+
+export const assetType: {
+  [key in TAssetType]: { label: string };
+} = {
+  BankAccount: { label: "Konten und Bargeld" },
+  Securities: { label: "Wertpapiere, Fonds und Krypto" },
+  BuildingSavings: { label: "Bausparvertrag" },
+  RetirementProvision: { label: "Zertifizierte oder geförderte Altersvorsorge" },
+  Vehicle: { label: "Kraftfahrzeug" },
+  OwnerOccupiedProperty: { label: "Selbst genutztes Wohneigentum" },
+  OtherProperty: { label: "Andere Immobilien oder Grundstücke" },
+  Other: { label: "Sonstiges Vermögen" },
+};
+
 const PersonCommon = z.object({
   id: z.string(),
   name: z.string(),
   income: z.array(ExtendedIncomeSchema),
-  age: z.optional(z.number()).describe("Alter der Person."),
+  age: z
+    .number()
+    .int()
+    .min(0)
+    .max(120)
+    .optional()
+    .describe("Alter der Person."),
   attributes: z.object({
     isPregnant: z.boolean().describe("Ist die Person schwanger?"),
     isSingleParent: z
@@ -180,7 +293,7 @@ const Adult = PersonCommon.merge(
 const Child = PersonCommon.merge(
   z.object({
     type: z.literal("child").describe("Ein Kind."),
-    age: z.number().describe("Alter des Kindes."),
+    age: z.number().int().min(0).max(24).describe("Alter des Kindes."),
   })
 );
 const Person = z.discriminatedUnion("type", [Adult, Child]);
@@ -190,7 +303,7 @@ export const StepContext = z.object({
   isEmployable: z
     .boolean()
     .describe(
-      "Gibt an ob der Antragsteller erwärbsfähig ist. Ist die Person nicht erwärbsfähig, kann sie kein Bürgergeld beantragen. In dem Fall stehen ihr andere Förderungen zu."
+      "Gibt an ob der Antragsteller erwärbsfähig ist. Ist die Person nicht erwärbsfähig, kann sie kein Grundsicherungsgeld beantragen. In dem Fall stehen ihr andere Förderungen zu."
     ),
   spendings: z.object({
     rent: z.number().describe("Die Kaltmiete. Kann 0 sein."),
@@ -212,6 +325,9 @@ export const StepContext = z.object({
         )
     ),
   }),
+  assets: AssetsSchema.describe(
+    "Angaben zum Vermögen der Bedarfsgemeinschaft nach § 12 SGB II."
+  ),
 });
 
 export const StepState = z.object({
@@ -225,6 +341,8 @@ export type TPerson = z.infer<typeof Person>;
 export type TChild = z.infer<typeof Child>;
 export type TAdult = z.infer<typeof Adult>;
 export type TIncome = z.infer<typeof Person>["income"][0];
+export type TAsset = z.infer<typeof ExtendedAssetSchema>;
+export type TAssets = z.infer<typeof AssetsSchema>;
 
 export type TStepsState = {
   context: TStepContext;
