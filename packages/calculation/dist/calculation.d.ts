@@ -62,6 +62,8 @@ export type OverallCalculation = {
     additionalNeeds: ReturnType<typeof calculateAdditionalNeeds>;
     spendings: number;
     spendingDetails: TStepContext["spendings"];
+    housingCostLimit: number | null;
+    housingCostReduction: number;
     need: number;
     income: {
         sum: number;
@@ -75,6 +77,11 @@ export type OverallCalculation = {
     benefitCommunity: TStepContext["community"];
     benefitCommunityRequiresManualReview: boolean;
     excludedPersonIds: string[];
+};
+export declare function calculateHousingCosts(context: TStepContext): {
+    limit: number | null;
+    reduction: number;
+    sum: number;
 };
 /**
  * Children under 25 only belong to the benefit community while their own

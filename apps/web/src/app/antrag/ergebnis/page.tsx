@@ -94,7 +94,7 @@ export default function StepSummary() {
 
   if (!calculation) return null;
 
-  const { assets, income, overall, resultStatus, spendings } = calculation;
+  const { assets, income, overall, resultStatus, housingCostReduction } = calculation;
 
   return (
     <StepRoot id={step.id}>
@@ -112,13 +112,47 @@ export default function StepSummary() {
             <Result
               communitySize={state.community.length}
               income={income.sum}
-              spendings={spendings}
+              spendings={state.spendings.sum}
               allowance={allowanceSum}
               overall={overall}
               assetExcess={assets.excess}
+              housingCostReduction={housingCostReduction}
               requiresManualReview={resultStatus === "manual-review"}
               onShowDocuments={() => setActiveTab("documents")}
             />
+            {housingCostReduction > 0 && (
+              <div className="mb-5 rounded-lg border bg-muted/30 p-4 text-sm">
+                <h3 className="font-semibold">Berücksichtigte Unterkunftskosten</h3>
+                <p className="mt-2">
+                  Die Bruttokaltmiete wurde in dieser Beispielrechnung um{" "}
+                  {housingCostReduction.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}{" "}
+                  begrenzt. Im Einzelfall können höhere Kosten berücksichtigt werden,
+                  etwa bei unabweisbaren Aufwendungen oder bei Kindern in der
+                  Bedarfsgemeinschaft. Das Jobcenter prüft dies nach Antragstellung.
+                  Sind Heizkosten in den Nebenkosten enthalten, kann die Berechnung
+                  die Bruttokaltmiete nicht genau von den Heizkosten abgrenzen.
+                </p>
+              </div>
+            )}
+            <div className="mb-5 rounded-lg border bg-muted/30 p-4 text-sm">
+              <h3 className="font-semibold">Mietpreisbremse</h3>
+              <p className="mt-2">
+                Seit 01.07.2026 ist bei der Berechnung der angemessenen Bedarfe für
+                Unterkunft und Heizung eine Mietpreisbegrenzung zu berücksichtigen.
+              </p>
+              <p className="mt-2">
+                In der Stadt Leipzig gilt die Mietpreisbegrenzung nach Maßgabe der
+                Mietpreisbegrenzungsverordnung des Freistaates Sachsen. Diese sieht
+                in Gebieten mit angespanntem Wohnungsmarkt vor, dass bei
+                Wiedervermietung von Wohnraum die zulässige Miete grundsätzlich auf
+                die ortsübliche Vergleichsmiete zuzüglich der gesetzlich zulässigen
+                Zuschläge begrenzt ist (Mietpreisbremse gemäß §§ 556d ff. BGB).
+              </p>
+              <p className="mt-2">
+                Die Prüfung erfolgt mit Antragstellung auf Grundsicherungsgeld. Sie
+                erhalten dann weitere Informationen nach Bedarf.
+              </p>
+            </div>
           </TabsContent>
           <TabsContent value="calculation" data-testid="result-calculation">
             <div className="pb-8">

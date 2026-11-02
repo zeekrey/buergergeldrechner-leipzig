@@ -308,8 +308,8 @@ test("counts bank deposits above the age-based asset allowance", async ({
 
   await expect(page.getByRole("heading")).toContainText("Welches Vermögen");
   await expect(page.getByText("Konten und Bargeld")).toBeVisible();
-  await expect(page.getByText("Anrechenbares Vermögen")).toBeVisible();
-  await expect(page.getByText("15.000,00 €")).toBeVisible();
+  await expect(page.getByText("Anrechenbares Vermögen").locator(".."))
+    .toContainText("25.000,00 €");
 
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.waitForURL("**/ergebnis");
@@ -318,7 +318,7 @@ test("counts bank deposits above the age-based asset allowance", async ({
   );
   await expect(page.getByRole("link", { name: "Jetzt beantragen" })).toBeVisible();
   await expect(
-    page.getByText("Vermögen über dem Freibetrag")
+    page.getByText("15.000,00 € Vermögen über dem Freibetrag")
   ).toBeVisible();
 });
 

@@ -106,7 +106,7 @@ const StepTitle = forwardRef<
               </Accordion>
             </ScrollArea>
           ) : null}
-          <QuestionChat questionTitle={title} />
+          <QuestionChat />
         </DialogContent>
       </Dialog>
     </div>

@@ -52,6 +52,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
     overall,
     resultStatus,
     spendingDetails,
+    housingCostReduction,
     assets,
   } = useMemo(
     () => calculateOverall(requireCompleteAges(state)),
@@ -167,7 +168,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
         {/* spendings */}
         {spendingDetails.sum > 0 && (
           <>
-            <TableCell className="font-medium row-span-4 col-span-2 sm:col-span-1">
+            <TableCell className={cn("font-medium col-span-2 sm:col-span-1", housingCostReduction > 0 ? "row-span-5" : "row-span-4")}>
               Kosten für Unterkunft und Heizung
             </TableCell>
             <TableCell className="sm:col-span-2">
@@ -193,6 +194,14 @@ export function ResultSheet({ state }: { state: TStepContext }) {
                 currency: "EUR",
               })}
             </TableCell>
+            {housingCostReduction > 0 && (
+              <>
+                <TableCell className="sm:col-span-2">Abzug wegen Begrenzung der Bruttokaltmiete</TableCell>
+                <TableCell className="text-right">
+                  −{housingCostReduction.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                </TableCell>
+              </>
+            )}
             <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
               Summe
             </TableCell>
