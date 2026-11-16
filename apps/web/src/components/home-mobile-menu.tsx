@@ -29,13 +29,13 @@ export function HomeMobileMenu() {
   return (
     <Drawer>
       <DrawerTrigger
-        className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-zinc-700"
+        className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-foreground"
         disabled={!hydrated}
       >
         <span className="sr-only">Menü öffnen</span>
         <MenuIcon className="size-6" aria-hidden="true" />
       </DrawerTrigger>
-      <DrawerContent className="text-zinc-900">
+      <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>
             Grundsicherungsrechner des Jobcenters Leipzig

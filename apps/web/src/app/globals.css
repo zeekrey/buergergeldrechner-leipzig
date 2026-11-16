@@ -43,6 +43,9 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
 
+  --color-success-surface: var(--success-surface);
+  --color-success-border: var(--success-border);
+
   --font-sans: var(--font-sans);
 
   --color-sidebar-ring: var(--sidebar-ring);
@@ -152,9 +155,13 @@
   --sidebar-ring: oklch(0.708 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
+  --success-surface: oklch(0.982 0.018 155.826);
+  --success-border: oklch(0.925 0.084 155.995);
 }
 
 .dark {
+  --success-surface: oklch(0.25 0.035 155.826);
+  --success-border: oklch(0.4 0.065 155.995);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

@@ -131,7 +131,7 @@ export default function HomePage() {
             maskImage:
               "radial-gradient(100% 100% at top right,white,transparent)",
           }}
-          className="h-full w-full absolute stroke-zinc-200 inset-0 -z-10"
+          className="h-full w-full absolute stroke-border inset-0 -z-10"
           aria-hidden="true"
         >
           <defs>
@@ -156,7 +156,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
             <Link
-              className="relative bg-white flex items-center gap-1 rounded-full px-3 py-1 text-sm leading-6 text-zinc-600 ring-1 ring-zinc-900/10 hover:ring-zinc-600/20"
+              className="relative bg-card flex items-center gap-1 rounded-full px-3 py-1 text-sm leading-6 text-muted-foreground ring-1 ring-border hover:ring-ring"
               href="/antrag"
             >
               Komplett überarbeitet für das Grundsicherungsgeld
@@ -164,10 +164,10 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-zinc-900 sm:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
               Grundsicherungsgeld, schnell und einfach berechnen
             </h1>
-            <p className="mt-6 text-lg leading-8 text-zinc-700">
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
               Ermitteln Sie Ihre möglichen Ansprüche in nur wenigen Schritten –
               transparent und unkompliziert. Bestens informiert und vorbereitet.
             </p>
@@ -195,23 +195,23 @@ export default function HomePage() {
           <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
             <div className="lg:pr-8 lg:pt-4">
               <div className="lg:max-w-lg">
-                <h2 className="text-base font-semibold leading-7 text-zinc-900/50">
+                <h2 className="text-base font-semibold leading-7 text-muted-foreground">
                   Einfach & sicher
                 </h2>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
+                <p className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                   Grundsicherungsgeld berechnen
                 </p>
-                <p className="mt-6 text-lg leading-8 text-zinc-700">
+                <p className="mt-6 text-lg leading-8 text-muted-foreground">
                   Der Grundsicherungsrechner des Jobcenters Leipzig bietet eine
                   einfache und sichere Möglichkeit, einen möglichen Anspruch auf
                   Grundsicherungsgeld zu prüfen – ganz ohne Anmeldung.
                 </p>
-                <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-zinc-700 lg:max-w-none">
+                <dl className="mt-10 flex max-w-xl flex-col gap-8 text-base leading-7 text-muted-foreground lg:max-w-none">
                   {features.map((feature) => (
                     <div className="relative pl-9" key={feature.name}>
-                      <dt className="inline font-semibold text-zinc-900">
+                      <dt className="inline font-semibold text-foreground">
                         <feature.icon
-                          className="absolute left-1 top-1 h-5 w-5 text-zinc-900/50"
+                          className="absolute left-1 top-1 size-5 text-muted-foreground"
                           aria-hidden="true"
                         />
                         {feature.name}
@@ -223,7 +223,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="w-[42rem] max-w-none sm:w-[42rem] lg:-ml-0 self-center hidden md:block">
-              <div className="-m-4 p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30">
+              <div className="-m-4 p-4 bg-muted rounded-xl ring-1 ring-border">
                 <div className="rounded-lg drop-shadow-xl overflow-hidden">
                   <StepExample />
                 </div>
@@ -236,13 +236,13 @@ export default function HomePage() {
       <section className="pt-24 sm:pt-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
-            <p className="text-base font-semibold leading-7 text-zinc-900/50">
+            <p className="text-base font-semibold leading-7 text-muted-foreground">
               Ganz einfach
             </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Ergebnisse teilen
             </h2>
-            <p className="mt-6 text-lg leading-8 text-zinc-700">
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
               Der Grundsicherungsrechner zeigt eine detailgenaue Berechnung des
               Grundsicherungsgeldes. Zudem haben Sie die Möglichkeit, das
               Ergebnis mit jemandem zu teilen.
@@ -251,7 +251,7 @@ export default function HomePage() {
           <div className="px-1 pt-16 pb-1">
             <div className="mx-auto max-w-3xl">
               <div
-                className="p-2 sm:p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30"
+                className="p-2 sm:p-4 bg-muted rounded-xl ring-1 ring-border"
                 data-testid="result-preview-frame"
               >
                 <div className="rounded-lg drop-shadow-xl overflow-hidden">
@@ -266,13 +266,13 @@ export default function HomePage() {
       <section className="pt-32 sm:pt-48">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="mx-auto max-w-2xl lg:text-center pb-14">
-            <p className="text-base font-semibold leading-7 text-zinc-900/50">
+            <p className="text-base font-semibold leading-7 text-muted-foreground">
               Open Source
             </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Vertrauenswürdig transparent
             </h2>
-            <p className="mt-6 text-lg leading-8 text-zinc-700">
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
               Unser Service beruht auf Open-Source-Prinzipien, was bedeutet,
               dass unsere Arbeit öffentlich und transparent ist.
             </p>
@@ -346,13 +346,14 @@ export default function HomePage() {
         <div className="py-24 sm:py-32">
           <div className="mx-auto max-w-4xl px-6 lg:px-8 ">
             <div className="text-center mx-auto">
-              <p className="text-center text-xl font-semibold text-zinc-900 mt-2">
+              <p className="text-center text-xl font-semibold text-foreground mt-2">
                 Der Grundsicherungsrechner wurde im Rahmen des
                 Innovationswettbewerbs &quot;Smart City Challenge Leipzig&quot; durch das
                 Referat Digitale Stadt Leipzig gefördert.
               </p>
             </div>
-            <div className="flex flex-col mt-10 items-center space-y-16 sm:space-y-0 sm:flex-row justify-center">
+            {/* Keep the official logos on a light surface so their dark lettering stays legible. */}
+            <div className="flex flex-col mt-10 items-center gap-12 sm:flex-row justify-center rounded-2xl bg-white p-8 ring-1 ring-border">
               <Image
                 alt="Stadt Leipzig Logo"
                 src={StadtLeipzigImage}
@@ -380,7 +381,7 @@ export default function HomePage() {
         <hr />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <nav
-            className="flex justify-center gap-12 text-zinc-700 text-sm"
+            className="flex justify-center gap-12 text-muted-foreground text-sm"
             aria-label="Footer"
           >
             <div>
