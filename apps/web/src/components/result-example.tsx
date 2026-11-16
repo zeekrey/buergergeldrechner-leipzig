@@ -75,7 +75,7 @@ export function ResultExample() {
                 </p>
               </div>
               <div
-                className="flex flex-col justify-center rounded-2xl bg-green-50 px-4 py-10 text-center ring-1 ring-inset ring-green-200 sm:px-8 md:row-span-2 lg:py-16"
+                className="flex flex-col justify-center rounded-2xl bg-success-surface px-4 py-10 text-center ring-1 ring-inset ring-success-border sm:px-8 md:row-span-2 lg:py-16"
                 data-testid="result-preview-summary"
               >
                 <p className="flex items-baseline justify-center gap-x-2">
