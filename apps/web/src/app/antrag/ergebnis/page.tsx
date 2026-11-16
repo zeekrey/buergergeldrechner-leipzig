@@ -39,29 +39,30 @@ export default function StepSummary() {
   const completeContext = useCompleteContext(state);
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("result");
+  const [createdAt] = useState(() => Date.now());
 
   const calculation = useMemo(
     () => (completeContext ? calculateOverall(completeContext) : undefined),
-    [completeContext]
+    [completeContext],
   );
 
   const allowanceSum = useMemo(
     () =>
       calculation?.allowance.reduce(
         (acc, curr) => acc + (curr.amount ?? 0),
-        0
+        0,
       ) ?? 0,
-    [calculation]
+    [calculation],
   );
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous(state)].id}`);
-  }, [state]);
+  }, [push, state]);
 
   const handleReset = useCallback(() => {
     setState(initialStepsState.context);
     localStorage.removeItem("state");
-  }, []);
+  }, [setState]);
 
   const onCreateShareableClick = () => {
     startTransition(async () => {
@@ -72,7 +73,8 @@ export default function StepSummary() {
 
         try {
           await navigator.share({
-            title: "Ich habe einen möglichen Grundsicherungsanspruch berechnet:",
+            title:
+              "Ich habe einen möglichen Grundsicherungsanspruch berechnet:",
             url: `${origin}/share/${data.alias}`,
           });
         } catch {
@@ -83,7 +85,7 @@ export default function StepSummary() {
               label: "Kopieren",
               onClick: async () =>
                 await navigator.clipboard.writeText(
-                  `${origin}/share/${data.alias}`
+                  `${origin}/share/${data.alias}`,
                 ),
             },
           });
@@ -94,7 +96,8 @@ export default function StepSummary() {
 
   if (!calculation) return null;
 
-  const { assets, income, overall, resultStatus, housingCostReduction } = calculation;
+  const { assets, income, overall, resultStatus, housingCostReduction } =
+    calculation;
 
   return (
     <StepRoot id={step.id}>
@@ -122,35 +125,43 @@ export default function StepSummary() {
             />
             {housingCostReduction > 0 && (
               <div className="mb-5 rounded-lg border bg-muted/30 p-4 text-sm">
-                <h3 className="font-semibold">Berücksichtigte Unterkunftskosten</h3>
+                <h3 className="font-semibold">
+                  Berücksichtigte Unterkunftskosten
+                </h3>
                 <p className="mt-2">
                   Die Bruttokaltmiete wurde in dieser Beispielrechnung um{" "}
-                  {housingCostReduction.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}{" "}
-                  begrenzt. Im Einzelfall können höhere Kosten berücksichtigt werden,
-                  etwa bei unabweisbaren Aufwendungen oder bei Kindern in der
-                  Bedarfsgemeinschaft. Das Jobcenter prüft dies nach Antragstellung.
-                  Sind Heizkosten in den Nebenkosten enthalten, kann die Berechnung
-                  die Bruttokaltmiete nicht genau von den Heizkosten abgrenzen.
+                  {housingCostReduction.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}{" "}
+                  begrenzt. Im Einzelfall können höhere Kosten berücksichtigt
+                  werden, etwa bei unabweisbaren Aufwendungen oder bei Kindern
+                  in der Bedarfsgemeinschaft. Das Jobcenter prüft dies nach
+                  Antragstellung. Sind Heizkosten in den Nebenkosten enthalten,
+                  kann die Berechnung die Bruttokaltmiete nicht genau von den
+                  Heizkosten abgrenzen.
                 </p>
               </div>
             )}
             <div className="mb-5 rounded-lg border bg-muted/30 p-4 text-sm">
               <h3 className="font-semibold">Mietpreisbremse</h3>
               <p className="mt-2">
-                Seit 01.07.2026 ist bei der Berechnung der angemessenen Bedarfe für
-                Unterkunft und Heizung eine Mietpreisbegrenzung zu berücksichtigen.
+                Seit 01.07.2026 ist bei der Berechnung der angemessenen Bedarfe
+                für Unterkunft und Heizung eine Mietpreisbegrenzung zu
+                berücksichtigen.
               </p>
               <p className="mt-2">
-                In der Stadt Leipzig gilt die Mietpreisbegrenzung nach Maßgabe der
-                Mietpreisbegrenzungsverordnung des Freistaates Sachsen. Diese sieht
-                in Gebieten mit angespanntem Wohnungsmarkt vor, dass bei
-                Wiedervermietung von Wohnraum die zulässige Miete grundsätzlich auf
-                die ortsübliche Vergleichsmiete zuzüglich der gesetzlich zulässigen
-                Zuschläge begrenzt ist (Mietpreisbremse gemäß §§ 556d ff. BGB).
+                In der Stadt Leipzig gilt die Mietpreisbegrenzung nach Maßgabe
+                der Mietpreisbegrenzungsverordnung des Freistaates Sachsen.
+                Diese sieht in Gebieten mit angespanntem Wohnungsmarkt vor, dass
+                bei Wiedervermietung von Wohnraum die zulässige Miete
+                grundsätzlich auf die ortsübliche Vergleichsmiete zuzüglich der
+                gesetzlich zulässigen Zuschläge begrenzt ist (Mietpreisbremse
+                gemäß §§ 556d ff. BGB).
               </p>
               <p className="mt-2">
-                Die Prüfung erfolgt mit Antragstellung auf Grundsicherungsgeld. Sie
-                erhalten dann weitere Informationen nach Bedarf.
+                Die Prüfung erfolgt mit Antragstellung auf Grundsicherungsgeld.
+                Sie erhalten dann weitere Informationen nach Bedarf.
               </p>
             </div>
           </TabsContent>
@@ -165,7 +176,7 @@ export default function StepSummary() {
                       </CardTitle>
                       <CardDescription>
                         Erstellungsdatum:{" "}
-                        {new Intl.DateTimeFormat("de-DE").format(Date.now())}
+                        {new Intl.DateTimeFormat("de-DE").format(createdAt)}
                       </CardDescription>
                     </div>
                   </CardHeader>

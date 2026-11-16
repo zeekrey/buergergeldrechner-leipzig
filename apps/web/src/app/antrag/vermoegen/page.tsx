@@ -99,7 +99,7 @@ export default function StepAssets() {
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous(state)].id}`);
-  }, [push]);
+  }, [push, state]);
 
   if (!calculation) return null;
 

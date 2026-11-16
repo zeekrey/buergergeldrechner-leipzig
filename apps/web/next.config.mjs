@@ -32,14 +32,6 @@ const nextConfig = {
     experimental: {
         mdxRs: true
     },
-    typescript: {
-        // FIXME: Just here because of mdx import errors
-        // !! WARN !!
-        // Dangerously allow production builds to successfully complete even if
-        // your project has type errors.
-        // !! WARN !!
-        ignoreBuildErrors: true,
-    },
 };
 
 const withMDX = createMDX({

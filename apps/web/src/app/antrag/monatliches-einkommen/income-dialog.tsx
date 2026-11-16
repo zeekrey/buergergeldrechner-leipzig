@@ -1,4 +1,4 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { z } from "zod";
 
 import { useStateContext } from "@/components/context";
@@ -72,22 +72,18 @@ export const IncomeDialog = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [state] = useStateContext();
-  const [person, setPerson] = useState(selectedPerson);
+  const [personId, setPersonId] = useState<string>();
+  const person =
+    state.community.find(
+      (person) => person.id === (selectedPerson?.id ?? personId),
+    ) ?? state.community.at(0);
   const [incomeType, setIncomeType] = useState(
-    selectedIncome?.type ?? ("EmploymentIncome" as TIncome["type"])
+    selectedIncome?.type ?? ("EmploymentIncome" as TIncome["type"]),
   );
 
-  /** Needed, otherwise the local person state, won't be updated. */
-  useEffect(() => {
-    setPerson(selectedPerson);
-  }, [state.community]);
-
-  const IncomeComponent = incomeComponentMap[incomeType] as React.FunctionComponent<IncomeComponentProps>;
-
-  const handlePersonChange = (personId: string) => {
-    const _person = state.community.find((pers) => pers.id === personId);
-    setPerson(_person);
-  };
+  const IncomeComponent = incomeComponentMap[
+    incomeType
+  ] as React.FunctionComponent<IncomeComponentProps>;
 
   const handleIncomeChange = (incomeType: string) => {
     const _income = incomeTypeList.find((inc) => inc[0] === incomeType);
@@ -104,10 +100,7 @@ export const IncomeDialog = ({
             Bitte erfassen Sie jede Art von Einkommen.
           </DialogDescription>
         </DialogHeader>
-        <Select
-          onValueChange={handlePersonChange}
-          defaultValue={person?.id ?? state.community.at(0)?.id}
-        >
+        <Select onValueChange={setPersonId} value={person?.id}>
           <SelectTrigger disabled={Boolean(selectedPerson)}>
             <SelectValue placeholder="Person auswählen" />
           </SelectTrigger>
@@ -134,12 +127,14 @@ export const IncomeDialog = ({
             ))}
           </SelectContent>
         </Select>
-        <IncomeComponent
-          person={person ?? (state.community.at(0) as TPerson)}
-          setOpen={setOpen}
-          income={selectedIncome}
-          incomeType={incomeType}
-        />
+        {person && (
+          <IncomeComponent
+            person={person}
+            setOpen={setOpen}
+            income={selectedIncome}
+            incomeType={incomeType}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

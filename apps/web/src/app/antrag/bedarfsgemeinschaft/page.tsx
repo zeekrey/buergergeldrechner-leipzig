@@ -70,7 +70,7 @@ export default function StepCommunity() {
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous(state)].id}`);
-  }, [state]);
+  }, [push, state]);
 
   const handleRemove = useCallback(
     (person: TPerson) => {
@@ -86,7 +86,7 @@ export default function StepCommunity() {
         })
       );
     },
-    [state]
+    [setState, state]
   );
 
   const handlePregnantChange = useCallback(
@@ -105,7 +105,7 @@ export default function StepCommunity() {
         })
       );
     },
-    [state]
+    [setState, state]
   );
 
   const handleDiseasesChange = useCallback(
@@ -125,7 +125,7 @@ export default function StepCommunity() {
         })
       );
     },
-    [state]
+    [setState, state]
   );
 
   return (

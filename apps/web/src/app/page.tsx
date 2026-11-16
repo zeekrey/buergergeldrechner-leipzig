@@ -159,7 +159,7 @@ export default function HomePage() {
               className="relative bg-white flex items-center gap-1 rounded-full px-3 py-1 text-sm leading-6 text-zinc-600 ring-1 ring-zinc-900/10 hover:ring-zinc-600/20"
               href="/antrag"
             >
-              Gültig für Bewilligungszeiträume ab 1. Juli 2026.
+              Komplett überarbeitet für das Grundsicherungsgeld
               <ArrowRightIcon className="w-3 h-3" aria-hidden />
             </Link>
           </div>
@@ -248,9 +248,12 @@ export default function HomePage() {
               Ergebnis mit jemandem zu teilen.
             </p>
           </div>
-          <div className="-mx-4 sm:mx-0 pt-16 pb-1 overflow-hidden relative">
+          <div className="px-1 pt-16 pb-1">
             <div className="mx-auto max-w-3xl">
-              <div className="p-2 sm:p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30">
+              <div
+                className="p-2 sm:p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30"
+                data-testid="result-preview-frame"
+              >
                 <div className="rounded-lg drop-shadow-xl overflow-hidden">
                   <ResultExample />
                 </div>
@@ -345,7 +348,7 @@ export default function HomePage() {
             <div className="text-center mx-auto">
               <p className="text-center text-xl font-semibold text-zinc-900 mt-2">
                 Der Grundsicherungsrechner wurde im Rahmen des
-                Innovationswettbewerbs "Smart City Challenge Leipzig" durch das
+                Innovationswettbewerbs &quot;Smart City Challenge Leipzig&quot; durch das
                 Referat Digitale Stadt Leipzig gefördert.
               </p>
             </div>

@@ -37,7 +37,7 @@ export function Result({
   const canApply = isPositive || requiresManualReview || housingCostReduction > 0;
 
   return (
-    <div className="py-6 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-5">
+    <div className="py-6 grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-5">
       <div className="flex items-center">
         {requiresManualReview ? (
           <p className="text-base leading-7 text-gray-600 dark:text-gray-300">
@@ -80,7 +80,7 @@ export function Result({
       </div>
       <div
         className={cn(
-          "row-span-2 rounded-2xl bg-green-50 dark:bg-green-800 px-8 text-center ring-1 ring-inset ring-green-200 dark:ring-green-500 flex flex-col justify-center lg:py-16",
+          "md:row-span-2 rounded-2xl bg-green-50 dark:bg-green-800 px-8 py-10 text-center ring-1 ring-inset ring-green-200 dark:ring-green-500 flex flex-col justify-center lg:py-16",
           {
             "ring-yellow-400 bg-yellow-50":
               !isPositive || requiresManualReview,

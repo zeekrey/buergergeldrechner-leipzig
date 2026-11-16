@@ -2,107 +2,107 @@ import type { TPerson } from "./types";
 export declare function flattenIncome(community: TPerson[]): (({
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "EmploymentIncome";
     gros: number;
     net: number;
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "SelfEmploymentIncome";
     gros: number;
     net: number;
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "ChildAllowance";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "AdvanceMaintenancePayment";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "Maintenance";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "UnemploymentBenefits";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "SicknessBenefits";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "HousingAllowance";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "ChildSupplement";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "BAfOG";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "ParentalAllowance";
     parentalAllowanceType: "normal" | "plus";
     claim: number;
     officialAllowance: number;
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "Pension";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "MaintenanceContributionFromMasterCraftsmen";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "ShortTimeWorkAllowance";
     gros: number;
     net: number;
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "VocationalTrainingAllowance";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "TaxFreeSideJob";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "VoluntarySocialYear";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "OtherIncome";
+    allowance?: number | undefined;
 } | {
     id: string;
     amount: number;
-    allowance?: number | undefined;
     type: "ChildBenefitTransfer";
+    allowance?: number | undefined;
 }) & {
     personId: string;
     name: string;

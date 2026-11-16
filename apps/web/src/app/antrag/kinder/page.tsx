@@ -100,7 +100,7 @@ export default function StepChildren() {
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous(state)].id}`);
-  }, [push]);
+  }, [push, state]);
 
   return (
     <StepRoot id={step.id}>

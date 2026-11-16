@@ -28,7 +28,8 @@
       }
     ],
     "types": [
-      "vitest/importMeta"
+      "vitest/importMeta",
+      "mdx"
     ],
     "target": "ES2017"
   },
