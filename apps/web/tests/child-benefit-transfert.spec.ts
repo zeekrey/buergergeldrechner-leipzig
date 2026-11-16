@@ -1,4 +1,11 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
+
+async function selectAge(page: Page, name: string, age: string) {
+  await page
+    .getByRole("combobox", { name: `${name} – Alter in Jahren` })
+    .click();
+  await page.getByRole("option", { name: age, exact: true }).click();
+}
 
 test("should assign child benefit transfer", async ({ page }) => {
   await page.goto("http://localhost:3000/antrag/erwerbsfaehig");
@@ -16,14 +23,15 @@ test("should assign child benefit transfer", async ({ page }) => {
 
   await page.waitForURL("**/kinder-anzahl");
   /** Add child */
-  await page.getByRole("combobox").click();
-  await page.getByLabel("7 Jahre", { exact: true }).click();
-
   await page.getByRole("button", { name: "Kind hinzufügen" }).click();
-  await page.getByRole("combobox").nth(1).click();
-  await page.getByLabel("7 Jahre", { exact: true }).click();
-
   await page.getByRole("button", { name: "Kind hinzufügen" }).click();
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/alter");
+  await selectAge(page, "Antragsteller", "35");
+  await selectAge(page, "Kind 1", "7");
+  await selectAge(page, "Kind 2", "7");
+  await selectAge(page, "Kind 3", "1");
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/bedarfsgemeinschaft");
@@ -61,7 +69,9 @@ test("should assign child benefit transfer", async ({ page }) => {
   await expect(page.locator("tbody")).toContainText("Antragsteller");
   await expect(page.locator("tbody")).toContainText("Kind 1");
   await page.getByRole("button", { name: "Weiter" }).click();
-  await expect(page.getByTestId("result")).toContainText("1.513,39 €");
+  await page.waitForURL("**/vermoegen");
+  await page.getByRole("button", { name: "Weiter" }).click();
+  await expect(page.getByTestId("result")).toContainText("1.483,39 €");
 });
 
 test("should assign child benefit transfer if changed", async ({ page }) => {
@@ -80,14 +90,15 @@ test("should assign child benefit transfer if changed", async ({ page }) => {
 
   await page.waitForURL("**/kinder-anzahl");
   /** Add child */
-  await page.getByRole("combobox").click();
-  await page.getByLabel("7 Jahre", { exact: true }).click();
-
   await page.getByRole("button", { name: "Kind hinzufügen" }).click();
-  await page.getByRole("combobox").nth(1).click();
-  await page.getByLabel("7 Jahre", { exact: true }).click();
-
   await page.getByRole("button", { name: "Kind hinzufügen" }).click();
+  await page.getByRole("button", { name: "Weiter" }).click();
+
+  await page.waitForURL("**/alter");
+  await selectAge(page, "Antragsteller", "35");
+  await selectAge(page, "Kind 1", "7");
+  await selectAge(page, "Kind 2", "7");
+  await selectAge(page, "Kind 3", "1");
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/bedarfsgemeinschaft");

@@ -1,19 +1,23 @@
-// @ts-check
-import eslint from '@eslint/js';
-import prettierConfig from 'eslint-config-prettier';
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+import prettierConfig from "eslint-config-prettier";
 import perfectionist from "eslint-plugin-perfectionist";
-import tseslint from 'typescript-eslint';
+import { defineConfig, globalIgnores } from "eslint/config";
 
-export default tseslint.config(
-    eslint.configs.recommended,
-    {
-        plugins: {
-            perfectionist,
-        },
-        rules: {
-            'perfectionist/sort-imports': 'error',
-        },
-    },
-    ...tseslint.configs.recommended,
-    prettierConfig,
-);
+export default defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  {
+    plugins: { perfectionist },
+    rules: { "perfectionist/sort-imports": "error" },
+  },
+  prettierConfig,
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    "playwright-report/**",
+    "test-results/**",
+  ]),
+]);

@@ -1,5 +1,12 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRightCircleIcon } from "lucide-react";
+import { BaseSyntheticEvent, FormEventHandler } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,18 +16,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
-import { BaseSyntheticEvent, FormEventHandler } from "react";
-import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ArrowRightCircleIcon } from "lucide-react";
 import { calculateRent } from "@/lib/rent-calculation";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 const FormSchema = z.object({
   communityCount: z.coerce
-    .number()
+    .number<string | number>()
     .min(1, {
       message: "Es muss mindestens 1 Person in der Bedarfsgemeinschafts sein.",
     })
@@ -29,10 +30,10 @@ const FormSchema = z.object({
         "Die Anzahl der Personen in der Bedarfsgemeinschaft, darf 15 nicht überschreiten.",
     }),
   residence: z.string(),
-  rent: z.coerce.number(),
-  utilities: z.coerce.number(),
+  rent: z.coerce.number<string | number>(),
+  utilities: z.coerce.number<string | number>(),
   rentSum: z.number(),
-  space: z.coerce.number(),
+  space: z.coerce.number<string | number>(),
 });
 
 export function RentCalculation({
@@ -48,7 +49,11 @@ export function RentCalculation({
     description: string;
   }) => void;
 }) {
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<
+    z.input<typeof FormSchema>,
+    unknown,
+    z.output<typeof FormSchema>
+  >({
     resolver: zodResolver(FormSchema),
     defaultValues: state ?? {
       communityCount: 0,
@@ -62,21 +67,20 @@ export function RentCalculation({
 
   function onSubmit(
     data: z.infer<typeof FormSchema>,
-    event?: BaseSyntheticEvent
+    event?: BaseSyntheticEvent,
   ) {
     event?.preventDefault();
     const { isOk, description } = calculateRent(data);
 
-    onResult &&
-      onResult({
-        title: isOk
-          ? "Der Anspruch wird nicht überschritten."
-          : "Der Anspruch wird überschritten",
-        description,
-      });
+    onResult?.({
+      title: isOk
+        ? "Der Anspruch wird nicht überschritten."
+        : "Der Anspruch wird überschritten",
+      description,
+    });
   }
 
-  const onChange: FormEventHandler<HTMLFormElement> = (event) => {
+  const onChange: FormEventHandler<HTMLFormElement> = () => {
     const { rent, utilities } = form.getValues();
     form.setValue("rentSum", Number(rent) + Number(utilities));
   };

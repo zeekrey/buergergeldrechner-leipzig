@@ -1,3 +1,7 @@
+import { useState, type Dispatch, type SetStateAction } from "react";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
 import {
   Dialog,
   DialogTrigger,
@@ -13,17 +17,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { IncomeTypEnum, TPerson } from "@/lib/types";
 import { type TIncome, incomeType } from "@/lib/types";
-import { EmploymentIncome } from "./income-dialogs/employment-income";
-import { useStateContext } from "@/components/context";
-import { SelfEmploymentIncome } from "./income-dialogs/self-employment-income";
+
 import { DefaultIncome } from "./income-dialogs/default-income";
+import { EmploymentIncome } from "./income-dialogs/employment-income";
 import { ParentalAllowance } from "./income-dialogs/parental-allowance";
-import { z } from "zod";
-import { VoluntarySocialYear } from "./income-dialogs/voluntary-social-year";
+import { SelfEmploymentIncome } from "./income-dialogs/self-employment-income";
 import { ShortTimeWorkIncome } from "./income-dialogs/short-time-work-income";
+import { VoluntarySocialYear } from "./income-dialogs/voluntary-social-year";
 
 const incomeTypeList = Object.entries(incomeType).map((type) => type);
 
@@ -34,11 +36,7 @@ export type IncomeComponentProps = {
   incomeType?: z.infer<typeof IncomeTypEnum>;
 };
 
-export const incomeComponentMap: {
-  [K in z.infer<typeof IncomeTypEnum>]: React.FunctionComponent<
-    IncomeComponentProps & any
-  >;
-} = {
+export const incomeComponentMap = {
   EmploymentIncome: EmploymentIncome,
   SelfEmploymentIncome: SelfEmploymentIncome,
   BAfOG: DefaultIncome,
@@ -58,7 +56,10 @@ export const incomeComponentMap: {
   VoluntarySocialYear: VoluntarySocialYear,
   OtherIncome: DefaultIncome,
   ChildBenefitTransfer: DefaultIncome,
-};
+} satisfies Record<
+  z.infer<typeof IncomeTypEnum>,
+  React.FunctionComponent<never>
+>;
 
 export const IncomeDialog = ({
   children,
@@ -70,23 +71,19 @@ export const IncomeDialog = ({
   selectedIncome?: TIncome;
 }) => {
   const [open, setOpen] = useState(false);
-  const [state, setState] = useStateContext();
-  const [person, setPerson] = useState(selectedPerson);
+  const [state] = useStateContext();
+  const [personId, setPersonId] = useState<string>();
+  const person =
+    state.community.find(
+      (person) => person.id === (selectedPerson?.id ?? personId),
+    ) ?? state.community.at(0);
   const [incomeType, setIncomeType] = useState(
-    selectedIncome?.type ?? ("EmploymentIncome" as TIncome["type"])
+    selectedIncome?.type ?? ("EmploymentIncome" as TIncome["type"]),
   );
 
-  /** Needed, otherwise the local person state, won't be updated. */
-  useEffect(() => {
-    setPerson(selectedPerson);
-  }, [state.community]);
-
-  const IncomeComponent = incomeComponentMap[incomeType];
-
-  const handlePersonChange = (personId: string) => {
-    const _person = state.community.find((pers) => pers.id === personId);
-    setPerson(_person);
-  };
+  const IncomeComponent = incomeComponentMap[
+    incomeType
+  ] as React.FunctionComponent<IncomeComponentProps>;
 
   const handleIncomeChange = (incomeType: string) => {
     const _income = incomeTypeList.find((inc) => inc[0] === incomeType);
@@ -103,10 +100,7 @@ export const IncomeDialog = ({
             Bitte erfassen Sie jede Art von Einkommen.
           </DialogDescription>
         </DialogHeader>
-        <Select
-          onValueChange={handlePersonChange}
-          defaultValue={person?.id ?? state.community.at(0)?.id}
-        >
+        <Select onValueChange={setPersonId} value={person?.id}>
           <SelectTrigger disabled={Boolean(selectedPerson)}>
             <SelectValue placeholder="Person auswählen" />
           </SelectTrigger>
@@ -133,12 +127,14 @@ export const IncomeDialog = ({
             ))}
           </SelectContent>
         </Select>
-        <IncomeComponent
-          person={person ?? (state.community.at(0) as TPerson)}
-          setOpen={setOpen}
-          income={selectedIncome}
-          incomeType={incomeType}
-        />
+        {person && (
+          <IncomeComponent
+            person={person}
+            setOpen={setOpen}
+            income={selectedIncome}
+            incomeType={incomeType}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

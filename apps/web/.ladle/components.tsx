@@ -2,15 +2,12 @@ import "../src/app/globals.css";
 import { GlobalProvider } from "@ladle/react";
 import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import * as React from "react";
-import { initialStepsState } from "../src/lib/machine";
-import { Debugger } from "../src/components/debugger";
-import { StateProvider } from "../src/components/context";
 
-export const Provider: GlobalProvider = ({
-  children,
-  globalState,
-  storyMeta,
-}) => {
+import { StateProvider } from "../src/components/context";
+import { Debugger } from "../src/components/debugger";
+import { initialStepsState } from "../src/lib/machine";
+
+export const Provider: GlobalProvider = ({ children }) => {
   return (
     <AppRouterContext.Provider
       value={{

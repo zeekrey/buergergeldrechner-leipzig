@@ -1,32 +1,20 @@
-import Image from "next/image";
-import { Button, buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
-import { Metadata } from "next";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import {
   ArrowRightIcon,
   DraftingCompassIcon,
   LockIcon,
-  MenuIcon,
   ShapesIcon,
   ShieldIcon,
   UsersIcon,
   LightbulbIcon,
-  GithubIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { StepExample } from "../components/step-example";
-import StadtLeipzigImage from "../assets/stadt-leipzig.webp";
-import SmartCityImage from "../assets/smart-city-challenge.webp";
-import JobcenterImage from "../assets/logo.webp";
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+
+import { HomeMobileMenu } from "@/components/home-mobile-menu";
+import { ResultExample } from "@/components/result-example";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -34,21 +22,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ResultExample } from "@/components/result-example";
+import { cn } from "@/lib/utils";
+
+import JobcenterImage from "../assets/logo.webp";
+import SmartCityImage from "../assets/smart-city-challenge.webp";
+import StadtLeipzigImage from "../assets/stadt-leipzig.webp";
+import { StepExample } from "../components/step-example";
 
 export const metadata: Metadata = {
-  title: "Bürgergeldrechner des Jobcenter Leipzig",
+  title: "Grundsicherungsrechner des Jobcenters Leipzig",
   description:
-    "Berechnen Sie Ihr Bürgergeld einfach und unkompliziert mit dem Bürgergeldrechner des Jobcenters Leipzig. Erfahren Sie, welche Leistungen Ihnen zustehen und erhalten Sie individuelle Unterstützung bei Ihrer Antragstellung. Nutzen Sie unseren kostenlosen Online-Rechner für eine schnelle und präzise Berechnung.",
+    "Berechnen Sie einen möglichen Anspruch auf Grundsicherungsgeld einfach und unkompliziert mit dem Grundsicherungsrechner des Jobcenters Leipzig. Erhalten Sie eine unverbindliche Orientierung zur Grundsicherung für Arbeitsuchende und zur Antragstellung.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Bürgergeldrechner des Jobcenter Leipzig",
+    url: "/",
+    title: "Grundsicherungsrechner des Jobcenters Leipzig",
     description:
-      "Berechnen Sie Ihr Bürgergeld einfach und unkompliziert mit dem Bürgergeldrechner des Jobcenters Leipzig. Erfahren Sie, welche Leistungen Ihnen zustehen und erhalten Sie individuelle Unterstützung bei Ihrer Antragstellung. Nutzen Sie unseren kostenlosen Online-Rechner für eine schnelle und präzise Berechnung.",
-    url: "https://buergergeld.io",
-    siteName: "Bürgergeldrechner des Jobcenter Leipzig",
+      "Berechnen Sie einen möglichen Anspruch auf Grundsicherungsgeld einfach und unkompliziert mit dem Grundsicherungsrechner des Jobcenters Leipzig. Erhalten Sie eine unverbindliche Orientierung zur Grundsicherung für Arbeitsuchende und zur Antragstellung.",
+    siteName: "Grundsicherungsrechner des Jobcenters Leipzig",
     images: [
       {
-        url: "https://www.buergergeld.dev/og.png", // Must be an absolute URL
+        url: "/og.png",
         width: 1200,
         height: 630,
       },
@@ -80,7 +76,7 @@ const features = [
   },
   {
     description:
-      "Der Bürgergeldrechner berücksichtigt bereits zahlreiche Informationen, die für den Anspruch auf Bürgergeld relevant sind.",
+      "Der Grundsicherungsrechner berücksichtigt bereits zahlreiche Informationen, die für den Anspruch auf Grundsicherungsgeld relevant sind.",
     name: "Detailgenaue Berechnung",
     icon: DraftingCompassIcon,
   },
@@ -97,53 +93,11 @@ export default function HomePage() {
         >
           {/* <div className="flex lg:flex-1">
             <Link className="-m-1.5 p-1.5" href="/">
-              Bürgergeldrechner des Jobcenter Leipzig
+              Grundsicherungsrechner des Jobcenters Leipzig
             </Link>
           </div> */}
           <div className="flex lg:hidden">
-            <Drawer>
-              <DrawerTrigger asChild>
-                <button
-                  className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-zinc-700"
-                  type="button"
-                >
-                  <span className="sr-only">Menü öffnen</span>
-                  <MenuIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </DrawerTrigger>
-              <DrawerContent className="text-zinc-900">
-                <DrawerHeader>
-                  <DrawerTitle>
-                    Bürgergeldrechner des Jobcenter Leipzig
-                  </DrawerTitle>
-                  <DrawerDescription>
-                    Schnell und einfach den Anspruch auf Bürgergeld mit dem
-                    Bürgergeldrechner des Jobcenters Leipzig prüfen.
-                  </DrawerDescription>
-                </DrawerHeader>
-                {/* <div className="p-2 flex flex-col"> */}
-                {/* nav */}
-                {/* {navigation.map((item) => (
-                    <Link
-                      className="text-sm font-semibold leading-6 text-zinc-900 border-b border-zinc-900/10 pb-3 mb-3 flex items-center justify-between"
-                      href={item.href}
-                      key={item.name}
-                    >
-                      {item.name}
-                      <ArrowRightIcon
-                        className="w-3 h-3 ml-1"
-                        aria-hidden="true"
-                      />
-                    </Link>
-                  ))} */}
-                {/* </div> */}
-                <DrawerFooter>
-                  <Button asChild>
-                    <Link href="/antrag">Berechnen</Link>
-                  </Button>
-                </DrawerFooter>
-              </DrawerContent>
-            </Drawer>
+            <HomeMobileMenu />
           </div>
           {/* <div className="hidden lg:flex lg:gap-x-12"> */}
           {/* {navigation.map((item) => (
@@ -177,7 +131,7 @@ export default function HomePage() {
             maskImage:
               "radial-gradient(100% 100% at top right,white,transparent)",
           }}
-          className="h-full w-full absolute stroke-zinc-200 inset-0 -z-10"
+          className="h-full w-full absolute stroke-border inset-0 -z-10"
           aria-hidden="true"
         >
           <defs>
@@ -202,18 +156,18 @@ export default function HomePage() {
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
             <Link
-              className="relative bg-white flex items-center gap-1 rounded-full px-3 py-1 text-sm leading-6 text-zinc-600 ring-1 ring-zinc-900/10 hover:ring-zinc-600/20"
+              className="relative bg-card flex items-center gap-1 rounded-full px-3 py-1 text-sm leading-6 text-muted-foreground ring-1 ring-border hover:ring-ring"
               href="/antrag"
             >
-              Alle Berechnungen & Sätze wurden für 2025 aktualisiert.
+              Komplett überarbeitet für das Grundsicherungsgeld
               <ArrowRightIcon className="w-3 h-3" aria-hidden />
             </Link>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-zinc-900 sm:text-6xl">
-              Bürgergeld, schnell und einfach berechnen
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
+              Grundsicherungsgeld, schnell und einfach berechnen
             </h1>
-            <p className="mt-6 text-lg leading-8 text-zinc-700">
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
               Ermitteln Sie Ihre möglichen Ansprüche in nur wenigen Schritten –
               transparent und unkompliziert. Bestens informiert und vorbereitet.
             </p>
@@ -241,23 +195,23 @@ export default function HomePage() {
           <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
             <div className="lg:pr-8 lg:pt-4">
               <div className="lg:max-w-lg">
-                <h2 className="text-base font-semibold leading-7 text-zinc-900/50">
+                <h2 className="text-base font-semibold leading-7 text-muted-foreground">
                   Einfach & sicher
                 </h2>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-                  Bürgergeld berechnen
+                <p className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                  Grundsicherungsgeld berechnen
                 </p>
-                <p className="mt-6 text-lg leading-8 text-zinc-700">
-                  Der Bürgergeldrechner des Jobcenters Leipzig bietet eine
-                  einfache und sichere Möglichkeit, den eigenen Bürgergeldbedarf
-                  zu prüfen – ganz ohne Anmeldung.
+                <p className="mt-6 text-lg leading-8 text-muted-foreground">
+                  Der Grundsicherungsrechner des Jobcenters Leipzig bietet eine
+                  einfache und sichere Möglichkeit, einen möglichen Anspruch auf
+                  Grundsicherungsgeld zu prüfen – ganz ohne Anmeldung.
                 </p>
-                <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-zinc-700 lg:max-w-none">
+                <dl className="mt-10 flex max-w-xl flex-col gap-8 text-base leading-7 text-muted-foreground lg:max-w-none">
                   {features.map((feature) => (
                     <div className="relative pl-9" key={feature.name}>
-                      <dt className="inline font-semibold text-zinc-900">
+                      <dt className="inline font-semibold text-foreground">
                         <feature.icon
-                          className="absolute left-1 top-1 h-5 w-5 text-zinc-900/50"
+                          className="absolute left-1 top-1 size-5 text-muted-foreground"
                           aria-hidden="true"
                         />
                         {feature.name}
@@ -269,7 +223,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="w-[42rem] max-w-none sm:w-[42rem] lg:-ml-0 self-center hidden md:block">
-              <div className="-m-4 p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30">
+              <div className="-m-4 p-4 bg-muted rounded-xl ring-1 ring-border">
                 <div className="rounded-lg drop-shadow-xl overflow-hidden">
                   <StepExample />
                 </div>
@@ -282,21 +236,24 @@ export default function HomePage() {
       <section className="pt-24 sm:pt-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
-            <p className="text-base font-semibold leading-7 text-zinc-900/50">
+            <p className="text-base font-semibold leading-7 text-muted-foreground">
               Ganz einfach
             </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Ergebnisse teilen
             </h2>
-            <p className="mt-6 text-lg leading-8 text-zinc-700">
-              Der Bürgergeldrechner zeigt eine detailgenaue Berechnung des
-              Bürgergeldes. Zudem haben Sie die Möglichkeit das Ergebnis mit
-              jemandem zu teilen.
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+              Der Grundsicherungsrechner zeigt eine detailgenaue Berechnung des
+              Grundsicherungsgeldes. Zudem haben Sie die Möglichkeit, das
+              Ergebnis mit jemandem zu teilen.
             </p>
           </div>
-          <div className="pt-16 pb-1 overflow-hidden relative">
-            <div className="px-6 mx-auto max-w-3xl">
-              <div className="p-4 bg-zinc-100 rounded-xl ring-1 ring-gray-400/30">
+          <div className="px-1 pt-16 pb-1">
+            <div className="mx-auto max-w-3xl">
+              <div
+                className="p-2 sm:p-4 bg-muted rounded-xl ring-1 ring-border"
+                data-testid="result-preview-frame"
+              >
                 <div className="rounded-lg drop-shadow-xl overflow-hidden">
                   <ResultExample />
                 </div>
@@ -309,13 +266,13 @@ export default function HomePage() {
       <section className="pt-32 sm:pt-48">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="mx-auto max-w-2xl lg:text-center pb-14">
-            <p className="text-base font-semibold leading-7 text-zinc-900/50">
+            <p className="text-base font-semibold leading-7 text-muted-foreground">
               Open Source
             </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Vertrauenswürdig transparent
             </h2>
-            <p className="mt-6 text-lg leading-8 text-zinc-700">
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
               Unser Service beruht auf Open-Source-Prinzipien, was bedeutet,
               dass unsere Arbeit öffentlich und transparent ist.
             </p>
@@ -374,10 +331,10 @@ export default function HomePage() {
             </p>
             <Button size="lg" asChild>
               <a
-                href="https://github.com/zeekrey/buergergeldrechner-leipzig"
+                href="https://github.com/zeekrey/smart-city-challenge"
                 className="flex gap-2"
               >
-                <GithubIcon className="w-4 h-4" />
+                <SiGithub data-icon="inline-start" />
                 Projekt auf Github
               </a>
             </Button>
@@ -389,13 +346,14 @@ export default function HomePage() {
         <div className="py-24 sm:py-32">
           <div className="mx-auto max-w-4xl px-6 lg:px-8 ">
             <div className="text-center mx-auto">
-              <p className="text-center text-xl font-semibold text-zinc-900 mt-2">
-                Der Bürgergeldrechner wurde im Rahmen des Innovationswettbewerbs
-                "Smart City Challenge Leipzig" durch das Referat Digitale Stadt
-                Leipzig gefördert.
+              <p className="text-center text-xl font-semibold text-foreground mt-2">
+                Der Grundsicherungsrechner wurde im Rahmen des
+                Innovationswettbewerbs &quot;Smart City Challenge Leipzig&quot; durch das
+                Referat Digitale Stadt Leipzig gefördert.
               </p>
             </div>
-            <div className="flex flex-col mt-10 items-center space-y-16 sm:space-y-0 sm:flex-row justify-center">
+            {/* Keep the official logos on a light surface so their dark lettering stays legible. */}
+            <div className="flex flex-col mt-10 items-center gap-12 sm:flex-row justify-center rounded-2xl bg-white p-8 ring-1 ring-border">
               <Image
                 alt="Stadt Leipzig Logo"
                 src={StadtLeipzigImage}
@@ -423,7 +381,7 @@ export default function HomePage() {
         <hr />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <nav
-            className="flex justify-center gap-12 text-zinc-700 text-sm"
+            className="flex justify-center gap-12 text-muted-foreground text-sm"
             aria-label="Footer"
           >
             <div>

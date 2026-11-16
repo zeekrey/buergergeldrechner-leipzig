@@ -25,9 +25,9 @@ export async function sendEmail(
   };
 
   const { data, error } = await resend.emails.send({
-    from: "Buergergeldrechner.io <onboarding@resend.dev>",
+    from: "Grundsicherungsrechner <onboarding@resend.dev>",
     to: process.env.FEEDBACK_ADDRESSES.split(" ") ?? ["delivered@resend.dev"],
-    subject: `Feedback von buergergeld.io - ${feedbackType}`,
+    subject: `Feedback zum Grundsicherungsrechner - ${feedbackType}`,
     html: text,
   });
 

@@ -6,9 +6,11 @@ import {
   calculateBaseNeed,
   calculateOverall,
   calculateIncome,
+  calculateHousingCosts,
   calculateSalary,
+  calculateSelfEmploymentIncome,
 } from "../src/calculation";
-import { type TAdult, type TChild, type TStepContext } from "../src/types";
+import { type TAdult, type TChild, type TStepContext, emptyAssets } from "../src/types";
 import { generateId } from "../src/utils";
 
 describe("salary", () => {
@@ -69,6 +71,36 @@ describe("salary", () => {
   });
 });
 
+describe("self-employment income", () => {
+  test("calculates income and allowance from profit", () => {
+    expect(
+      calculateSelfEmploymentIncome({
+        revenue: 1500,
+        expenses: 1000,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 180,
+      income: 500,
+    });
+  });
+
+  test("does not produce negative income when expenses exceed revenue", () => {
+    expect(
+      calculateSelfEmploymentIncome({
+        revenue: 500,
+        expenses: 1000,
+        hasMinorChild: false,
+        isYoung: false,
+      })
+    ).toEqual({
+      allowance: 0,
+      income: 0,
+    });
+  });
+});
+
 const defaultContext: TStepContext = {
   community: [],
   income: {
@@ -82,9 +114,11 @@ const defaultContext: TStepContext = {
     sum: 750,
     utilities: 100,
   },
+  assets: emptyAssets,
 };
 
 const defaultAdult: TAdult = {
+  age: 35,
   id: generateId(),
   name: "Person",
   type: "adult",
@@ -110,6 +144,64 @@ const defaultChild: TChild = {
   },
   income: [],
 };
+
+describe("housing cost limit", () => {
+  const context = (community: TStepContext["community"], rent = 2000): TStepContext => ({
+    ...defaultContext,
+    community,
+    spendings: { rent, utilities: 100, heating: 150, sum: rent + 250 },
+  });
+
+  test.each([
+    [1, 536.43], [2, 699.45], [3, 903.9], [4, 1034.51],
+    [5, 1203.72], [6, 1330.44], [7, 1457.16],
+  ])("limits gross cold rent for %i community members", (size, limit) => {
+    const community = [defaultAdult, ...Array.from({ length: size - 1 }, (_, i) => ({
+      ...defaultChild, id: `child-${i}`,
+    }))];
+    expect(calculateHousingCosts(context(community))).toEqual({
+      limit, reduction: Math.round((2100 - limit) * 100) / 100, sum: limit + 150,
+    });
+  });
+
+  test("a childless couple uses the two-person limit", () => {
+    const result = calculateOverall(context([defaultAdult, { ...defaultAdult, id: "partner" }]));
+    expect(result.spendings).toBe(849.45);
+    expect(result.housingCostReduction).toBe(1400.55);
+    expect(result.need).toBe(result.baseNeed.sum + result.additionalNeeds.sum + 849.45);
+  });
+
+  test.each([436.43, 436.42, 436.44])("compares combined rent and utilities at the boundary (%f)", (rent) => {
+    const result = calculateHousingCosts(context([defaultAdult], rent));
+    expect(result.sum).toBe(Math.round((Math.min(rent + 100, 536.43) + 150) * 100) / 100);
+  });
+
+  test("minor child exempts the community, including mixed-age children", () => {
+    const result = calculateHousingCosts(context([defaultAdult, defaultChild, { ...defaultChild, id: "minor", age: 17 }]));
+    expect(result).toEqual({ limit: null, reduction: 0, sum: 2250 });
+  });
+
+  test.each(["child", "adult"] as const)("child benefit recorded for %s exempts a community with children", (recipient) => {
+    const benefit = { id: "benefit", type: "ChildAllowance" as const, amount: 255 };
+    const adult = { ...defaultAdult, income: recipient === "adult" ? [benefit] : [] };
+    const child = { ...defaultChild, income: recipient === "child" ? [benefit] : [] };
+    expect(calculateHousingCosts(context([adult, child])).limit).toBeNull();
+  });
+
+  test("zero child benefit does not exempt, and benefit without a child does not exempt", () => {
+    const benefit = { id: "benefit", type: "ChildAllowance" as const, amount: 0 };
+    expect(calculateHousingCosts(context([defaultAdult, { ...defaultChild, income: [benefit] }])).limit).toBe(699.45);
+    expect(calculateHousingCosts(context([{ ...defaultAdult, income: [{ ...benefit, amount: 255 }] }])).limit).toBe(536.43);
+  });
+
+  test("uses the remaining benefit community and its proportional housing costs", () => {
+    const child = { ...defaultChild, income: [{ id: "income", type: "OtherIncome" as const, amount: 3000 }] };
+    const result = calculateOverall(context([defaultAdult, child]));
+    expect(result.excludedPersonIds).toContain(child.id);
+    expect(result.housingCostLimit).toBe(536.43);
+    expect(result.spendings).toBe(611.43);
+  });
+});
 
 describe("calculateAdditionalNeeds", () => {
   test("single, is pregnant", () => {
@@ -361,6 +453,45 @@ describe("calculateCommunityNeed", () => {
 });
 
 describe("calculateOverall", () => {
+  test("uses self-employment profit and does not add an insurance allowance", () => {
+    const selfEmploymentIncome = calculateSelfEmploymentIncome({
+      revenue: 1500,
+      expenses: 1000,
+      hasMinorChild: false,
+      isYoung: false,
+    });
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+          income: [
+            {
+              id: generateId(),
+              type: "SelfEmploymentIncome",
+              amount: selfEmploymentIncome.income,
+              allowance: selfEmploymentIncome.allowance,
+              gros: 1500,
+              net: 1000,
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = calculateOverall(context);
+
+    expect(result.income.sum).toBe(500);
+    expect(result.allowance).toEqual([
+      {
+        personId: defaultAdult.id,
+        type: "SelfEmploymentIncome",
+        amount: 180,
+      },
+    ]);
+    expect(result.incomeAfterAllowance).toBe(320);
+  });
+
   test("case #1", () => {
     const context: TStepContext = {
       ...defaultContext,
@@ -491,7 +622,192 @@ describe("calculateOverall", () => {
 
     const { overall } = calculateOverall(context);
 
-    expect(overall).toEqual(-630);
+    expect(overall).toEqual(-660);
+  });
+
+  test("does not apply self-supporting children's income to the rest of the benefit community", () => {
+    const attributes = { ...defaultAdult.attributes };
+    const employmentIncome = (net: number) => {
+      const salary = calculateSalary({
+        gross: 3000,
+        net,
+        hasMinorChild: true,
+        isYoung: false,
+      });
+
+      return {
+        id: generateId(),
+        type: "EmploymentIncome" as const,
+        amount: salary.income,
+        allowance: salary.allowance,
+        gros: 3000,
+        net,
+      };
+    };
+    const childAllowance = () => ({
+      id: generateId(),
+      type: "ChildAllowance" as const,
+      amount: 255,
+    });
+    const selfSupportingChildIds = [generateId(), generateId()];
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          age: 35,
+          id: generateId(),
+          name: "Antragsteller",
+          type: "adult",
+          attributes,
+          income: [employmentIncome(1684)],
+        },
+        {
+          age: 35,
+          id: generateId(),
+          name: "Partner",
+          type: "adult",
+          attributes,
+          income: [],
+        },
+        {
+          id: selfSupportingChildIds[0],
+          name: "Kind 1",
+          type: "child",
+          age: 22,
+          attributes,
+          income: [employmentIncome(2241)],
+        },
+        {
+          id: selfSupportingChildIds[1],
+          name: "Kind 2",
+          type: "child",
+          age: 21,
+          attributes,
+          income: [employmentIncome(2225)],
+        },
+        {
+          id: generateId(),
+          name: "Kind 3",
+          type: "child",
+          age: 19,
+          attributes,
+          income: [childAllowance()],
+        },
+        {
+          id: generateId(),
+          name: "Kind 4",
+          type: "child",
+          age: 15,
+          attributes,
+          income: [childAllowance()],
+        },
+        {
+          id: generateId(),
+          name: "Kind 5",
+          type: "child",
+          age: 13,
+          attributes,
+          income: [childAllowance()],
+        },
+      ],
+      spendings: {
+        heating: 0,
+        rent: 3341.03,
+        sum: 3341.03,
+        utilities: 0,
+      },
+    };
+
+    const result = calculateOverall(context);
+
+    expect(result.excludedPersonIds).toEqual(selfSupportingChildIds);
+    expect(result.baseNeed.sum).toBe(2324);
+    expect(result.spendings).toBe(2386.45);
+    expect(result.income.sum).toBe(2449);
+    expect(result.incomeAfterAllowance).toBe(2071);
+    expect(result.overall).toBe(2639.45);
+  });
+
+  test("returns manual review instead of zero entitlement for excess assets", () => {
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [{ ...defaultAdult, id: "adult", age: 35 }],
+      assets: {
+        ...emptyAssets,
+        items: [
+          {
+            id: "bank",
+            personId: "adult",
+            type: "BankAccount",
+            amount: 100000,
+          },
+        ],
+      },
+    });
+
+    expect(result.resultStatus).toBe("manual-review");
+    expect(result.assets.excess).toBeGreaterThan(0);
+    expect(result.overall).toBeGreaterThan(0);
+  });
+
+  test("keeps child membership indeterminate when excess assets require manual review", () => {
+    const parent = { ...defaultAdult, id: "parent", age: 35 };
+    const child = { ...defaultChild, id: "child", age: 10 };
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [parent, child],
+      spendings: { rent: 600, utilities: 0, heating: 0, sum: 600 },
+      assets: {
+        ...emptyAssets,
+        items: [
+          {
+            id: "child-bank",
+            personId: "child",
+            type: "BankAccount",
+            amount: 100000,
+          },
+        ],
+      },
+    });
+
+    expect(result.excludedPersonIds).toEqual([]);
+    expect(result.benefitCommunity.map(({ id }) => id)).toEqual([
+      "parent",
+      "child",
+    ]);
+    expect(result.assets.countable).toBe(100000);
+    expect(result.assets.items.map(({ id }) => id)).toEqual(["child-bank"]);
+    expect(result.benefitCommunityRequiresManualReview).toBe(true);
+    expect(result.resultStatus).toBe("manual-review");
+  });
+
+  test("does not give a child the applicant's employability for its vehicle assessment", () => {
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [
+        { ...defaultAdult, id: "parent", age: 35 },
+        { ...defaultChild, id: "child", age: 10 },
+      ],
+      assets: {
+        ...emptyAssets,
+        items: [
+          {
+            id: "child-car",
+            personId: "child",
+            type: "Vehicle",
+            amount: 12000,
+            remainingLoan: 0,
+          },
+        ],
+      },
+    });
+
+    expect(result.excludedPersonIds).toEqual([]);
+    expect(result.benefitCommunityRequiresManualReview).toBe(true);
+    expect(result.resultStatus).toBe("manual-review");
+    expect(result.assets.items).toEqual([
+      expect.objectContaining({ id: "child-car", countable: 12000 }),
+    ]);
   });
 });
 
@@ -586,6 +902,23 @@ describe("calculateAllowance", () => {
     expect(sum).toBe(60);
   });
 
+  test("does not apply the insurance allowance to an adult child's Kindergeld", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        {
+          ...defaultChild,
+          age: 19,
+          income: [
+            { id: generateId(), type: "ChildAllowance", amount: 255 },
+          ],
+        },
+      ],
+    };
+
+    expect(calculateAllowance(context)).toEqual([]);
+  });
+
   test("insurance allowance with old kid but different income type", () => {
     const context: TStepContext = {
       ...defaultContext,
@@ -626,6 +959,37 @@ describe("calculateAllowance", () => {
 });
 
 describe("calculate child benefit transfert", () => {
+  test("does not transfer employment income when the child receives no Kindergeld", () => {
+    const salary = calculateSalary({
+      gross: 3000,
+      net: 2241,
+      hasMinorChild: false,
+      isYoung: false,
+    });
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        { ...defaultAdult },
+        {
+          ...defaultChild,
+          age: 22,
+          income: [
+            {
+              id: generateId(),
+              type: "EmploymentIncome",
+              amount: salary.income,
+              allowance: salary.allowance,
+              gros: 3000,
+              net: 2241,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(calculateChildBenefitTransfer(context)).toEqual([]);
+  });
+
   test("should calculate child benefit transfert", () => {
     const context: TStepContext = {
       ...defaultContext,

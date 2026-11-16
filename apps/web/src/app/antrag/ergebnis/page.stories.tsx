@@ -1,11 +1,12 @@
-import StepResult from "./page";
 import type { Story } from "@ladle/react";
+
 import { StateProvider } from "@/components/context";
 import {
-  coupleWithKids,
   singleWithoutKids,
   singleWithoutKidsNoNeed,
 } from "@/config/fixtures";
+
+import StepResult from "./page";
 
 export const StepResultStory: Story = () => <StepResult />;
 export const StepResultStoryNegative: Story = () => <StepResult />;

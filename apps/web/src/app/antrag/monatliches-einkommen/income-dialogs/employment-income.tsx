@@ -1,7 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { calculateSalary } from "calculation";
+import { produce } from "immer";
 import { useForm } from "react-hook-form";
-import { EmploymentIncomeSchema, TStepContext } from "@/lib/types";
+import { z } from "zod";
+
+import { useStateContext } from "@/components/context";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -9,19 +14,16 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { produce } from "immer";
+import { Input } from "@/components/ui/input";
+import { EmploymentIncomeSchema, TStepContext } from "@/lib/types";
 import { generateId } from "@/lib/utils";
-import { useStateContext } from "@/components/context";
+
 import { IncomeComponentProps } from "../income-dialog";
-import { z } from "zod";
-import { Checkbox } from "@/components/ui/checkbox";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { checkChildBenefitTransfert } from "./default-income";
-import { calculateSalary } from "calculation";
 
 const formSchema = z.object({
-  gros: z.coerce.number(),
-  net: z.coerce.number(),
+  gros: z.coerce.number<string | number>(),
+  net: z.coerce.number<string | number>(),
   isYoung: z.boolean(),
 });
 
@@ -30,11 +32,15 @@ export const EmploymentIncome = ({
   income,
   setOpen,
 }: IncomeComponentProps & {
-  income: z.infer<typeof EmploymentIncomeSchema>;
+  income?: z.infer<typeof EmploymentIncomeSchema>;
 }) => {
   const [state, setState] = useStateContext();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<
+    z.input<typeof formSchema>,
+    unknown,
+    z.output<typeof formSchema>
+  >({
     resolver: zodResolver(formSchema),
     defaultValues: {
       isYoung:
@@ -46,7 +52,7 @@ export const EmploymentIncome = ({
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     const selectedPersonIndex = state.community.findIndex(
-      (per) => per.id === person.id
+      (per) => per.id === person.id,
     );
 
     if (selectedPersonIndex !== -1) {
@@ -54,7 +60,7 @@ export const EmploymentIncome = ({
         gross: Number(data.gros),
         net: Number(data.net),
         hasMinorChild: state.community.some(
-          (person) => person.type === "child" && person.age < 18
+          (person) => person.type === "child" && person.age < 18,
         ),
         isYoung: data.isYoung,
       });
@@ -68,13 +74,6 @@ export const EmploymentIncome = ({
         ].income.findIndex((inc) => inc.id === income.id);
 
         newState = produce(state, (draft) => {
-          if (
-            data.isYoung &&
-            typeof draft.community[selectedPersonIndex].age === "undefined"
-          ) {
-            draft.community[selectedPersonIndex].age = 24;
-          } else draft.community[selectedPersonIndex].age = undefined;
-
           draft.community[selectedPersonIndex].income[selectedIncomeIndex] = {
             ...income,
             allowance,
@@ -89,13 +88,6 @@ export const EmploymentIncome = ({
       } else {
         /** Create income if no income to be edited was provided. */
         newState = produce(state, (draft) => {
-          if (
-            data.isYoung &&
-            typeof draft.community[selectedPersonIndex].age === "undefined"
-          ) {
-            draft.community[selectedPersonIndex].age = 24;
-          } else draft.community[selectedPersonIndex].age = undefined;
-
           draft.community[selectedPersonIndex].income.push({
             allowance,
             amount: Number(_income),

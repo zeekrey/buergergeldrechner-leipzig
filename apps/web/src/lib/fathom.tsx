@@ -1,9 +1,9 @@
 "use client";
 
-import { load, trackPageview } from "fathom-client";
-import { useEffect, Suspense } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
 import { strict as assert } from "assert";
+import { load, trackPageview } from "fathom-client";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, Suspense } from "react";
 
 function TrackPageView() {
   const pathname = usePathname();

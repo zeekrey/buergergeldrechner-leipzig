@@ -1,18 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Badge } from "./ui/badge";
+import { useSyncExternalStore } from "react";
+
 import { siteConfig } from "@/config/site";
 
-export function MainNav() {
-  const [isPreview, setIsPreview] = useState(false);
+import { Badge } from "./ui/badge";
 
-  useEffect(() => {
-    setIsPreview(
-      ["localhost", "buergergeld.dev"].includes(window?.location.hostname)
-    );
-  });
+const subscribe = () => () => {};
+const getIsPreview = () => window.location.hostname === "localhost";
+const getServerIsPreview = () => false;
+
+export function MainNav() {
+  const isPreview = useSyncExternalStore(
+    subscribe,
+    getIsPreview,
+    getServerIsPreview,
+  );
 
   return (
     <div className="flex">
