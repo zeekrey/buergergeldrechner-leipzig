@@ -92,7 +92,13 @@ export function StateProvider({
     <StateContext.Provider value={state}>
       <SetStateContext.Provider value={setState}>
         <StateHydratedContext.Provider value={serialized !== undefined}>
-          {children}
+          <div
+            className="contents"
+            data-slot="calculator-state"
+            inert={serialized === undefined}
+          >
+            {children}
+          </div>
         </StateHydratedContext.Provider>
       </SetStateContext.Provider>
     </StateContext.Provider>

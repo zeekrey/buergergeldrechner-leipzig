@@ -24,7 +24,7 @@ jobs:
         run: bun run test:unit
       - name: Build web app with type checking
         run: bun run --filter '@grundsicherungsrechner/web' build
-      - name: Run web Playwright tests
+      - name: Run Playwright against the production build
         run: bun run --filter '@grundsicherungsrechner/web' test:e2e
       - uses: actions/upload-artifact@v4
         if: always()

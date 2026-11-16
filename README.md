@@ -36,7 +36,7 @@ bun run build
 bun run test:e2e
 ```
 
-Both workspaces use TypeScript 5.9. The web app uses the standard Next.js Core Web Vitals and TypeScript ESLint presets, with import sorting and Prettier compatibility. `typecheck` generates Next.js types before checking the web app, and production builds fail on type errors. CI runs lint, type checks, unit tests, a production build, and Playwright tests.
+Both workspaces use TypeScript 5.9. The web app uses the standard Next.js Core Web Vitals and TypeScript ESLint presets, with import sorting and Prettier compatibility. `typecheck` generates Next.js types before checking the web app, and production builds fail on type errors. CI runs lint, type checks, unit tests, a production build, and Playwright tests against that production build. Locally, Playwright starts or reuses the development server at `http://localhost:3000`.
 
 Set `NEXT_PUBLIC_SITE_URL` to the production origin (for example, `https://example.org`) so canonical and Open Graph URLs resolve to the deployed domain. Development defaults to `http://localhost:3000`.
 
