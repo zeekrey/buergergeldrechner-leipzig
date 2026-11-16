@@ -1,6 +1,8 @@
 /** @type {import('vite').UserConfig} */
-export default {
+const config = {
   define: {
     "process.env": process.env,
   },
 };
+
+export default config;

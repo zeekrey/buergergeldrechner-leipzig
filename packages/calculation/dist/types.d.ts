@@ -24,49 +24,49 @@ export declare const diseases: readonly [{
     readonly description: "";
 }];
 export declare const IncomeTypEnum: z.ZodEnum<{
-    AdvanceMaintenancePayment: "AdvanceMaintenancePayment";
-    BAfOG: "BAfOG";
-    ChildAllowance: "ChildAllowance";
-    ChildBenefitTransfer: "ChildBenefitTransfer";
-    ChildSupplement: "ChildSupplement";
     EmploymentIncome: "EmploymentIncome";
-    HousingAllowance: "HousingAllowance";
+    SelfEmploymentIncome: "SelfEmploymentIncome";
+    ChildAllowance: "ChildAllowance";
+    AdvanceMaintenancePayment: "AdvanceMaintenancePayment";
     Maintenance: "Maintenance";
-    MaintenanceContributionFromMasterCraftsmen: "MaintenanceContributionFromMasterCraftsmen";
-    OtherIncome: "OtherIncome";
+    UnemploymentBenefits: "UnemploymentBenefits";
+    SicknessBenefits: "SicknessBenefits";
+    HousingAllowance: "HousingAllowance";
+    ChildSupplement: "ChildSupplement";
+    BAfOG: "BAfOG";
     ParentalAllowance: "ParentalAllowance";
     Pension: "Pension";
-    SelfEmploymentIncome: "SelfEmploymentIncome";
+    MaintenanceContributionFromMasterCraftsmen: "MaintenanceContributionFromMasterCraftsmen";
     ShortTimeWorkAllowance: "ShortTimeWorkAllowance";
-    SicknessBenefits: "SicknessBenefits";
-    TaxFreeSideJob: "TaxFreeSideJob";
-    UnemploymentBenefits: "UnemploymentBenefits";
     VocationalTrainingAllowance: "VocationalTrainingAllowance";
+    TaxFreeSideJob: "TaxFreeSideJob";
     VoluntarySocialYear: "VoluntarySocialYear";
+    OtherIncome: "OtherIncome";
+    ChildBenefitTransfer: "ChildBenefitTransfer";
 }>;
 export type TIncomeType = z.infer<typeof IncomeTypEnum>;
 export declare const IncomeBaseSchema: z.ZodObject<{
     id: z.ZodString;
     type: z.ZodEnum<{
-        AdvanceMaintenancePayment: "AdvanceMaintenancePayment";
-        BAfOG: "BAfOG";
-        ChildAllowance: "ChildAllowance";
-        ChildBenefitTransfer: "ChildBenefitTransfer";
-        ChildSupplement: "ChildSupplement";
         EmploymentIncome: "EmploymentIncome";
-        HousingAllowance: "HousingAllowance";
+        SelfEmploymentIncome: "SelfEmploymentIncome";
+        ChildAllowance: "ChildAllowance";
+        AdvanceMaintenancePayment: "AdvanceMaintenancePayment";
         Maintenance: "Maintenance";
-        MaintenanceContributionFromMasterCraftsmen: "MaintenanceContributionFromMasterCraftsmen";
-        OtherIncome: "OtherIncome";
+        UnemploymentBenefits: "UnemploymentBenefits";
+        SicknessBenefits: "SicknessBenefits";
+        HousingAllowance: "HousingAllowance";
+        ChildSupplement: "ChildSupplement";
+        BAfOG: "BAfOG";
         ParentalAllowance: "ParentalAllowance";
         Pension: "Pension";
-        SelfEmploymentIncome: "SelfEmploymentIncome";
+        MaintenanceContributionFromMasterCraftsmen: "MaintenanceContributionFromMasterCraftsmen";
         ShortTimeWorkAllowance: "ShortTimeWorkAllowance";
-        SicknessBenefits: "SicknessBenefits";
-        TaxFreeSideJob: "TaxFreeSideJob";
-        UnemploymentBenefits: "UnemploymentBenefits";
         VocationalTrainingAllowance: "VocationalTrainingAllowance";
+        TaxFreeSideJob: "TaxFreeSideJob";
         VoluntarySocialYear: "VoluntarySocialYear";
+        OtherIncome: "OtherIncome";
+        ChildBenefitTransfer: "ChildBenefitTransfer";
     }>;
     amount: z.ZodNumber;
     allowance: z.ZodOptional<z.ZodNumber>;
@@ -307,13 +307,13 @@ export declare const ExtendedIncomeSchema: z.ZodUnion<readonly [z.ZodObject<{
 }, z.core.$strip>]>;
 export declare const AssetTypeEnum: z.ZodEnum<{
     BankAccount: "BankAccount";
-    BuildingSavings: "BuildingSavings";
-    Other: "Other";
-    OtherProperty: "OtherProperty";
-    OwnerOccupiedProperty: "OwnerOccupiedProperty";
-    RetirementProvision: "RetirementProvision";
     Securities: "Securities";
+    BuildingSavings: "BuildingSavings";
+    RetirementProvision: "RetirementProvision";
     Vehicle: "Vehicle";
+    OwnerOccupiedProperty: "OwnerOccupiedProperty";
+    OtherProperty: "OtherProperty";
+    Other: "Other";
 }>;
 export type TAssetType = z.infer<typeof AssetTypeEnum>;
 export declare const BankAccountAssetSchema: z.ZodObject<{
@@ -354,8 +354,8 @@ export declare const OwnerOccupiedPropertyAssetSchema: z.ZodObject<{
     type: z.ZodLiteral<"OwnerOccupiedProperty">;
     livingSpace: z.ZodNumber;
     propertyKind: z.ZodEnum<{
-        condo: "condo";
         house: "house";
+        condo: "condo";
     }>;
     mortgages: z.ZodNumber;
 }, z.core.$strip>;
@@ -405,8 +405,8 @@ export declare const ExtendedAssetSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
     type: z.ZodLiteral<"OwnerOccupiedProperty">;
     livingSpace: z.ZodNumber;
     propertyKind: z.ZodEnum<{
-        condo: "condo";
         house: "house";
+        condo: "condo";
     }>;
     mortgages: z.ZodNumber;
 }, z.core.$strip>, z.ZodObject<{
@@ -455,8 +455,8 @@ export declare const AssetsSchema: z.ZodObject<{
         type: z.ZodLiteral<"OwnerOccupiedProperty">;
         livingSpace: z.ZodNumber;
         propertyKind: z.ZodEnum<{
-            condo: "condo";
             house: "house";
+            condo: "condo";
         }>;
         mortgages: z.ZodNumber;
     }, z.core.$strip>, z.ZodObject<{
@@ -1244,8 +1244,8 @@ export declare const StepContext: z.ZodObject<{
             type: z.ZodLiteral<"OwnerOccupiedProperty">;
             livingSpace: z.ZodNumber;
             propertyKind: z.ZodEnum<{
-                condo: "condo";
                 house: "house";
+                condo: "condo";
             }>;
             mortgages: z.ZodNumber;
         }, z.core.$strip>, z.ZodObject<{
@@ -1550,8 +1550,8 @@ export declare const StepState: z.ZodObject<{
                 type: z.ZodLiteral<"OwnerOccupiedProperty">;
                 livingSpace: z.ZodNumber;
                 propertyKind: z.ZodEnum<{
-                    condo: "condo";
                     house: "house";
+                    condo: "condo";
                 }>;
                 mortgages: z.ZodNumber;
             }, z.core.$strip>, z.ZodObject<{

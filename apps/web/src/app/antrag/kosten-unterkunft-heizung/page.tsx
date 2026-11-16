@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { produce } from "immer";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { useStateContext } from "@/components/context";
@@ -45,9 +45,9 @@ import { stepsConfig } from "@/lib/machine";
 const step = stepsConfig[7];
 
 const formSchema = z.object({
-  heating: z.coerce.number().optional(),
-  rent: z.coerce.number().optional(),
-  utilities: z.coerce.number().optional(),
+  heating: z.coerce.number<string | number>().optional(),
+  rent: z.coerce.number<string | number>().optional(),
+  utilities: z.coerce.number<string | number>().optional(),
   hasNoSpendings: z.boolean(),
 });
 
@@ -56,7 +56,11 @@ export default function StepSpending() {
   const [state, setState] = useStateContext();
   const [dialogIsOpen, setDialogOpen] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<
+    z.input<typeof formSchema>,
+    unknown,
+    z.output<typeof formSchema>
+  >({
     resolver: zodResolver(formSchema),
     defaultValues: {
       heating: state.spendings.heating ?? 0,
@@ -70,7 +74,7 @@ export default function StepSpending() {
     ({ rent = 0, utilities = 0, heating = 0 }) => {
       return rent + utilities + heating;
     },
-    []
+    [],
   );
 
   function onSubmit({
@@ -100,17 +104,15 @@ export default function StepSpending() {
     push(`${stepsConfig[nextStep].id}`);
   }
 
-  const [heating, rent, utilities] = form.watch([
-    "rent",
-    "heating",
-    "utilities",
-    "hasNoSpendings",
-  ]);
+  const [rent, heating, utilities, hasNoSpendings] = useWatch({
+    control: form.control,
+    name: ["rent", "heating", "utilities", "hasNoSpendings"],
+  });
 
   const sum = Number(heating ?? 0) + Number(rent ?? 0) + Number(utilities ?? 0);
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous(state)].id}`);
-  }, [state]);
+  }, [push, state]);
 
   return (
     <StepRoot id={step.id}>
@@ -166,7 +168,7 @@ export default function StepSpending() {
                                 type="number"
                                 className="w-[160px]"
                                 placeholder="Kaltmiete"
-                                disabled={form.getValues("hasNoSpendings")}
+                                disabled={hasNoSpendings}
                               />
                             </FormControl>
                             <FormMessage />
@@ -190,7 +192,7 @@ export default function StepSpending() {
                                 {...field}
                                 type="number"
                                 placeholder="Nebenkosten"
-                                disabled={form.getValues("hasNoSpendings")}
+                                disabled={hasNoSpendings}
                               />
                             </FormControl>
                             <FormMessage />
@@ -214,7 +216,7 @@ export default function StepSpending() {
                                 {...field}
                                 type="number"
                                 placeholder="Heizkosten"
-                                disabled={form.getValues("hasNoSpendings")}
+                                disabled={hasNoSpendings}
                               />
                             </FormControl>
                             <FormMessage />

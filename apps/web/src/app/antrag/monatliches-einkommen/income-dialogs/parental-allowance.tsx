@@ -101,7 +101,7 @@ export const ParentalAllowance = ({
   income,
   setOpen,
 }: IncomeComponentProps & {
-  income: z.infer<typeof ParentalAllowanceSchema>;
+  income?: z.infer<typeof ParentalAllowanceSchema>;
 }) => {
   const [state, setState] = useStateContext();
 

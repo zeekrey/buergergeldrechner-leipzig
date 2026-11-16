@@ -56,7 +56,7 @@ export default function StepChildrenCount() {
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous(state)].id}`);
-  }, [state]);
+  }, [push, state]);
 
   const addChildren = () => {
     const newState = produce(state, (draft) => {

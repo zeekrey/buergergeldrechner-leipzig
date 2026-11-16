@@ -65,7 +65,7 @@ export function ResultExample() {
                 Unterlagen
               </span>
             </div>
-            <div className="grid grid-cols-1 grid-rows-2 gap-5 py-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-5 py-6 md:grid-cols-2 md:grid-rows-2">
               <div className="flex items-center">
                 <p className="text-base leading-7 text-muted-foreground">
                   Auf Basis Ihrer Angaben sehen Sie die mögliche Höhe des
@@ -74,7 +74,10 @@ export function ResultExample() {
                   sich hierbei um eine unverbindliche Berechnung handelt.
                 </p>
               </div>
-              <div className="row-span-2 flex flex-col justify-center rounded-2xl bg-green-50 px-4 text-center ring-1 ring-inset ring-green-200 sm:px-8 lg:py-16">
+              <div
+                className="flex flex-col justify-center rounded-2xl bg-green-50 px-4 py-10 text-center ring-1 ring-inset ring-green-200 sm:px-8 md:row-span-2 lg:py-16"
+                data-testid="result-preview-summary"
+              >
                 <p className="flex items-baseline justify-center gap-x-2">
                   <span className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
                     1.298,02 €

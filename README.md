@@ -21,19 +21,22 @@ The estimate does not replace an official assessment by the responsible Jobcente
 
 - `apps/web`: productive Next.js web application
 - `packages/calculation`: shared calculation engine
-- `specs`: requirements and procurement specifications
+- `knowledge`: source documents used by the web application's chat knowledge retrieval
 
-The experimental areas `apps/llm` and `packages/rag` are outside the productive application described by the current specification.
+The chat runs in `apps/web` and calls Vercel AI Gateway directly; no separate LLM or RAG workspace is required.
 
 ## Development
 
 ```bash
 bun install
-bun run --filter calculation typecheck
-bun run --filter '@grundsicherungsrechner/web' lint
+bun run typecheck
+bun run lint
 bun run test:unit
-bun run --filter '@grundsicherungsrechner/web' build
+bun run build
+bun run test:e2e
 ```
+
+Both workspaces use TypeScript 5.9. The web app uses the standard Next.js Core Web Vitals and TypeScript ESLint presets, with import sorting and Prettier compatibility. `typecheck` generates Next.js types before checking the web app, and production builds fail on type errors. CI runs lint, type checks, unit tests, a production build, and Playwright tests.
 
 Set `NEXT_PUBLIC_SITE_URL` to the production origin (for example, `https://example.org`) so canonical and Open Graph URLs resolve to the deployed domain. Development defaults to `http://localhost:3000`.
 

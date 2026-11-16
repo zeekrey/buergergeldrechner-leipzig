@@ -91,7 +91,7 @@ export default function StepPartner() {
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous(state)].id}`);
-  }, [push]);
+  }, [push, state]);
 
   return (
     <StepRoot id={step.id}>

@@ -1,44 +1,38 @@
 import { calculateOverall } from "calculation";
-import { Fragment, useMemo, forwardRef } from "react";
+import { Fragment, useMemo } from "react";
 
 import { requireCompleteAges } from "@/lib/complete-context";
 import { allowanceType, incomeType, TStepContext } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const Table = forwardRef<
-  HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+function Table({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div className="relative w-full overflow-auto">
+      <div
+        className={cn("w-full caption-bottom text-sm", className)}
+        {...props}
+      />
+    </div>
+  );
+}
+
+function TableBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div className={cn("[&_tr:last-child]:border-0", className)} {...props} />
+  );
+}
+
+function TableCell({ className, ...props }: React.ComponentProps<"div">) {
+  return (
     <div
-      ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
+      className={cn(
+        "p-4 align-middle [&:has([role=checkbox])]:pr-0",
+        className,
+      )}
       {...props}
     />
-  </div>
-));
-
-const TableBody = forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
-    {...props}
-  />
-));
-
-const TableCell = forwardRef<
-  HTMLTableCellElement,
-  React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
-    {...props}
-  />
-));
+  );
+}
 
 export function ResultSheet({ state }: { state: TStepContext }) {
   const {
@@ -54,14 +48,11 @@ export function ResultSheet({ state }: { state: TStepContext }) {
     spendingDetails,
     housingCostReduction,
     assets,
-  } = useMemo(
-    () => calculateOverall(requireCompleteAges(state)),
-    [state]
-  );
+  } = useMemo(() => calculateOverall(requireCompleteAges(state)), [state]);
 
   const allowanceSum = useMemo(
     () => allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0),
-    [allowance]
+    [allowance],
   );
 
   const additionalsCount = useMemo(
@@ -69,7 +60,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
       additionalNeeds.community.reduce((acc, curr) => {
         return acc + curr.additionals.length;
       }, 0),
-    []
+    [additionalNeeds.community],
   );
 
   const incomeCount = useMemo(
@@ -77,7 +68,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
       benefitCommunity.reduce((acc, curr) => {
         return acc + curr.income.length;
       }, 0),
-    [benefitCommunity]
+    [benefitCommunity],
   );
 
   return (
@@ -168,7 +159,12 @@ export function ResultSheet({ state }: { state: TStepContext }) {
         {/* spendings */}
         {spendingDetails.sum > 0 && (
           <>
-            <TableCell className={cn("font-medium col-span-2 sm:col-span-1", housingCostReduction > 0 ? "row-span-5" : "row-span-4")}>
+            <TableCell
+              className={cn(
+                "font-medium col-span-2 sm:col-span-1",
+                housingCostReduction > 0 ? "row-span-5" : "row-span-4",
+              )}
+            >
               Kosten für Unterkunft und Heizung
             </TableCell>
             <TableCell className="sm:col-span-2">
@@ -196,9 +192,15 @@ export function ResultSheet({ state }: { state: TStepContext }) {
             </TableCell>
             {housingCostReduction > 0 && (
               <>
-                <TableCell className="sm:col-span-2">Abzug wegen Begrenzung der Bruttokaltmiete</TableCell>
+                <TableCell className="sm:col-span-2">
+                  Abzug wegen Begrenzung der Bruttokaltmiete
+                </TableCell>
                 <TableCell className="text-right">
-                  −{housingCostReduction.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                  −
+                  {housingCostReduction.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
                 </TableCell>
               </>
             )}

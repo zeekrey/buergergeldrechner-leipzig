@@ -81,7 +81,7 @@ export default function StepSalary() {
 
       setState(newState);
     },
-    [state]
+    [setState, state]
   );
 
   const incomeSum = useMemo(
@@ -98,7 +98,7 @@ export default function StepSalary() {
 
   const handleBack = useCallback(() => {
     push(`${stepsConfig[step.previous(state)].id}`);
-  }, [state]);
+  }, [push, state]);
 
   if (!completeContext) return null;
 

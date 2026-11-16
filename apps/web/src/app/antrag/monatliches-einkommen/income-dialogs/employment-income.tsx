@@ -22,8 +22,8 @@ import { IncomeComponentProps } from "../income-dialog";
 import { checkChildBenefitTransfert } from "./default-income";
 
 const formSchema = z.object({
-  gros: z.coerce.number(),
-  net: z.coerce.number(),
+  gros: z.coerce.number<string | number>(),
+  net: z.coerce.number<string | number>(),
   isYoung: z.boolean(),
 });
 
@@ -32,11 +32,15 @@ export const EmploymentIncome = ({
   income,
   setOpen,
 }: IncomeComponentProps & {
-  income: z.infer<typeof EmploymentIncomeSchema>;
+  income?: z.infer<typeof EmploymentIncomeSchema>;
 }) => {
   const [state, setState] = useStateContext();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<
+    z.input<typeof formSchema>,
+    unknown,
+    z.output<typeof formSchema>
+  >({
     resolver: zodResolver(formSchema),
     defaultValues: {
       isYoung:
@@ -48,7 +52,7 @@ export const EmploymentIncome = ({
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     const selectedPersonIndex = state.community.findIndex(
-      (per) => per.id === person.id
+      (per) => per.id === person.id,
     );
 
     if (selectedPersonIndex !== -1) {
@@ -56,7 +60,7 @@ export const EmploymentIncome = ({
         gross: Number(data.gros),
         net: Number(data.net),
         hasMinorChild: state.community.some(
-          (person) => person.type === "child" && person.age < 18
+          (person) => person.type === "child" && person.age < 18,
         ),
         isYoung: data.isYoung,
       });

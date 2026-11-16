@@ -11,6 +11,13 @@ const person: TPerson = {
   name: "Antragsteller",
   type: "adult",
   income: [],
+  age: 30,
+  attributes: {
+    isPregnant: false,
+    isSingleParent: false,
+    hasDiseases: false,
+    diseases: [],
+  },
 };
 
 const incomeType: TIncomeType = "ParentalAllowance";

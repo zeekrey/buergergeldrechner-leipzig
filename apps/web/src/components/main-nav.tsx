@@ -1,18 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 import { siteConfig } from "@/config/site";
 
 import { Badge } from "./ui/badge";
 
-export function MainNav() {
-  const [isPreview, setIsPreview] = useState(false);
+const subscribe = () => () => {};
+const getIsPreview = () => window.location.hostname === "localhost";
+const getServerIsPreview = () => false;
 
-  useEffect(() => {
-    setIsPreview(window.location.hostname === "localhost");
-  });
+export function MainNav() {
+  const isPreview = useSyncExternalStore(
+    subscribe,
+    getIsPreview,
+    getServerIsPreview,
+  );
 
   return (
     <div className="flex">

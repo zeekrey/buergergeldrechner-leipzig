@@ -18,8 +18,12 @@ jobs:
         run: bunx playwright install --with-deps chromium
       - name: Lint web app
         run: bun run --filter '@grundsicherungsrechner/web' lint
-      - name: Run calculation unit tests
-        run: bun run --filter calculation test
+      - name: Type-check workspaces
+        run: bun run typecheck
+      - name: Run unit tests
+        run: bun run test:unit
+      - name: Build web app with type checking
+        run: bun run --filter '@grundsicherungsrechner/web' build
       - name: Run web Playwright tests
         run: bun run --filter '@grundsicherungsrechner/web' test:e2e
       - uses: actions/upload-artifact@v4

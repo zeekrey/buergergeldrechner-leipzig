@@ -1,7 +1,7 @@
 "use client";
 
 import { produce } from "immer";
-import { type FormEvent, useEffect, useMemo, useState } from "react";
+import { type FormEvent, useMemo, useState } from "react";
 
 import { useStateContext } from "@/components/context";
 import { Button } from "@/components/ui/button";
@@ -92,8 +92,9 @@ export function AssetDialog({
       : ""
   );
 
-  useEffect(() => {
-    if (!open) return;
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (!nextOpen) return;
     setSubmitted(false);
     setPersonId(selectedAsset?.personId ?? state.community.at(0)?.id ?? "");
     setType(selectedAsset?.type ?? "BankAccount");
@@ -117,7 +118,7 @@ export function AssetDialog({
         ? String(selectedAsset.mortgages)
         : ""
     );
-  }, [open, selectedAsset, state.community]);
+  }
 
   const selectedPerson = useMemo(
     () => state.community.find((person) => person.id === personId),
@@ -135,7 +136,7 @@ export function AssetDialog({
   function buildAsset(): unknown {
     if (!selectedPerson) return undefined;
     const base = {
-      id: selectedAsset?.id ?? generateId(),
+      id: selectedAsset?.id ?? "new-asset",
       personId: selectedPerson.id,
       type,
       amount: toNumber(amount),
@@ -164,7 +165,10 @@ export function AssetDialog({
     event.preventDefault();
     setSubmitted(true);
     if (!parsedAsset.success) return;
-    const asset: TAsset = parsedAsset.data;
+    const asset: TAsset = {
+      ...parsedAsset.data,
+      id: selectedAsset?.id ?? generateId(),
+    };
 
     setState(
       produce(state, (draft) => {
@@ -180,7 +184,7 @@ export function AssetDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
