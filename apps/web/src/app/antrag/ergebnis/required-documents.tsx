@@ -147,7 +147,7 @@ export function RequiredDocuments() {
       },
       {
         name: "Entgeltbescheinigungen",
-        description: "Der letzten 6 Monate",
+        description: "der letzten 6 Monate",
         when: "Erwerbstätigkeit",
       },
       {
@@ -157,12 +157,12 @@ export function RequiredDocuments() {
       },
       {
         name: "Nachweis doppelte Haushaltsführung",
-        description: "Zum Beispiel Mietvertrag am Arbeitsort, Falls relevant",
+        description: "zum Beispiel Mietvertrag am Arbeitsort, falls relevant",
         when: "Erwerbstätigkeit",
       },
       {
         name: "Nachweis Fahrkosten",
-        description: "Für den Arbeitsweg, Falls relevant",
+        description: "für den Arbeitsweg, falls relevant",
         when: "Erwerbstätigkeit",
       },
       {
@@ -189,7 +189,7 @@ export function RequiredDocuments() {
   if (incomeTypesPresent.has("ChildAllowance")) {
     basedOnInputs.push({
       name: "Kindergeldbescheid",
-      description: "Oder Bescheid zur Abzweigung",
+      description: "oder Bescheid zur Abzweigung",
       when: "Kindergeld",
     });
   }
@@ -255,7 +255,7 @@ export function RequiredDocuments() {
     basedOnInputs.push({
       name: "Bescheinigung der Bausparkasse",
       description:
-        "Mit angespartem Guthaben und Zinsen des vergangenen Jahres",
+        "mit angespartem Guthaben und Zinsen des vergangenen Jahres",
       when: "Bausparvertrag",
     });
   }
@@ -264,18 +264,18 @@ export function RequiredDocuments() {
     {
       name: "Nachweis geschützte Altersvorsorge",
       description:
-        "Falls vorhanden: Police oder jährliche Anbieterbescheinigung zur Zertifizierung oder Förderung",
+        "falls vorhanden: Police oder jährliche Anbieterbescheinigung zur Zertifizierung oder Förderung",
     },
     // Wohnen/Kosten der Unterkunft – generisch
     ...(hasHousingCosts
       ? [
           {
             name: "Mietvertrag (vollständig)",
-            description: "Als ein zusammenhängendes Dokument",
+            description: "als ein zusammenhängendes Dokument",
           },
           {
             name: "Nachweis aktuelle Miethöhe",
-            description: "Zum Beispiel letzte Mietanpassung",
+            description: "zum Beispiel letzte Mietanpassung",
           },
         ]
       : []),
@@ -289,11 +289,11 @@ export function RequiredDocuments() {
     },
     {
       name: "Nebenkostenabrechnung",
-      description: "Aktuell; sofern Wohnung > 1 Jahr bewohnt",
+      description: "aktuell; sofern Wohnung > 1 Jahr bewohnt",
     },
     {
       name: "Heizkostenabrechnung",
-      description: "Aktuell; sofern Wohnung > 1 Jahr bewohnt",
+      description: "aktuell; sofern Wohnung > 1 Jahr bewohnt",
     },
     { name: "Untermietvertrag (WG)", description: "falls Untermiete" },
     {
@@ -312,7 +312,7 @@ export function RequiredDocuments() {
     },
     {
       name: "EU: Bestätigung Agentur für Arbeit",
-      description: "Zur unfreiwilligen Arbeitslosigkeit",
+      description: "zur unfreiwilligen Arbeitslosigkeit",
     },
     { name: "Geflüchtete: BAMF-Bescheid" },
     { name: "Geflüchtete: elektronischer Aufenthaltstitel" },
