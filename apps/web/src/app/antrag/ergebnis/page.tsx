@@ -96,8 +96,14 @@ export default function StepSummary() {
 
   if (!calculation) return null;
 
-  const { assets, income, overall, resultStatus, housingCostReduction } =
-    calculation;
+  const {
+    assets,
+    income,
+    overall,
+    resultStatus,
+    housingCostLimit,
+    housingCostReduction,
+  } = calculation;
 
   return (
     <StepRoot id={step.id}>
@@ -123,14 +129,14 @@ export default function StepSummary() {
               requiresManualReview={resultStatus === "manual-review"}
               onShowDocuments={() => setActiveTab("documents")}
             />
-            {housingCostReduction > 0 && (
+            {housingCostReduction > 0 && housingCostLimit !== null && (
               <div className="mb-5 rounded-lg border bg-muted/30 p-4 text-sm">
                 <h3 className="font-semibold">
                   Berücksichtigte Unterkunftskosten
                 </h3>
                 <p className="mt-2">
-                  Die Bruttokaltmiete wurde in dieser Beispielrechnung um{" "}
-                  {housingCostReduction.toLocaleString("de-DE", {
+                  Die Bruttokaltmiete wurde in dieser Beispielrechnung auf{" "}
+                  {housingCostLimit.toLocaleString("de-DE", {
                     style: "currency",
                     currency: "EUR",
                   })}{" "}
