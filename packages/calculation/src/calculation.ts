@@ -361,18 +361,17 @@ export function calculateAllowance(context: TStepContext): {
   type: TAllowance;
   amount: number;
 }[] {
-  /** Private insurance */
+  /** Private insurance (§ 11b Abs. 1 Satz 1 Nr. 3 SGB II, § 6 Abs. 1 Nr. 1 Bürgergeld-V) */
   const legitimate = context.community.filter((person) => {
-    const relevantIncome = person.income.filter(
-      (income) =>
-        income.type !== "ChildAllowance" &&
-        income.type !== "ChildBenefitTransfer"
+    const netIncome = person.income.reduce(
+      (sum, income) => sum + income.amount,
+      0
     );
 
     return (
       (person.type === "adult" || getChildAgeGroup(person.age) === "18+") &&
-      relevantIncome.length > 0 &&
-      relevantIncome.every(
+      netIncome > 0 &&
+      person.income.every(
         (income) =>
           income.type !== "EmploymentIncome" &&
           income.type !== "SelfEmploymentIncome"

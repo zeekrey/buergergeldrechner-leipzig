@@ -6364,8 +6364,8 @@ function calculateChildBenefitTransfer(context) {
 }
 function calculateAllowance(context) {
   const legitimate = context.community.filter((person) => {
-    const relevantIncome = person.income.filter((income) => income.type !== "ChildAllowance" && income.type !== "ChildBenefitTransfer");
-    return (person.type === "adult" || getChildAgeGroup(person.age) === "18+") && relevantIncome.length > 0 && relevantIncome.every((income) => income.type !== "EmploymentIncome" && income.type !== "SelfEmploymentIncome");
+    const netIncome = person.income.reduce((sum, income) => sum + income.amount, 0);
+    return (person.type === "adult" || getChildAgeGroup(person.age) === "18+") && netIncome > 0 && person.income.every((income) => income.type !== "EmploymentIncome" && income.type !== "SelfEmploymentIncome");
   });
   const incomeAllowance = context.community.flatMap((group) => group.income.filter((income) => income.allowance).map((income) => ({
     personId: group.id,

@@ -15,7 +15,7 @@ async function loadState(page: Page, state: object, path: string) {
   await page.reload();
 }
 
-test("the documented seven-person household excludes self-supporting children and the incorrect €30 allowance", async ({
+test("the documented seven-person household excludes self-supporting children and applies the €30 insurance allowance to the adult child's Kindergeld", async ({
   page,
 }) => {
   const employmentIncome = (id: string, net: number) => ({
@@ -108,23 +108,23 @@ test("the documented seven-person household excludes self-supporting children an
 
   await loadState(page, state, "/antrag/ergebnis");
 
-  await expect(page.getByTestId("result")).toHaveText("2.639,45 €");
+  await expect(page.getByTestId("result")).toHaveText("2.669,45 €");
   await expect(page.getByText("2.449,00 € Einnahmen")).toBeVisible();
   await expect(
     page.getByText("3.341,03 € Kosten für Unterkunft und Heizung")
   ).toBeVisible();
-  await expect(page.getByText("378,00 € Freibeträge")).toBeVisible();
+  await expect(page.getByText("408,00 € Freibeträge")).toBeVisible();
 
   await page.getByRole("tab", { name: "Berechnung" }).click();
   const calculation = page.getByTestId("result-calculation");
 
-  await expect(calculation).toContainText("2.639,45 €");
+  await expect(calculation).toContainText("2.669,45 €");
   await expect(calculation).toContainText("2.324,00 €");
   await expect(calculation).toContainText("2.386,45 €");
   await expect(calculation).toContainText("2.449,00 €");
-  await expect(calculation).toContainText("2.071,00 €");
-  await expect(calculation).toContainText("378,00 €");
-  await expect(calculation).not.toContainText("30,00 €");
+  await expect(calculation).toContainText("2.041,00 €");
+  await expect(calculation).toContainText("408,00 €");
+  await expect(calculation).toContainText("30,00 €");
   await expect(calculation).not.toContainText("Kind 1");
   await expect(calculation).not.toContainText("Kind 2");
 });

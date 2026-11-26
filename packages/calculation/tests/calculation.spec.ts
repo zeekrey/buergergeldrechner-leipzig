@@ -634,7 +634,7 @@ describe("calculateOverall", () => {
 
     const { overall } = calculateOverall(context);
 
-    expect(overall).toEqual(-660);
+    expect(overall).toEqual(-630);
   });
 
   test("does not apply self-supporting children's income to the rest of the benefit community", () => {
@@ -736,8 +736,8 @@ describe("calculateOverall", () => {
     expect(result.baseNeed.sum).toBe(2324);
     expect(result.spendings).toBe(2386.45);
     expect(result.income.sum).toBe(2449);
-    expect(result.incomeAfterAllowance).toBe(2071);
-    expect(result.overall).toBe(2639.45);
+    expect(result.incomeAfterAllowance).toBe(2041);
+    expect(result.overall).toBe(2669.45);
   });
 
   test("returns manual review instead of zero entitlement for excess assets", () => {
@@ -914,21 +914,67 @@ describe("calculateAllowance", () => {
     expect(sum).toBe(60);
   });
 
-  test("does not apply the insurance allowance to an adult child's Kindergeld", () => {
+  test("applies the 30 EUR insurance allowance to an adult child's Kindergeld", () => {
+    const adultChild = {
+      ...defaultChild,
+      id: "adult-child",
+      age: 19,
+      income: [{ id: generateId(), type: "ChildAllowance" as const, amount: 259 }],
+    };
     const context: TStepContext = {
       ...defaultContext,
-      community: [
-        {
-          ...defaultChild,
-          age: 19,
-          income: [
-            { id: generateId(), type: "ChildAllowance", amount: 255 },
-          ],
-        },
+      community: [adultChild],
+    };
+
+    expect(calculateAllowance(context)).toEqual([
+      { personId: "adult-child", type: "insurance", amount: 30 },
+    ]);
+  });
+
+  test("applies the 30 EUR insurance allowance to an adult receiving Kindergeld or Kindergeldübertrag", () => {
+    const adultWithChildAllowance = {
+      ...defaultAdult,
+      id: "adult-kg",
+      income: [{ id: generateId(), type: "ChildAllowance" as const, amount: 259 }],
+    };
+    const adultWithTransfer = {
+      ...defaultAdult,
+      id: "adult-transfer",
+      income: [
+        { id: generateId(), type: "ChildBenefitTransfer" as const, amount: 181.5 },
       ],
     };
 
-    expect(calculateAllowance(context)).toEqual([]);
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [adultWithChildAllowance, adultWithTransfer],
+      })
+    ).toEqual([
+      { personId: "adult-kg", type: "insurance", amount: 30 },
+      { personId: "adult-transfer", type: "insurance", amount: 30 },
+    ]);
+  });
+
+  test("does not apply the insurance allowance to a minor child's Kindergeld or zero income", () => {
+    const minorChild = {
+      ...defaultChild,
+      id: "minor-child",
+      age: 17,
+      income: [{ id: generateId(), type: "ChildAllowance" as const, amount: 259 }],
+    };
+    const adultWithZeroKindergeld = {
+      ...defaultAdult,
+      id: "adult-zero",
+      income: [{ id: generateId(), type: "ChildAllowance" as const, amount: 0 }],
+    };
+
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [minorChild, adultWithZeroKindergeld],
+      })
+    ).toEqual([]);
   });
 
   test("insurance allowance with old kid but different income type", () => {

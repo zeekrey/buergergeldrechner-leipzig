@@ -71,7 +71,7 @@ test("should assign child benefit transfer", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
   await page.waitForURL("**/vermoegen");
   await page.getByRole("button", { name: "Weiter" }).click();
-  await expect(page.getByTestId("result")).toContainText("1.471,39 €");
+  await expect(page.getByTestId("result")).toContainText("1.501,39 €");
 });
 
 test("should assign child benefit transfer if changed", async ({ page }) => {
