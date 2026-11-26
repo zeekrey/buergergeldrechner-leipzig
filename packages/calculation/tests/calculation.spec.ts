@@ -10,8 +10,20 @@ import {
   calculateSalary,
   calculateSelfEmploymentIncome,
 } from "../src/calculation";
-import { type TAdult, type TChild, type TStepContext, emptyAssets } from "../src/types";
+import {
+  type TAdult,
+  type TChild,
+  type TStepContext,
+  emptyAssets,
+  incomeType,
+} from "../src/types";
 import { generateId } from "../src/utils";
+
+describe("income defaults", () => {
+  test("uses 259 EUR as default Kindergeld amount for 2026", () => {
+    expect(incomeType.ChildAllowance.standardAmount).toBe(259);
+  });
+});
 
 describe("salary", () => {
   test("900 gross, 600 net", () => {

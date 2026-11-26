@@ -176,7 +176,7 @@ test("Case #3 - Couple with 1 kid", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/ergebnis");
-  await expect(page.getByTestId("result")).toContainText("592");
+  await expect(page.getByTestId("result")).toContainText("588");
 
   await page.getByRole("tab", { name: "Berechnung" }).click();
 });
@@ -249,7 +249,7 @@ test("Case #4 - Couple with 2 kids", async ({ page }) => {
 
   await page.waitForURL("**/ergebnis");
   await expect(page.getByTestId("result")).toContainText("Kein Anspruch");
-  await expect(page.getByRole("strong")).toContainText("-282,00 €");
+  await expect(page.getByRole("strong")).toContainText("-290,00 €");
 
   await page.getByRole("tab", { name: "Berechnung" }).click();
 

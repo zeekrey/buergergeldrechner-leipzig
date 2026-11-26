@@ -310,7 +310,7 @@ export const incomeType: {
 } = {
   EmploymentIncome: { label: "Einkommen aus Erwerbstätigkeit" },
   SelfEmploymentIncome: { label: "Einkommen aus Selbstständigkeit" },
-  ChildAllowance: { label: "Kindergeld", standardAmount: 255 },
+  ChildAllowance: { label: "Kindergeld", standardAmount: 259 },
   AdvanceMaintenancePayment: { label: "Unterhaltsvorschuss" },
   Maintenance: { label: "Unterhalt" },
   UnemploymentBenefits: { label: "Arbeitslosengeld" },
