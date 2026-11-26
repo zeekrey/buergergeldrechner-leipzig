@@ -347,6 +347,6 @@ export const allowanceType: {
 } = {
   insurance: { label: "Pauschale für angemessene private Versicherungen" },
   income: { label: "Einkommen aus Erwerbstätigkeit" },
-  baseDeduction: { label: "Grund" },
+  baseDeduction: { label: "Grundfreibetrag" },
   ...incomeType,
 };

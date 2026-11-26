@@ -977,6 +977,94 @@ describe("calculateAllowance", () => {
     ).toEqual([]);
   });
 
+  test("deducts only the 100 EUR basic deduction when receiving BAB and Kindergeld", () => {
+    const adultChild = {
+      ...defaultChild,
+      id: "bab-child",
+      age: 19,
+      income: [
+        { id: generateId(), type: "ChildAllowance" as const, amount: 259 },
+        {
+          id: generateId(),
+          type: "VocationalTrainingAllowance" as const,
+          amount: 300,
+        },
+      ],
+    };
+
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [adultChild],
+      })
+    ).toEqual([
+      { personId: "bab-child", type: "baseDeduction", amount: 100 },
+    ]);
+  });
+
+  test("deducts only the 100 EUR basic deduction for BAfOG or Meister-BAfOG without adding insurance allowance", () => {
+    const bafogAdult = {
+      ...defaultAdult,
+      id: "bafog-adult",
+      income: [
+        { id: generateId(), type: "BAfOG" as const, amount: 450 },
+        { id: generateId(), type: "ChildAllowance" as const, amount: 259 },
+      ],
+    };
+    const masterAdult = {
+      ...defaultAdult,
+      id: "master-adult",
+      income: [
+        {
+          id: generateId(),
+          type: "MaintenanceContributionFromMasterCraftsmen" as const,
+          amount: 500,
+        },
+      ],
+    };
+
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [bafogAdult, masterAdult],
+      })
+    ).toEqual([
+      { personId: "bafog-adult", type: "baseDeduction", amount: 100 },
+      { personId: "master-adult", type: "baseDeduction", amount: 100 },
+    ]);
+  });
+
+  test("does not double-count the 100 EUR basic deduction alongside employment income", () => {
+    const adult = {
+      ...defaultAdult,
+      id: "emp-bab-adult",
+      income: [
+        {
+          id: generateId(),
+          type: "EmploymentIncome" as const,
+          amount: 500,
+          allowance: 180,
+          gros: 500,
+          net: 500,
+        },
+        {
+          id: generateId(),
+          type: "VocationalTrainingAllowance" as const,
+          amount: 200,
+        },
+      ],
+    };
+
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [adult],
+      })
+    ).toEqual([
+      { personId: "emp-bab-adult", type: "EmploymentIncome", amount: 180 },
+    ]);
+  });
+
   test("insurance allowance with old kid but different income type", () => {
     const context: TStepContext = {
       ...defaultContext,

@@ -2,7 +2,7 @@ import {
   type TStepContext,
   type TChild,
   diseases as DiseaseMap,
-  IncomeTypEnum,
+  type TIncomeType,
   type TAllowance,
 } from "./types";
 import { calculateAssets } from "./assets";
@@ -12,7 +12,6 @@ import {
   flattenIncome,
   getChildAgeGroup,
 } from "./utils";
-import { z } from "zod";
 
 type TAdditional = { name: string; amount: number };
 
@@ -361,6 +360,28 @@ export function calculateAllowance(context: TStepContext): {
   type: TAllowance;
   amount: number;
 }[] {
+  const basicDeductionIncomeTypes: TIncomeType[] = [
+    "BAfOG",
+    "VocationalTrainingAllowance",
+    "MaintenanceContributionFromMasterCraftsmen",
+  ];
+  const employmentAllowanceIncomeTypes: TIncomeType[] = [
+    "EmploymentIncome",
+    "SelfEmploymentIncome",
+    "ShortTimeWorkAllowance",
+  ];
+
+  const hasIncludedInsuranceDeduction = (
+    person: TStepContext["community"][number]
+  ) =>
+    person.income.some(
+      (income) =>
+        employmentAllowanceIncomeTypes.includes(income.type) ||
+        (basicDeductionIncomeTypes.includes(income.type) &&
+          income.amount > 0) ||
+        (income.type === "VoluntarySocialYear" && (income.allowance ?? 0) > 0)
+    );
+
   /** Private insurance (§ 11b Abs. 1 Satz 1 Nr. 3 SGB II, § 6 Abs. 1 Nr. 1 Bürgergeld-V) */
   const legitimate = context.community.filter((person) => {
     const netIncome = person.income.reduce(
@@ -371,11 +392,7 @@ export function calculateAllowance(context: TStepContext): {
     return (
       (person.type === "adult" || getChildAgeGroup(person.age) === "18+") &&
       netIncome > 0 &&
-      person.income.every(
-        (income) =>
-          income.type !== "EmploymentIncome" &&
-          income.type !== "SelfEmploymentIncome"
-      )
+      !hasIncludedInsuranceDeduction(person)
     );
   });
 
@@ -390,20 +407,19 @@ export function calculateAllowance(context: TStepContext): {
       }))
   );
 
-  /** Basic deduction amount, only once */
-  const schema = z.array(IncomeTypEnum);
-  const legitimateIncomeTypes: z.infer<typeof schema> = [
-    "BAfOG",
-    "VocationalTrainingAllowance",
-    "MaintenanceContributionFromMasterCraftsmen",
-  ];
-
+  /** Basic deduction amount (100 EUR Grundfreibetrag, only once per person; includes the 30 EUR insurance allowance) */
   const baseDeduction = context.community.reduce<
     { personId: string; type: "baseDeduction"; amount: number }[]
   >((acc, curr) => {
-    const hasBasicDeduction = curr.income.some((item) =>
-      legitimateIncomeTypes.includes(item.type)
+    const hasEmploymentAllowance = curr.income.some((item) =>
+      employmentAllowanceIncomeTypes.includes(item.type)
     );
+    const hasBasicDeduction =
+      !hasEmploymentAllowance &&
+      curr.income.some(
+        (item) =>
+          basicDeductionIncomeTypes.includes(item.type) && item.amount > 0
+      );
 
     if (hasBasicDeduction) {
       acc.push({

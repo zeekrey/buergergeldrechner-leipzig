@@ -5913,7 +5913,7 @@ var incomeType = {
 var allowanceType = {
   insurance: { label: "Pauschale für angemessene private Versicherungen" },
   income: { label: "Einkommen aus Erwerbstätigkeit" },
-  baseDeduction: { label: "Grund" },
+  baseDeduction: { label: "Grundfreibetrag" },
   ...incomeType
 };
 // src/utils.ts
@@ -6363,23 +6363,29 @@ function calculateChildBenefitTransfer(context) {
   }, []);
 }
 function calculateAllowance(context) {
+  const basicDeductionIncomeTypes = [
+    "BAfOG",
+    "VocationalTrainingAllowance",
+    "MaintenanceContributionFromMasterCraftsmen"
+  ];
+  const employmentAllowanceIncomeTypes = [
+    "EmploymentIncome",
+    "SelfEmploymentIncome",
+    "ShortTimeWorkAllowance"
+  ];
+  const hasIncludedInsuranceDeduction = (person) => person.income.some((income) => employmentAllowanceIncomeTypes.includes(income.type) || basicDeductionIncomeTypes.includes(income.type) && income.amount > 0 || income.type === "VoluntarySocialYear" && (income.allowance ?? 0) > 0);
   const legitimate = context.community.filter((person) => {
     const netIncome = person.income.reduce((sum, income) => sum + income.amount, 0);
-    return (person.type === "adult" || getChildAgeGroup(person.age) === "18+") && netIncome > 0 && person.income.every((income) => income.type !== "EmploymentIncome" && income.type !== "SelfEmploymentIncome");
+    return (person.type === "adult" || getChildAgeGroup(person.age) === "18+") && netIncome > 0 && !hasIncludedInsuranceDeduction(person);
   });
   const incomeAllowance = context.community.flatMap((group) => group.income.filter((income) => income.allowance).map((income) => ({
     personId: group.id,
     amount: income.allowance ?? 0,
     type: income.type
   })));
-  const schema = array(IncomeTypEnum);
-  const legitimateIncomeTypes = [
-    "BAfOG",
-    "VocationalTrainingAllowance",
-    "MaintenanceContributionFromMasterCraftsmen"
-  ];
   const baseDeduction = context.community.reduce((acc, curr) => {
-    const hasBasicDeduction = curr.income.some((item) => legitimateIncomeTypes.includes(item.type));
+    const hasEmploymentAllowance = curr.income.some((item) => employmentAllowanceIncomeTypes.includes(item.type));
+    const hasBasicDeduction = !hasEmploymentAllowance && curr.income.some((item) => basicDeductionIncomeTypes.includes(item.type) && item.amount > 0);
     if (hasBasicDeduction) {
       acc.push({
         personId: curr.id,
