@@ -2,7 +2,7 @@ import {
   type TStepContext,
   type TChild,
   diseases as DiseaseMap,
-  IncomeTypEnum,
+  type TIncomeType,
   type TAllowance,
 } from "./types";
 import { calculateAssets } from "./assets";
@@ -12,9 +12,11 @@ import {
   flattenIncome,
   getChildAgeGroup,
 } from "./utils";
-import { z } from "zod";
 
 type TAdditional = { name: string; amount: number };
+
+/** Monthly Sofortzuschlag under § 72 Abs. 1 SGB II (from 1 January 2025). */
+export const IMMEDIATE_SUPPLEMENT_AMOUNT = 25;
 
 const roundCurrency = (amount: number) => Math.round(amount * 100) / 100;
 
@@ -361,22 +363,39 @@ export function calculateAllowance(context: TStepContext): {
   type: TAllowance;
   amount: number;
 }[] {
-  /** Private insurance */
-  const legitimate = context.community.filter((person) => {
-    const relevantIncome = person.income.filter(
+  const basicDeductionIncomeTypes: TIncomeType[] = [
+    "BAfOG",
+    "VocationalTrainingAllowance",
+    "MaintenanceContributionFromMasterCraftsmen",
+  ];
+  const employmentAllowanceIncomeTypes: TIncomeType[] = [
+    "EmploymentIncome",
+    "SelfEmploymentIncome",
+    "ShortTimeWorkAllowance",
+  ];
+
+  const hasIncludedInsuranceDeduction = (
+    person: TStepContext["community"][number]
+  ) =>
+    person.income.some(
       (income) =>
-        income.type !== "ChildAllowance" &&
-        income.type !== "ChildBenefitTransfer"
+        employmentAllowanceIncomeTypes.includes(income.type) ||
+        (basicDeductionIncomeTypes.includes(income.type) &&
+          income.amount > 0) ||
+        (income.type === "VoluntarySocialYear" && (income.allowance ?? 0) > 0)
+    );
+
+  /** Private insurance (§ 11b Abs. 1 Satz 1 Nr. 3 SGB II, § 6 Abs. 1 Nr. 1 Bürgergeld-V) */
+  const legitimate = context.community.filter((person) => {
+    const netIncome = person.income.reduce(
+      (sum, income) => sum + income.amount,
+      0
     );
 
     return (
       (person.type === "adult" || getChildAgeGroup(person.age) === "18+") &&
-      relevantIncome.length > 0 &&
-      relevantIncome.every(
-        (income) =>
-          income.type !== "EmploymentIncome" &&
-          income.type !== "SelfEmploymentIncome"
-      )
+      netIncome > 0 &&
+      !hasIncludedInsuranceDeduction(person)
     );
   });
 
@@ -391,20 +410,19 @@ export function calculateAllowance(context: TStepContext): {
       }))
   );
 
-  /** Basic deduction amount, only once */
-  const schema = z.array(IncomeTypEnum);
-  const legitimateIncomeTypes: z.infer<typeof schema> = [
-    "BAfOG",
-    "VocationalTrainingAllowance",
-    "MaintenanceContributionFromMasterCraftsmen",
-  ];
-
+  /** Basic deduction amount (100 EUR Grundfreibetrag, only once per person; includes the 30 EUR insurance allowance) */
   const baseDeduction = context.community.reduce<
     { personId: string; type: "baseDeduction"; amount: number }[]
   >((acc, curr) => {
-    const hasBasicDeduction = curr.income.some((item) =>
-      legitimateIncomeTypes.includes(item.type)
+    const hasEmploymentAllowance = curr.income.some((item) =>
+      employmentAllowanceIncomeTypes.includes(item.type)
     );
+    const hasBasicDeduction =
+      !hasEmploymentAllowance &&
+      curr.income.some(
+        (item) =>
+          basicDeductionIncomeTypes.includes(item.type) && item.amount > 0
+      );
 
     if (hasBasicDeduction) {
       acc.push({
@@ -439,9 +457,15 @@ type BenefitCommunityResult = {
   requiresManualReview: boolean;
 };
 
+export type ImmediateSupplementResult = {
+  sum: number;
+  community: { personId: string; name: string; amount: number }[];
+};
+
 export type OverallCalculation = {
   baseNeed: ReturnType<typeof calculateBaseNeed>;
   additionalNeeds: ReturnType<typeof calculateAdditionalNeeds>;
+  immediateSupplement: ImmediateSupplementResult;
   spendings: number;
   spendingDetails: TStepContext["spendings"];
   housingCostLimit: number | null;
@@ -584,6 +608,126 @@ export function calculateBenefitCommunity(
   };
 }
 
+/**
+ * Calculates the monthly Sofortzuschlag (25 EUR) under § 72 SGB II for children,
+ * adolescents, and young adults whose base need corresponds to Regelbedarfsstufe
+ * 3, 4, 5, or 6.
+ *
+ * The Sofortzuschlag is an additional benefit and does not create entitlement on
+ * its own (Rz. 72.2). It also applies to children excluded from the benefit
+ * community solely because Kindergeld covers their need (§ 72 Abs. 1 Satz 2 Nr. 2).
+ */
+export function calculateImmediateSupplement(
+  context: TStepContext,
+  benefitContext: TStepContext,
+  excludedPersonIds: string[],
+  entitlementBeforeSupplement: number
+): ImmediateSupplementResult {
+  if (entitlementBeforeSupplement <= 0 || !context.community.length) {
+    return { sum: 0, community: [] };
+  }
+
+  const eligibleFromBenefitCommunity = benefitContext.community
+    .filter((person) => person.type === "child")
+    .map((child) => ({
+      personId: child.id,
+      name: child.name,
+      amount: IMMEDIATE_SUPPLEMENT_AMOUNT,
+    }));
+
+  const excludedChildrenWithKindergeld = context.community.filter(
+    (person): person is TChild =>
+      person.type === "child" &&
+      person.age < 25 &&
+      excludedPersonIds.includes(person.id) &&
+      person.income.some(
+        (income) => income.type === "ChildAllowance" && income.amount > 0
+      )
+  );
+
+  const eligibleFromExcluded: {
+    personId: string;
+    name: string;
+    amount: number;
+  }[] = [];
+
+  if (excludedChildrenWithKindergeld.length > 0) {
+    const rentPerPerson = context.spendings.sum / context.community.length;
+    const baseNeed = calculateBaseNeed(context);
+    const additionalNeeds = calculateAdditionalNeeds(context);
+
+    excludedChildrenWithKindergeld.forEach((child) => {
+      const individualBaseNeed =
+        baseNeed.community.find((entry) => entry.personId === child.id)
+          ?.amount ?? 0;
+      const individualAdditionalNeeds =
+        additionalNeeds.community
+          .find((entry) => entry.personId === child.id)
+          ?.additionals.reduce((sum, entry) => sum + entry.amount, 0) ?? 0;
+      const individualNeed =
+        individualBaseNeed + individualAdditionalNeeds + rentPerPerson;
+
+      const childWithoutKindergeld: TChild = {
+        ...child,
+        income: child.income.filter(
+          (entry) =>
+            entry.type !== "ChildAllowance" &&
+            entry.type !== "ChildBenefitTransfer"
+        ),
+      };
+      const incomeWithoutKindergeld = childWithoutKindergeld.income.reduce(
+        (sum, entry) => sum + entry.amount,
+        0
+      );
+      const allowanceWithoutKindergeld = calculateAllowance({
+        ...context,
+        community: [childWithoutKindergeld],
+      }).reduce((sum, entry) => sum + entry.amount, 0);
+      const individualAssets = calculateAssets({
+        ...context,
+        community: [child],
+        isEmployable: false,
+        assets: {
+          ...context.assets,
+          items: context.assets.items.filter(
+            (asset) => asset.personId === child.id
+          ),
+        },
+      });
+
+      if (
+        incomeWithoutKindergeld -
+          allowanceWithoutKindergeld +
+          individualAssets.excess <
+        individualNeed
+      ) {
+        eligibleFromExcluded.push({
+          personId: child.id,
+          name: child.name,
+          amount: IMMEDIATE_SUPPLEMENT_AMOUNT,
+        });
+      }
+    });
+  }
+
+  const eligibleIds = new Set([
+    ...eligibleFromBenefitCommunity.map((entry) => entry.personId),
+    ...eligibleFromExcluded.map((entry) => entry.personId),
+  ]);
+  const community = context.community
+    .filter((person) => eligibleIds.has(person.id))
+    .map((child) => ({
+      personId: child.id,
+      name: child.name,
+      amount: IMMEDIATE_SUPPLEMENT_AMOUNT,
+    }));
+
+  return {
+    sum: community.reduce((sum, entry) => sum + entry.amount, 0),
+    community,
+  };
+}
+
 export function calculateOverall(
   context: TStepContext
 ): OverallCalculation {
@@ -603,7 +747,18 @@ export function calculateOverall(
   const incomeAfterAllowance =
     income - allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
   const assets = calculateAssets(benefitContext);
-  const overall = need - incomeAfterAllowance;
+  const entitlementBeforeSupplement = roundCurrency(
+    need - incomeAfterAllowance
+  );
+  const immediateSupplement = calculateImmediateSupplement(
+    context,
+    benefitContext,
+    excludedPersonIds,
+    entitlementBeforeSupplement
+  );
+  const overall = roundCurrency(
+    entitlementBeforeSupplement + immediateSupplement.sum
+  );
   const resultStatus =
     assets.requiresManualReview || benefitCommunityRequiresManualReview
       ? "manual-review"
@@ -612,6 +767,7 @@ export function calculateOverall(
   return {
     baseNeed,
     additionalNeeds,
+    immediateSupplement,
     spendings: housingCosts.sum,
     spendingDetails: { ...benefitContext.spendings, sum: housingCosts.sum },
     housingCostLimit: housingCosts.limit,

@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   IncomeBaseSchema,
+  incomeType as incomeTypeMap,
   TStepContext,
 } from "@/lib/types";
 import { generateId } from "@/lib/utils";
@@ -87,10 +88,11 @@ export const DefaultIncome = ({
   incomeType: "OtherIncome";
 }) => {
   const [state, setState] = useStateContext();
+  const standardAmount = incomeTypeMap[incomeType]?.standardAmount;
 
   const form = useForm<TFormData>({
     defaultValues: {
-      amount: income?.amount ?? 0,
+      amount: income?.amount ?? standardAmount ?? 0,
       allowance: income?.allowance ?? 0,
     },
   });
@@ -169,7 +171,11 @@ export const DefaultIncome = ({
           </Button>
           <Button
             type="submit"
-            disabled={!form.formState.isDirty || !form.formState.isValid}
+            disabled={
+              (!income && standardAmount === undefined && !form.formState.isDirty) ||
+              (Boolean(income) && !form.formState.isDirty) ||
+              !form.formState.isValid
+            }
           >
             {income ? "Bearbeiten" : "Hinzufügen"}
           </Button>

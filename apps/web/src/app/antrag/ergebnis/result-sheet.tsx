@@ -40,6 +40,7 @@ export function ResultSheet({ state }: { state: TStepContext }) {
     need,
     allowance,
     additionalNeeds,
+    immediateSupplement,
     benefitCommunity,
     income,
     incomeAfterAllowance,
@@ -328,6 +329,41 @@ export function ResultSheet({ state }: { state: TStepContext }) {
             </TableCell>
             <TableCell className="text-right bg-muted font-bold">
               {incomeAfterAllowance.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
+            </TableCell>
+          </>
+        )}
+        {/* immediate supplement (§ 72 SGB II) */}
+        {immediateSupplement.community.length > 0 && (
+          <>
+            <TableCell
+              className="font-medium col-span-2 sm:col-span-1"
+              style={{
+                gridRow: `span ${immediateSupplement.community.length + 1} / span ${
+                  immediateSupplement.community.length + 1
+                }`,
+              }}
+            >
+              Sofortzuschlag (§ 72 SGB II)
+            </TableCell>
+            {immediateSupplement.community.map((item) => (
+              <Fragment key={item.personId}>
+                <TableCell className="sm:col-span-2">{item.name}</TableCell>
+                <TableCell className="text-right">
+                  {item.amount.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </TableCell>
+              </Fragment>
+            ))}
+            <TableCell className="sm:col-span-2 bg-muted/30 font-bold">
+              Summe
+            </TableCell>
+            <TableCell className="text-right bg-muted/30 font-bold">
+              {immediateSupplement.sum.toLocaleString("de-DE", {
                 style: "currency",
                 currency: "EUR",
               })}

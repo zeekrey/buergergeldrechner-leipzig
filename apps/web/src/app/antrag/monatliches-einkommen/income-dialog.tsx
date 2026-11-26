@@ -129,6 +129,7 @@ export const IncomeDialog = ({
         </Select>
         {person && (
           <IncomeComponent
+            key={incomeType}
             person={person}
             setOpen={setOpen}
             income={selectedIncome}

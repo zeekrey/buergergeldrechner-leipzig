@@ -5,6 +5,8 @@ type TAdditional = {
     name: string;
     amount: number;
 };
+/** Monthly Sofortzuschlag under § 72 Abs. 1 SGB II (from 1 January 2025). */
+export declare const IMMEDIATE_SUPPLEMENT_AMOUNT = 25;
 /**
  * "Grundsicherungsgeld" is the result of the following:
  *   Regelbedarf (base need)
@@ -57,9 +59,18 @@ type BenefitCommunityResult = {
     excludedPersonIds: string[];
     requiresManualReview: boolean;
 };
+export type ImmediateSupplementResult = {
+    sum: number;
+    community: {
+        personId: string;
+        name: string;
+        amount: number;
+    }[];
+};
 export type OverallCalculation = {
     baseNeed: ReturnType<typeof calculateBaseNeed>;
     additionalNeeds: ReturnType<typeof calculateAdditionalNeeds>;
+    immediateSupplement: ImmediateSupplementResult;
     spendings: number;
     spendingDetails: TStepContext["spendings"];
     housingCostLimit: number | null;
@@ -89,6 +100,16 @@ export declare function calculateHousingCosts(context: TStepContext): {
  * not be used to cover the needs of parents or siblings.
  */
 export declare function calculateBenefitCommunity(context: TStepContext): BenefitCommunityResult;
+/**
+ * Calculates the monthly Sofortzuschlag (25 EUR) under § 72 SGB II for children,
+ * adolescents, and young adults whose base need corresponds to Regelbedarfsstufe
+ * 3, 4, 5, or 6.
+ *
+ * The Sofortzuschlag is an additional benefit and does not create entitlement on
+ * its own (Rz. 72.2). It also applies to children excluded from the benefit
+ * community solely because Kindergeld covers their need (§ 72 Abs. 1 Satz 2 Nr. 2).
+ */
+export declare function calculateImmediateSupplement(context: TStepContext, benefitContext: TStepContext, excludedPersonIds: string[], entitlementBeforeSupplement: number): ImmediateSupplementResult;
 export declare function calculateOverall(context: TStepContext): OverallCalculation;
 export declare function calculateSelfEmploymentIncome({ revenue, expenses, hasMinorChild, isYoung, }: {
     revenue: number;

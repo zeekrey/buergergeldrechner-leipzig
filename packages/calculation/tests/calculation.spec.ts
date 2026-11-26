@@ -10,8 +10,20 @@ import {
   calculateSalary,
   calculateSelfEmploymentIncome,
 } from "../src/calculation";
-import { type TAdult, type TChild, type TStepContext, emptyAssets } from "../src/types";
+import {
+  type TAdult,
+  type TChild,
+  type TStepContext,
+  emptyAssets,
+  incomeType,
+} from "../src/types";
 import { generateId } from "../src/utils";
+
+describe("income defaults", () => {
+  test("uses 259 EUR as default Kindergeld amount for 2026", () => {
+    expect(incomeType.ChildAllowance.standardAmount).toBe(259);
+  });
+});
 
 describe("salary", () => {
   test("900 gross, 600 net", () => {
@@ -622,7 +634,7 @@ describe("calculateOverall", () => {
 
     const { overall } = calculateOverall(context);
 
-    expect(overall).toEqual(-660);
+    expect(overall).toEqual(-630);
   });
 
   test("does not apply self-supporting children's income to the rest of the benefit community", () => {
@@ -724,8 +736,14 @@ describe("calculateOverall", () => {
     expect(result.baseNeed.sum).toBe(2324);
     expect(result.spendings).toBe(2386.45);
     expect(result.income.sum).toBe(2449);
-    expect(result.incomeAfterAllowance).toBe(2071);
-    expect(result.overall).toBe(2639.45);
+    expect(result.incomeAfterAllowance).toBe(2041);
+    expect(result.immediateSupplement.sum).toBe(75);
+    expect(result.immediateSupplement.community.map((entry) => entry.name)).toEqual([
+      "Kind 3",
+      "Kind 4",
+      "Kind 5",
+    ]);
+    expect(result.overall).toBe(2744.45);
   });
 
   test("returns manual review instead of zero entitlement for excess assets", () => {
@@ -808,6 +826,118 @@ describe("calculateOverall", () => {
     expect(result.assets.items).toEqual([
       expect.objectContaining({ id: "child-car", countable: 12000 }),
     ]);
+  });
+});
+
+describe("Sofortzuschlag (§ 72 SGB II)", () => {
+  test("grants 25 EUR per child across Regelbedarfsstufen 3, 4, 5, and 6 when entitled", () => {
+    const context: TStepContext = {
+      ...defaultContext,
+      community: [
+        { ...defaultAdult, id: "parent", name: "Antragsteller" },
+        { ...defaultChild, id: "c-rbs6", name: "Kind 1", age: 3 },
+        { ...defaultChild, id: "c-rbs5", name: "Kind 2", age: 10 },
+        { ...defaultChild, id: "c-rbs4", name: "Kind 3", age: 16 },
+        { ...defaultChild, id: "c-rbs3", name: "Kind 4", age: 20 },
+      ],
+    };
+
+    const result = calculateOverall(context);
+
+    expect(result.immediateSupplement).toEqual({
+      sum: 100,
+      community: [
+        { personId: "c-rbs6", name: "Kind 1", amount: 25 },
+        { personId: "c-rbs5", name: "Kind 2", amount: 25 },
+        { personId: "c-rbs4", name: "Kind 3", amount: 25 },
+        { personId: "c-rbs3", name: "Kind 4", amount: 25 },
+      ],
+    });
+    expect(result.overall).toBe(result.need - result.incomeAfterAllowance + 100);
+  });
+
+  test("does not grant Sofortzuschlag to adults (Regelbedarfsstufe 1 or 2)", () => {
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [
+        { ...defaultAdult, id: "a1", age: 22 },
+        { ...defaultAdult, id: "a2", age: 23 },
+      ],
+    });
+
+    expect(result.immediateSupplement).toEqual({ sum: 0, community: [] });
+  });
+
+  test("does not create an entitlement when income already covers need (nicht anspruchsauslösend)", () => {
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [
+        {
+          ...defaultAdult,
+          id: "parent",
+          income: [{ id: "inc", type: "OtherIncome", amount: 2500 }],
+        },
+        {
+          ...defaultChild,
+          id: "child",
+          age: 5,
+          income: [{ id: "kg", type: "ChildAllowance", amount: 259 }],
+        },
+      ],
+      spendings: { rent: 500, utilities: 100, heating: 100, sum: 700 },
+    });
+
+    expect(result.immediateSupplement).toEqual({ sum: 0, community: [] });
+    expect(result.overall).toBeLessThanOrEqual(0);
+  });
+
+  test("grants Sofortzuschlag to a child excluded solely because of Kindergeld (§ 72 Abs. 1 Satz 2 Nr. 2)", () => {
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [
+        { ...defaultAdult, id: "parent", name: "Antragsteller" },
+        {
+          ...defaultChild,
+          id: "child-kg-excluded",
+          name: "Kind 1",
+          age: 7,
+          income: [
+            { id: "kg", type: "ChildAllowance", amount: 259 },
+            { id: "maint", type: "Maintenance", amount: 500 },
+          ],
+        },
+      ],
+      spendings: { rent: 500, utilities: 100, heating: 100, sum: 700 },
+    });
+
+    expect(result.excludedPersonIds).toEqual(["child-kg-excluded"]);
+    expect(result.immediateSupplement).toEqual({
+      sum: 25,
+      community: [{ personId: "child-kg-excluded", name: "Kind 1", amount: 25 }],
+    });
+  });
+
+  test("does not grant Sofortzuschlag to a child who is self-supporting even without Kindergeld", () => {
+    const result = calculateOverall({
+      ...defaultContext,
+      community: [
+        { ...defaultAdult, id: "parent", name: "Antragsteller" },
+        {
+          ...defaultChild,
+          id: "child-self-supporting",
+          name: "Kind 1",
+          age: 19,
+          income: [
+            { id: "kg", type: "ChildAllowance", amount: 259 },
+            { id: "maint", type: "Maintenance", amount: 1500 },
+          ],
+        },
+      ],
+      spendings: { rent: 500, utilities: 100, heating: 100, sum: 700 },
+    });
+
+    expect(result.excludedPersonIds).toEqual(["child-self-supporting"]);
+    expect(result.immediateSupplement).toEqual({ sum: 0, community: [] });
   });
 });
 
@@ -902,21 +1032,155 @@ describe("calculateAllowance", () => {
     expect(sum).toBe(60);
   });
 
-  test("does not apply the insurance allowance to an adult child's Kindergeld", () => {
+  test("applies the 30 EUR insurance allowance to an adult child's Kindergeld", () => {
+    const adultChild = {
+      ...defaultChild,
+      id: "adult-child",
+      age: 19,
+      income: [{ id: generateId(), type: "ChildAllowance" as const, amount: 259 }],
+    };
     const context: TStepContext = {
       ...defaultContext,
-      community: [
+      community: [adultChild],
+    };
+
+    expect(calculateAllowance(context)).toEqual([
+      { personId: "adult-child", type: "insurance", amount: 30 },
+    ]);
+  });
+
+  test("applies the 30 EUR insurance allowance to an adult receiving Kindergeld or Kindergeldübertrag", () => {
+    const adultWithChildAllowance = {
+      ...defaultAdult,
+      id: "adult-kg",
+      income: [{ id: generateId(), type: "ChildAllowance" as const, amount: 259 }],
+    };
+    const adultWithTransfer = {
+      ...defaultAdult,
+      id: "adult-transfer",
+      income: [
+        { id: generateId(), type: "ChildBenefitTransfer" as const, amount: 181.5 },
+      ],
+    };
+
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [adultWithChildAllowance, adultWithTransfer],
+      })
+    ).toEqual([
+      { personId: "adult-kg", type: "insurance", amount: 30 },
+      { personId: "adult-transfer", type: "insurance", amount: 30 },
+    ]);
+  });
+
+  test("does not apply the insurance allowance to a minor child's Kindergeld or zero income", () => {
+    const minorChild = {
+      ...defaultChild,
+      id: "minor-child",
+      age: 17,
+      income: [{ id: generateId(), type: "ChildAllowance" as const, amount: 259 }],
+    };
+    const adultWithZeroKindergeld = {
+      ...defaultAdult,
+      id: "adult-zero",
+      income: [{ id: generateId(), type: "ChildAllowance" as const, amount: 0 }],
+    };
+
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [minorChild, adultWithZeroKindergeld],
+      })
+    ).toEqual([]);
+  });
+
+  test("deducts only the 100 EUR basic deduction when receiving BAB and Kindergeld", () => {
+    const adultChild = {
+      ...defaultChild,
+      id: "bab-child",
+      age: 19,
+      income: [
+        { id: generateId(), type: "ChildAllowance" as const, amount: 259 },
         {
-          ...defaultChild,
-          age: 19,
-          income: [
-            { id: generateId(), type: "ChildAllowance", amount: 255 },
-          ],
+          id: generateId(),
+          type: "VocationalTrainingAllowance" as const,
+          amount: 300,
         },
       ],
     };
 
-    expect(calculateAllowance(context)).toEqual([]);
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [adultChild],
+      })
+    ).toEqual([
+      { personId: "bab-child", type: "baseDeduction", amount: 100 },
+    ]);
+  });
+
+  test("deducts only the 100 EUR basic deduction for BAfOG or Meister-BAfOG without adding insurance allowance", () => {
+    const bafogAdult = {
+      ...defaultAdult,
+      id: "bafog-adult",
+      income: [
+        { id: generateId(), type: "BAfOG" as const, amount: 450 },
+        { id: generateId(), type: "ChildAllowance" as const, amount: 259 },
+      ],
+    };
+    const masterAdult = {
+      ...defaultAdult,
+      id: "master-adult",
+      income: [
+        {
+          id: generateId(),
+          type: "MaintenanceContributionFromMasterCraftsmen" as const,
+          amount: 500,
+        },
+      ],
+    };
+
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [bafogAdult, masterAdult],
+      })
+    ).toEqual([
+      { personId: "bafog-adult", type: "baseDeduction", amount: 100 },
+      { personId: "master-adult", type: "baseDeduction", amount: 100 },
+    ]);
+  });
+
+  test("does not double-count the 100 EUR basic deduction alongside employment income", () => {
+    const adult = {
+      ...defaultAdult,
+      id: "emp-bab-adult",
+      income: [
+        {
+          id: generateId(),
+          type: "EmploymentIncome" as const,
+          amount: 500,
+          allowance: 180,
+          gros: 500,
+          net: 500,
+        },
+        {
+          id: generateId(),
+          type: "VocationalTrainingAllowance" as const,
+          amount: 200,
+        },
+      ],
+    };
+
+    expect(
+      calculateAllowance({
+        ...defaultContext,
+        community: [adult],
+      })
+    ).toEqual([
+      { personId: "emp-bab-adult", type: "EmploymentIncome", amount: 180 },
+    ]);
   });
 
   test("insurance allowance with old kid but different income type", () => {
