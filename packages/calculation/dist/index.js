@@ -6127,6 +6127,7 @@ function calculateAssets(context) {
 }
 
 // src/calculation.ts
+var IMMEDIATE_SUPPLEMENT_AMOUNT = 25;
 var roundCurrency = (amount) => Math.round(amount * 100) / 100;
 function calculateBaseNeed(context) {
   const isSingle = context.community.filter((person) => person.type === "adult").length === 1;
@@ -6488,6 +6489,66 @@ function calculateBenefitCommunity(context) {
     requiresManualReview
   };
 }
+function calculateImmediateSupplement(context, benefitContext, excludedPersonIds, entitlementBeforeSupplement) {
+  if (entitlementBeforeSupplement <= 0 || !context.community.length) {
+    return { sum: 0, community: [] };
+  }
+  const eligibleFromBenefitCommunity = benefitContext.community.filter((person) => person.type === "child").map((child) => ({
+    personId: child.id,
+    name: child.name,
+    amount: IMMEDIATE_SUPPLEMENT_AMOUNT
+  }));
+  const excludedChildrenWithKindergeld = context.community.filter((person) => person.type === "child" && person.age < 25 && excludedPersonIds.includes(person.id) && person.income.some((income) => income.type === "ChildAllowance" && income.amount > 0));
+  const eligibleFromExcluded = [];
+  if (excludedChildrenWithKindergeld.length > 0) {
+    const rentPerPerson = context.spendings.sum / context.community.length;
+    const baseNeed = calculateBaseNeed(context);
+    const additionalNeeds = calculateAdditionalNeeds(context);
+    excludedChildrenWithKindergeld.forEach((child) => {
+      const individualBaseNeed = baseNeed.community.find((entry) => entry.personId === child.id)?.amount ?? 0;
+      const individualAdditionalNeeds = additionalNeeds.community.find((entry) => entry.personId === child.id)?.additionals.reduce((sum, entry) => sum + entry.amount, 0) ?? 0;
+      const individualNeed = individualBaseNeed + individualAdditionalNeeds + rentPerPerson;
+      const childWithoutKindergeld = {
+        ...child,
+        income: child.income.filter((entry) => entry.type !== "ChildAllowance" && entry.type !== "ChildBenefitTransfer")
+      };
+      const incomeWithoutKindergeld = childWithoutKindergeld.income.reduce((sum, entry) => sum + entry.amount, 0);
+      const allowanceWithoutKindergeld = calculateAllowance({
+        ...context,
+        community: [childWithoutKindergeld]
+      }).reduce((sum, entry) => sum + entry.amount, 0);
+      const individualAssets = calculateAssets({
+        ...context,
+        community: [child],
+        isEmployable: false,
+        assets: {
+          ...context.assets,
+          items: context.assets.items.filter((asset) => asset.personId === child.id)
+        }
+      });
+      if (incomeWithoutKindergeld - allowanceWithoutKindergeld + individualAssets.excess < individualNeed) {
+        eligibleFromExcluded.push({
+          personId: child.id,
+          name: child.name,
+          amount: IMMEDIATE_SUPPLEMENT_AMOUNT
+        });
+      }
+    });
+  }
+  const eligibleIds = new Set([
+    ...eligibleFromBenefitCommunity.map((entry) => entry.personId),
+    ...eligibleFromExcluded.map((entry) => entry.personId)
+  ]);
+  const community = context.community.filter((person) => eligibleIds.has(person.id)).map((child) => ({
+    personId: child.id,
+    name: child.name,
+    amount: IMMEDIATE_SUPPLEMENT_AMOUNT
+  }));
+  return {
+    sum: community.reduce((sum, entry) => sum + entry.amount, 0),
+    community
+  };
+}
 function calculateOverall(context) {
   const {
     context: benefitContext,
@@ -6502,11 +6563,14 @@ function calculateOverall(context) {
   const need = baseNeed.sum + additionalNeeds.sum + housingCosts.sum;
   const incomeAfterAllowance = income - allowance.reduce((acc, curr) => acc + (curr.amount ?? 0), 0);
   const assets = calculateAssets(benefitContext);
-  const overall = need - incomeAfterAllowance;
+  const entitlementBeforeSupplement = roundCurrency(need - incomeAfterAllowance);
+  const immediateSupplement = calculateImmediateSupplement(context, benefitContext, excludedPersonIds, entitlementBeforeSupplement);
+  const overall = roundCurrency(entitlementBeforeSupplement + immediateSupplement.sum);
   const resultStatus = assets.requiresManualReview || benefitCommunityRequiresManualReview ? "manual-review" : "calculated";
   return {
     baseNeed,
     additionalNeeds,
+    immediateSupplement,
     spendings: housingCosts.sum,
     spendingDetails: { ...benefitContext.spendings, sum: housingCosts.sum },
     housingCostLimit: housingCosts.limit,
@@ -6605,6 +6669,7 @@ export {
   ExtendedAssetSchema,
   ExtendedIncomeSchema,
   HousingAllowanceSchema,
+  IMMEDIATE_SUPPLEMENT_AMOUNT,
   IncomeBaseSchema,
   IncomeTypEnum,
   MaintenanceContributionFromMasterCraftsmenSchema,
@@ -6638,6 +6703,7 @@ export {
   calculateBenefitCommunity,
   calculateChildBenefitTransfer,
   calculateHousingCosts,
+  calculateImmediateSupplement,
   calculateIncome,
   calculateOverall,
   calculateSalary,

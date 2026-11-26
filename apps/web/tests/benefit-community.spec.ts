@@ -108,7 +108,7 @@ test("the documented seven-person household excludes self-supporting children an
 
   await loadState(page, state, "/antrag/ergebnis");
 
-  await expect(page.getByTestId("result")).toHaveText("2.669,45 €");
+  await expect(page.getByTestId("result")).toHaveText("2.744,45 €");
   await expect(page.getByText("2.449,00 € Einnahmen")).toBeVisible();
   await expect(
     page.getByText("3.341,03 € Kosten für Unterkunft und Heizung")
@@ -118,13 +118,15 @@ test("the documented seven-person household excludes self-supporting children an
   await page.getByRole("tab", { name: "Berechnung" }).click();
   const calculation = page.getByTestId("result-calculation");
 
-  await expect(calculation).toContainText("2.669,45 €");
+  await expect(calculation).toContainText("2.744,45 €");
   await expect(calculation).toContainText("2.324,00 €");
   await expect(calculation).toContainText("2.386,45 €");
   await expect(calculation).toContainText("2.449,00 €");
   await expect(calculation).toContainText("2.041,00 €");
   await expect(calculation).toContainText("408,00 €");
   await expect(calculation).toContainText("30,00 €");
+  await expect(calculation).toContainText("Sofortzuschlag (§ 72 SGB II)");
+  await expect(calculation).toContainText("75,00 €");
   await expect(calculation).not.toContainText("Kind 1");
   await expect(calculation).not.toContainText("Kind 2");
 });

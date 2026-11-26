@@ -176,7 +176,7 @@ test("Case #3 - Couple with 1 kid", async ({ page }) => {
   await page.getByRole("button", { name: "Weiter" }).click();
 
   await page.waitForURL("**/ergebnis");
-  await expect(page.getByTestId("result")).toContainText("588");
+  await expect(page.getByTestId("result")).toContainText("613");
 
   await page.getByRole("tab", { name: "Berechnung" }).click();
 });
